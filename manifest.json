@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+
+  "name": "blog-skipper",
+  "description": "blog-skipper",
+  "version": "0.1",
+
+  "applications": {
+    "gecko": {
+      "id": "blog-skipper@ris58h"
+    }
+  },
+
+  "permissions": [
+    
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}
