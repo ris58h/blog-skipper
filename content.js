@@ -21,6 +21,28 @@ if (comments.length > 0) {
 		var bRect = b.getBoundingClientRect();
 		return aRect.top - bRect.top;
 	});
+
+	var clickedIndex = null;
+	for (var i = 0; i < comments.length; i++) {
+		(function (index) {
+			comments[index].addEventListener("contextmenu", function() {
+				clickedIndex = index;
+			});
+		})(i);
+	}
+	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+		if (clickedIndex == null) {
+			return;
+		}
+
+		var rootIndex = root(clickedIndex);
+		var nextIndex = nextSameLevelTree(rootIndex);
+		if (nextIndex >=0) {
+			goTo(nextIndex);
+		}
+		
+		clickedIndex = null;
+	});
 	
 	var history = [];
 	var currentIndex = null;
