@@ -1,4 +1,5 @@
 var commentSelector = null;
+var offset = 0;
 //TODO it shouldn't be hardcoded
 if (window.location.hostname == 'habrahabr.ru') {
 	commentSelector = '.comment';
@@ -8,6 +9,9 @@ if (window.location.hostname == 'habrahabr.ru') {
 	commentSelector = '[id^="comment-"]';
 } else if (window.location.hostname.endsWith('.d3.ru')) {
 	commentSelector = '[id^="b-comment-"] > .b-comment__body';
+} else if (window.location.hostname == ('vc.ru')) {
+	commentSelector = '.comments__item__self';
+	offset = 100;
 }
 
 var comments = [];
@@ -89,6 +93,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	
 function goTo(nextIndex) {
 	comments[nextIndex].scrollIntoView();
+	window.scrollBy(0, -offset);
 }
 
 function level(index) {
