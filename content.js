@@ -1,155 +1,144 @@
-function commentElements() { //TODO work with async comments loading
-	var url = window.location.href;
-	console.log('>>>url ' + url);
-	var nodeList;
-	//TODO it shouldn't be a hardcode
-	if (window.location.hostname == 'habrahabr.ru') {
-		nodeList = document.querySelectorAll('.comment');
-	} else if (window.location.hostname == 'news.ycombinator.com') {
-		nodeList = document.querySelectorAll('.comhead > a.hnuser');
-	} else {
-		return [];
-	}
-	return [].slice.call(nodeList);
+var commentSelector = null;
+//TODO it shouldn't be hardcoded
+if (window.location.hostname == 'habrahabr.ru') {
+	commentSelector = '.comment';
+} else if (window.location.hostname == 'news.ycombinator.com') {
+	commentSelector = '.comment';
+} else if (window.location.hostname == '4pda.ru') {
+	commentSelector = '[id^="comment-"]';
+} else if (window.location.hostname.endsWith('.d3.ru')) {
+	commentSelector = '[id^="b-comment-"] > .b-comment__body';
 }
 
-var comments = commentElements();
-console.log('>>> total comments found: ' + comments.length); //TODO
-if (comments.length > 0) {
-	comments.sort(function (a, b) {
-		var aRect = a.getBoundingClientRect();
-		var bRect = b.getBoundingClientRect();
-		return aRect.top - bRect.top;
-	});
+var comments = [];
+var clickedComment = null;
 
-	var clickedIndex = null;
-	for (var i = 0; i < comments.length; i++) {
-		(function (index) {
-			comments[index].addEventListener("contextmenu", function() {
-				clickedIndex = index;
-			});
-		})(i);
-	}
-	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-		if (clickedIndex == null) {
-			return;
-		}
-
-		var rootIndex = root(clickedIndex);
-		var nextIndex = nextSameLevelTree(rootIndex);
-		if (nextIndex >=0) {
-			goTo(nextIndex);
-		}
-		
-		clickedIndex = null;
-	});
-	
-	var history = [];
-	var currentIndex = null;
-	var initialScroll = document.documentElement.scrollTop || document.body.scrollTop;//TODO do before first move
-	console.log('>>> initial scroll: ' + initialScroll);
-
-	function goTo(nextIndex, addToHistory) {
-		addToHistory = typeof addToHistory !== 'undefined' ? addToHistory : true;
-		console.log(">>> go to " + nextIndex); //TODO
-		if (addToHistory && currentIndex != null) {
-			history.push(currentIndex);
-		}
-		console.log(history);
-		comments[nextIndex].scrollIntoView();
-		currentIndex = nextIndex;
+if (commentSelector != null) {
+	var nodeList = document.querySelectorAll(commentSelector);
+	console.log('>>> comments found: ' + nodeList.length); //TODO
+	for (var i = 0; i < nodeList.length; i++) {
+		var node = nodeList[i];
+		onNewComment(node);
 	}
 
-	function level(index) {
-		return comments[index].getBoundingClientRect().left;
-	}
-
-	function parent(index) {
-		var currentLevel = level(index);
-		var prevIndex = index - 1;
-		while (prevIndex >= 0 && level(prevIndex) >= currentLevel) {
-			prevIndex--;
-		}
-		return prevIndex;
-	}
-
-	function root(index) {
-		var rootIndex = index;
-		var parentIndex = parent(index);
-		while (parentIndex >= 0) {
-			rootIndex = parentIndex;
-			parentIndex = parent(parentIndex);
-		}
-		return rootIndex;
-	}
-
-	function nextSameLevelTree(index) {
-		var currentLevel = level(index);
-		var nextIndex = index + 1;
-		while (nextIndex < comments.length && level(nextIndex) > currentLevel) {
-			nextIndex++;
-		}
-		if (nextIndex < comments.length && level(nextIndex) == currentLevel) {
-			return nextIndex;
-		} else {
-			return -1;
-		}
-	}
-
-	function keyHandler(e) {
-		if (e.key == 'c') { // Current
-			goTo(currentIndex == null ? 0 : currentIndex, false);
-		} else if (e.key == 'n') { // Next
-			var nextIndex = currentIndex == null ? 0 : currentIndex + 1;
-			if (nextIndex < comments.length) {
-				goTo(nextIndex);
-			}
-		} else if (e.key == 'p') { // Prev
-			if (currentIndex != null) {
-				var prevIndex = currentIndex - 1;
-				if (prevIndex >= 0) {
-					goTo(prevIndex);	
-				}
-			}
-		} else if (e.key == 'b') { // Back
-			if (history.length > 0) {
-				var nextIndex = history.pop();
-				goTo(nextIndex, false);
-			} else {
-				currentIndex = null;
-				document.documentElement.scrollTop = document.body.scrollTop = initialScroll;
-			}
-		} else if (e.key == 'f') { // Parent
-			if (currentIndex != null) {
-				var parentIndex = parent(currentIndex);
-				if (parentIndex >= 0) {
-					goTo(parentIndex);
-				}
-			}
-		} else if (e.key == 'r') { // Root
-			if (currentIndex != null) {
-				var rootIndex = root(currentIndex);
-				if (rootIndex != currentIndex) {
-					goTo(rootIndex);
-				}
-			}
-		} else if (e.key == 's') { // Skip Subtree
-			if (currentIndex != null) {
-				var nextIndex = nextSameLevelTree(currentIndex);
-				if (nextIndex >= 0) {
-					goTo(nextIndex);
-				}
-			}
-		} else if (e.key == 't') { // Skip Tree
-			if (currentIndex != null) {
-				var rootIndex = root(currentIndex);
-				var nextIndex = nextSameLevelTree(rootIndex);
-				if (nextIndex >=0) {
-					goTo(nextIndex);
+	observerCallback = function(mutations) {
+		for (var i = 0; i < mutations.length; i++) {
+			var mutation = mutations[i];
+			var addedNodes = mutation.addedNodes;
+			for (var j = 0; j < addedNodes.length; j++) {
+				var addedNode = addedNodes[j];
+				if (matches(addedNode, commentSelector)) {
+					console.log('>>> new comment detected!');
+					onNewComment(addedNode);
+				} else {
+					if (typeof addedNode.querySelectorAll === 'function') {
+						var nodeList = addedNode.querySelectorAll(commentSelector);
+						if (nodeList.length > 0) { //TODO
+							console.log('>>> new comments detected: ' + nodeList.length);
+						}
+						for (var k = 0; k < nodeList.length; k++) {
+							var node = nodeList[k];
+							onNewComment(node);
+						}
+					}
 				}
 			}
 		}
 	};
+	var observer = new MutationObserver(observerCallback);
+	observer.observe(document.documentElement, {
+		childList: true,
+		subtree: true
+	});
+}
 
-	document.onkeyup = keyHandler;
+function onNewComment(element) {
+	var eTop = element.getBoundingClientRect().top;
+	var i;
+	for (i = 0; i < comments.length; i++) {
+		if (eTop < comments[i].getBoundingClientRect().top) {
+			break;
+		}
+	}
+	comments.splice(i, 0, element);
+
+	element.addEventListener("contextmenu", function() {
+		clickedComment = element;
+	});
+}
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+	if (clickedComment == null) {
+		return;
+	}
+
+	var clickedIndex = comments.indexOf(clickedComment); //TODO binary search
+	if (clickedIndex < 0) {
+		console.error("Comment not found in comments!");
+		return;
+	}
+
+	var rootIndex = root(clickedIndex);
+	var nextIndex = nextSameLevelTree(rootIndex);
+	if (nextIndex >= 0) {
+		goTo(nextIndex);
+	}
+	
+	clickedComment = null;
+});
+	
+function goTo(nextIndex) {
+	comments[nextIndex].scrollIntoView();
+}
+
+function level(index) {
+	return comments[index].getBoundingClientRect().left;
+}
+
+function parent(index) {
+	var currentLevel = level(index);
+	var prevIndex = index - 1;
+	while (prevIndex >= 0 && level(prevIndex) >= currentLevel) {
+		prevIndex--;
+	}
+	return prevIndex;
+}
+
+function root(index) {
+	var rootIndex = index;
+	var parentIndex = parent(index);
+	while (parentIndex >= 0) {
+		rootIndex = parentIndex;
+		parentIndex = parent(parentIndex);
+	}
+	return rootIndex;
+}
+
+function nextSameLevelTree(index) {
+	var currentLevel = level(index);
+	var nextIndex = index + 1;
+	while (nextIndex < comments.length && level(nextIndex) > currentLevel) {
+		nextIndex++;
+	}
+	if (nextIndex < comments.length && level(nextIndex) == currentLevel) {
+		return nextIndex;
+	} else {
+		return -1;
+	}
+}
+
+function matches(elem, selector) {
+	var proto = window.Element.prototype;
+	var nativeMatches = proto.matches ||
+		proto.mozMatchesSelector ||
+		proto.msMatchesSelector ||
+		proto.oMatchesSelector ||
+		proto.webkitMatchesSelector;
+  
+	//TODO
+	if (!elem || elem.nodeType !== 1) {
+	  return false;
+	}
+  
+	return nativeMatches.call(elem, selector);
 }
