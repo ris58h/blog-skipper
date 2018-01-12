@@ -8,6 +8,7 @@ if (window.location.hostname == 'habrahabr.ru') {
 	offset = 25;
 } else if (window.location.hostname == '4pda.ru') {
 	commentSelector = '[id^="comment-"]';
+	offset = 50;
 } else if (window.location.hostname.endsWith('.d3.ru')) {
 	commentSelector = '[id^="b-comment-"] > .b-comment__body';
 } else if (window.location.hostname == 'vc.ru') {
