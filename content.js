@@ -16,15 +16,18 @@ if (window.location.hostname == 'habrahabr.ru') {
 	offset = 100;
 } else if (window.location.hostname == 'disqus.com') {
 	commentSelector = '.post-content';
+} else if (window.location.hostname == 'www.reddit.com') {
+	commentSelector = '[id^="form-t1_"]';
+	offset = 25;
 }
 
 var comments = [];
 var clickedComment = null;
 
 if (commentSelector != null) {
-	console.log('>>> use selector: ' + commentSelector); //TODO
+	console.log('>>> Using selector: ' + commentSelector); //TODO
 	var nodeList = document.querySelectorAll(commentSelector);
-	console.log('>>> comments found: ' + nodeList.length); //TODO
+	console.log('>>> Comments found: ' + nodeList.length); //TODO
 	for (var i = 0; i < nodeList.length; i++) {
 		var node = nodeList[i];
 		onNewComment(node);
@@ -37,13 +40,13 @@ if (commentSelector != null) {
 			for (var j = 0; j < addedNodes.length; j++) {
 				var addedNode = addedNodes[j];
 				if (matches(addedNode, commentSelector)) {
-					console.log('>>> new comment detected!');
+					console.log('>>> New comment detected!'); //TODO
 					onNewComment(addedNode);
 				} else {
 					if (typeof addedNode.querySelectorAll === 'function') {
 						var nodeList = addedNode.querySelectorAll(commentSelector);
 						if (nodeList.length > 0) { //TODO
-							console.log('>>> new comments detected: ' + nodeList.length);
+							console.log('>>> New comments detected: ' + nodeList.length);
 						}
 						for (var k = 0; k < nodeList.length; k++) {
 							var node = nodeList[k];
@@ -62,6 +65,11 @@ if (commentSelector != null) {
 }
 
 function onNewComment(element) {
+	if (isHidden(element)) { //TODO
+		console.log('>>> Skip new hidden comment!');
+		return;
+	}
+
 	var eTop = element.getBoundingClientRect().top;
 	var i;
 	for (i = 0; i < comments.length; i++) {
@@ -83,7 +91,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 	var clickedIndex = comments.indexOf(clickedComment); //TODO binary search
 	if (clickedIndex < 0) {
-		console.error("Comment not found in comments!");
+		console.error(">>> Comment not found in comments!");
 		return;
 	}
 
@@ -151,4 +159,12 @@ function matches(elem, selector) {
 	}
   
 	return nativeMatches.call(elem, selector);
+}
+
+function isHidden(el) {
+	if (el.offsetParent === null) {
+		return true;
+	}
+    var style = window.getComputedStyle(el);
+    return (style.display === 'none')
 }
