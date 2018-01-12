@@ -9,15 +9,18 @@ if (window.location.hostname == 'habrahabr.ru') {
 	commentSelector = '[id^="comment-"]';
 } else if (window.location.hostname.endsWith('.d3.ru')) {
 	commentSelector = '[id^="b-comment-"] > .b-comment__body';
-} else if (window.location.hostname == ('vc.ru')) {
+} else if (window.location.hostname == 'vc.ru') {
 	commentSelector = '.comments__item__self';
 	offset = 100;
+} else if (window.location.hostname == 'disqus.com') {
+	commentSelector = '.post-content';
 }
 
 var comments = [];
 var clickedComment = null;
 
 if (commentSelector != null) {
+	console.log('>>> use selector: ' + commentSelector); //TODO
 	var nodeList = document.querySelectorAll(commentSelector);
 	console.log('>>> comments found: ' + nodeList.length); //TODO
 	for (var i = 0; i < nodeList.length; i++) {
