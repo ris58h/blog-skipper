@@ -19,6 +19,8 @@ if (window.location.hostname == 'habrahabr.ru') {
 } else if (window.location.hostname == 'www.reddit.com') {
 	commentSelector = '[id^="form-t1_"]';
 	offset = 25;
+} else if (window.location.hostname == 'pikabu.ru') {
+	commentSelector = '.b-comment__body';
 }
 
 var comments = [];
