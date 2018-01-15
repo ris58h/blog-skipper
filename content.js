@@ -24,7 +24,6 @@ if (window.location.hostname == 'habrahabr.ru') {
 }
 
 var allComments = [];
-var comments = [];
 var clickedComment = null;
 
 if (commentSelector != null) {
@@ -81,7 +80,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		return;
 	}
 
-	comments = [];
+	var comments = [];
 	for (var i = 0; i < allComments.length; i++) {
 		var comment = allComments[i];
 		if (!isHidden(comment)) {
@@ -100,50 +99,50 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		return;
 	}
 
-	var rootIndex = root(clickedIndex);
-	var nextIndex = nextSameLevelTree(rootIndex);
+	var rootIndex = root(comments, clickedIndex);
+	var nextIndex = nextSameLevelTree(comments, rootIndex);
 	if (nextIndex >= 0) {
-		goTo(nextIndex);
+		goTo(comments[nextIndex]);
 	}
 	
 	clickedComment = null;
 });
 	
-function goTo(nextIndex) {
-	comments[nextIndex].scrollIntoView();
+function goTo(comment) {
+	comment.scrollIntoView();
 	window.scrollBy(0, -offset);
 }
 
-function level(index) {
+function level(comments, index) {
 	return comments[index].getBoundingClientRect().left;
 }
 
-function parent(index) {
-	var currentLevel = level(index);
+function parent(comments, index) {
+	var currentLevel = level(comments, index);
 	var prevIndex = index - 1;
-	while (prevIndex >= 0 && level(prevIndex) >= currentLevel) {
+	while (prevIndex >= 0 && level(comments, prevIndex) >= currentLevel) {
 		prevIndex--;
 	}
 	return prevIndex;
 }
 
-function root(index) {
+function root(comments, index) {
 	var rootIndex = index;
-	var parentIndex = parent(index);
+	var parentIndex = parent(comments, index);
 	while (parentIndex >= 0) {
 		rootIndex = parentIndex;
-		parentIndex = parent(parentIndex);
+		parentIndex = parent(comments, parentIndex);
 	}
 	return rootIndex;
 }
 
-function nextSameLevelTree(index) {
-	var currentLevel = level(index);
+function nextSameLevelTree(comments, index) {
+	var currentLevel = level(comments, index);
 	var nextIndex = index + 1;
-	while (nextIndex < comments.length && level(nextIndex) > currentLevel) {
+	while (nextIndex < comments.length && level(comments, nextIndex) > currentLevel) {
 		nextIndex++;
 	}
-	if (nextIndex < comments.length && level(nextIndex) == currentLevel) {
+	if (nextIndex < comments.length && level(comments, nextIndex) == currentLevel) {
 		return nextIndex;
 	} else {
 		return -1;
