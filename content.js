@@ -21,6 +21,9 @@ if (window.location.hostname == 'habrahabr.ru') {
 	offset = 25;
 } else if (window.location.hostname == 'pikabu.ru') {
 	commentSelector = '.b-comment__body';
+} else if (window.location.hostname.endsWith('.livejournal.com')) {
+	commentSelector = '.mdspost-thread';
+	offset = 50;
 }
 
 var allComments = [];
