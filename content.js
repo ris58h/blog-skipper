@@ -96,13 +96,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	var clickedIndex = comments.indexOf(clickedComment); //TODO binary search
 	if (clickedIndex < 0) {
 		console.error(">>> Comment not found in comments!");
-		return;
-	}
-
-	var rootIndex = root(comments, clickedIndex);
-	var nextIndex = nextSameLevelTree(comments, rootIndex);
-	if (nextIndex >= 0) {
-		goTo(comments[nextIndex]);
+	} else {
+		var rootIndex = root(comments, clickedIndex);
+		var nextIndex = nextSameLevelTree(comments, rootIndex);
+		if (nextIndex >= 0) {
+			goTo(comments[nextIndex]);
+		}
 	}
 	
 	clickedComment = null;
