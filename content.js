@@ -23,6 +23,7 @@ if (window.location.hostname == 'habrahabr.ru') {
 	commentSelector = '.b-comment__body';
 }
 
+var allComments = [];
 var comments = [];
 var clickedComment = null;
 
@@ -57,6 +58,7 @@ if (commentSelector != null) {
 					}
 				}
 			}
+			//TODO deleted nodes
 		}
 	};
 	var observer = new MutationObserver(observerCallback);
@@ -67,19 +69,7 @@ if (commentSelector != null) {
 }
 
 function onNewComment(element) {
-	if (isHidden(element)) { //TODO
-		console.log('>>> Skip new hidden comment!');
-		return;
-	}
-
-	var eTop = element.getBoundingClientRect().top;
-	var i;
-	for (i = 0; i < comments.length; i++) {
-		if (eTop < comments[i].getBoundingClientRect().top) {
-			break;
-		}
-	}
-	comments.splice(i, 0, element);
+	allComments.push(element);
 
 	element.addEventListener("contextmenu", function() {
 		clickedComment = element;
@@ -90,6 +80,19 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if (clickedComment == null) {
 		return;
 	}
+
+	comments = [];
+	for (var i = 0; i < allComments.length; i++) {
+		var comment = allComments[i];
+		if (!isHidden(comment)) {
+			comments.push(comment);
+		}
+	}
+	comments.sort(function (a, b) {
+ 		var aRect = a.getBoundingClientRect();
+		var bRect = b.getBoundingClientRect();
+		return aRect.top - bRect.top;	
+	});
 
 	var clickedIndex = comments.indexOf(clickedComment); //TODO binary search
 	if (clickedIndex < 0) {
