@@ -84,10 +84,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	}
 
 	var comments = [];
+	var rootLevel = null;
 	for (var i = 0; i < allComments.length; i++) {
 		var comment = allComments[i];
 		if (!isHidden(comment)) {
 			comments.push(comment);
+			
+			var commentLevel = level(comment);
+			if (rootLevel == null || commentLevel < rootLevel) {
+				rootLevel = commentLevel;
+			}
 		}
 	}
 	comments.sort(function (a, b) {
@@ -100,10 +106,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if (clickedIndex < 0) {
 		console.error(">>> Comment not found in comments!");
 	} else {
-		var rootIndex = root(comments, clickedIndex);
-		var nextIndex = nextSameLevelTree(comments, rootIndex);
-		if (nextIndex >= 0) {
-			goTo(comments[nextIndex]);
+		for (var i = clickedIndex + 1; i < comments.length; i++) {
+			if (level(comments[i]) === rootLevel) {
+				goTo(comments[i]);
+				break;
+			}
 		}
 	}
 	
@@ -115,40 +122,8 @@ function goTo(comment) {
 	window.scrollBy(0, -offset);
 }
 
-function level(comments, index) {
-	return comments[index].getBoundingClientRect().left;
-}
-
-function parent(comments, index) {
-	var currentLevel = level(comments, index);
-	var prevIndex = index - 1;
-	while (prevIndex >= 0 && level(comments, prevIndex) >= currentLevel) {
-		prevIndex--;
-	}
-	return prevIndex;
-}
-
-function root(comments, index) {
-	var rootIndex = index;
-	var parentIndex = parent(comments, index);
-	while (parentIndex >= 0) {
-		rootIndex = parentIndex;
-		parentIndex = parent(comments, parentIndex);
-	}
-	return rootIndex;
-}
-
-function nextSameLevelTree(comments, index) {
-	var currentLevel = level(comments, index);
-	var nextIndex = index + 1;
-	while (nextIndex < comments.length && level(comments, nextIndex) > currentLevel) {
-		nextIndex++;
-	}
-	if (nextIndex < comments.length && level(comments, nextIndex) == currentLevel) {
-		return nextIndex;
-	} else {
-		return -1;
-	}
+function level(comment) {
+	return comment.getBoundingClientRect().left;
 }
 
 function matches(elem, selector) {
