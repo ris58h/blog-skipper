@@ -26,8 +26,8 @@ if (window.location.hostname == 'habrahabr.ru') {
 	offset = 50;
 }
 
-var clickY;
 if (commentSelector != null) {
+	var clickY;
 	document.addEventListener('contextmenu', function(e) {
         clickY = e.pageY;
 	});
