@@ -26,96 +26,56 @@ if (window.location.hostname == 'habrahabr.ru') {
 	offset = 50;
 }
 
-var allComments = [];
-var clickedComment = null;
-
+var clickY;
 if (commentSelector != null) {
-	console.log('>>> Using selector: ' + commentSelector); //TODO
-	var nodeList = document.querySelectorAll(commentSelector);
-	console.log('>>> Comments found: ' + nodeList.length); //TODO
-	for (var i = 0; i < nodeList.length; i++) {
-		var node = nodeList[i];
-		onNewComment(node);
-	}
+	document.addEventListener('contextmenu', function(e) {
+        clickY = e.pageY;
+	});
+	chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+		doSkip(clickY);	
+	});
 
-	observerCallback = function(mutations) {
-		for (var i = 0; i < mutations.length; i++) {
-			var mutation = mutations[i];
-			var addedNodes = mutation.addedNodes;
-			for (var j = 0; j < addedNodes.length; j++) {
-				var addedNode = addedNodes[j];
-				if (matches(addedNode, commentSelector)) {
-					console.log('>>> New comment detected!'); //TODO
-					onNewComment(addedNode);
-				} else {
-					if (typeof addedNode.querySelectorAll === 'function') {
-						var nodeList = addedNode.querySelectorAll(commentSelector);
-						if (nodeList.length > 0) { //TODO
-							console.log('>>> New comments detected: ' + nodeList.length);
-						}
-						for (var k = 0; k < nodeList.length; k++) {
-							var node = nodeList[k];
-							onNewComment(node);
-						}
-					}
+	document.addEventListener('keyup', function(e) {
+		if (e.key == 'z') { //TODO
+			var windowCenterY = window.scrollY + (window.innerHeight / 2);
+			doSkip(windowCenterY);
+		}
+	});
+
+	function doSkip(pageY) {
+		var comments = [];
+		var rootLevel = null;
+		var nodeList = document.querySelectorAll(commentSelector);
+		if (nodeList.length == 0) {
+			return;
+		}
+		for (var i = 0; i < nodeList.length; i++) {
+			var comment = nodeList[i];
+			if (!isHidden(comment)) {
+				comments.push(comment);
+				var commentLevel = level(comment);
+				if (rootLevel == null || commentLevel < rootLevel) {
+					rootLevel = commentLevel;
 				}
 			}
-			//TODO deleted nodes
 		}
-	};
-	var observer = new MutationObserver(observerCallback);
-	observer.observe(document.documentElement, {
-		childList: true,
-		subtree: true
-	});
-}
-
-function onNewComment(element) {
-	allComments.push(element);
-
-	element.addEventListener("contextmenu", function() {
-		clickedComment = element;
-	});
-}
-
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	if (clickedComment == null) {
-		return;
-	}
-
-	var comments = [];
-	var rootLevel = null;
-	for (var i = 0; i < allComments.length; i++) {
-		var comment = allComments[i];
-		if (!isHidden(comment)) {
-			comments.push(comment);
-			
-			var commentLevel = level(comment);
-			if (rootLevel == null || commentLevel < rootLevel) {
-				rootLevel = commentLevel;
-			}
-		}
-	}
-	comments.sort(function (a, b) {
- 		var aRect = a.getBoundingClientRect();
-		var bRect = b.getBoundingClientRect();
-		return aRect.top - bRect.top;	
-	});
-
-	var clickedIndex = comments.indexOf(clickedComment); //TODO binary search
-	if (clickedIndex < 0) {
-		console.error(">>> Comment not found in comments!");
-	} else {
-		for (var i = clickedIndex + 1; i < comments.length; i++) {
-			if (level(comments[i]) === rootLevel) {
-				goTo(comments[i]);
-				break;
-			}
-		}
-	}
+		comments.sort(function (a, b) {
+			var aRect = a.getBoundingClientRect();
+			var bRect = b.getBoundingClientRect();
+			return aRect.top - bRect.top;	
+		});
 	
-	clickedComment = null;
-});
+		var clickedIndex = indexOfClicked(comments, pageY);
+		if (clickedIndex >= 0) {
+			for (var i = clickedIndex + 1; i < comments.length; i++) {
+				if (level(comments[i]) === rootLevel) {
+					goTo(comments[i]);
+					break;
+				}
+			}
+		}
+	}
+}
 	
 function goTo(comment) {
 	comment.scrollIntoView();
@@ -134,7 +94,6 @@ function matches(elem, selector) {
 		proto.oMatchesSelector ||
 		proto.webkitMatchesSelector;
   
-	//TODO
 	if (!elem || elem.nodeType !== 1) {
 	  return false;
 	}
@@ -148,4 +107,15 @@ function isHidden(el) {
 	}
     var style = window.getComputedStyle(el);
     return (style.display === 'none')
+}
+
+function indexOfClicked(elements, pageY) {
+	for (var i = 0; i < elements.length - 1; i++) {
+		var elementY = window.scrollY + elements[i].getBoundingClientRect().top;
+		var nextElementY = window.scrollY + elements[i + 1].getBoundingClientRect().top;
+		if (elementY < pageY && pageY < nextElementY) {
+			return i;
+		}
+	}
+	return -1;
 }
