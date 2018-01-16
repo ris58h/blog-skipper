@@ -1,5 +1,5 @@
-var commentSelector = null;
-var offset = 0;
+let commentSelector = null;
+let offset = 0;
 //TODO it shouldn't be hardcoded
 if (window.location.hostname == 'habrahabr.ru') {
 	commentSelector = '.comment';
@@ -26,7 +26,7 @@ if (window.location.hostname == 'habrahabr.ru') {
 	offset = 50;
 }
 
-var clickY;
+let clickY;
 document.addEventListener('contextmenu', function(e) {
 	clickY = e.pageY;
 });
@@ -36,13 +36,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 document.addEventListener('keyup', function(e) {
 	if (e.key == 'z') { //TODO
-		var windowCenterY = window.scrollY + (window.innerHeight / 2);
+		const windowCenterY = window.scrollY + (window.innerHeight / 2);
 		doSkip(windowCenterY);
 	}
 });
 
 function doSkip(pageY) {
-	var next = nextCommentRoot(pageY);
+	let next = nextCommentRoot(pageY);
 	if (next == null) {
 		next = nextHeader(pageY);
 	}
@@ -56,17 +56,16 @@ function nextCommentRoot(pageY) {
 		return null;
 	}
 
-	var comments = [];
-	var rootLevel = null;
-	var nodeList = document.querySelectorAll(commentSelector);
+	const comments = [];
+	let rootLevel = null;
+	const nodeList = document.querySelectorAll(commentSelector);
 	if (nodeList.length == 0) {
 		return null;
 	}
-	for (var i = 0; i < nodeList.length; i++) {
-		var comment = nodeList[i];
+	for (const comment of nodeList) {
 		if (!isHidden(comment)) {
 			comments.push(comment);
-			var commentLevel = level(comment);
+			const commentLevel = level(comment);
 			if (rootLevel == null || commentLevel < rootLevel) {
 				rootLevel = commentLevel;
 			}
@@ -74,10 +73,10 @@ function nextCommentRoot(pageY) {
 	}
 	comments.sort(compareTop);
 
-	var clickedIndex = indexOfClicked(comments, pageY);
+	const clickedIndex = indexOfClicked(comments, pageY);
 	if (clickedIndex >= 0) {
-		for (var i = clickedIndex + 1; i < comments.length; i++) {
-			var comment = comments[i];
+		for (let i = clickedIndex + 1; i < comments.length; i++) {
+			const comment = comments[i];
 			if (level(comment) === rootLevel) {
 				return comment;
 			}
@@ -88,25 +87,24 @@ function nextCommentRoot(pageY) {
 }
 
 function nextHeader(pageY) {
-	var headers = [];
-	var headersSelector = 'article h1,article h2,article h3,article h4,article h5,article h6';
-	var nodeList = document.querySelectorAll(headersSelector);
+	const headers = [];
+	const headersSelector = 'article h1,article h2,article h3,article h4,article h5,article h6';
+	let nodeList = document.querySelectorAll(headersSelector);
 	if (nodeList.length == 0) {
-		var headersSelector2 = 'h1,h2,h3,h4,h5,h6';
+		const headersSelector2 = 'h1,h2,h3,h4,h5,h6';
 		nodeList = document.querySelectorAll(headersSelector2);
 	}
 	if (nodeList.length == 0) {
 		return null;
 	}
-	for (var i = 0; i < nodeList.length; i++) {
-		var header = nodeList[i];
+	for (header of nodeList) {
 		if (!isHidden(header)) {
 			headers.push(header);
 		}
 	}
 	headers.sort(compareTop);
 
-	var clickedIndex = indexOfClicked(headers, pageY);
+	const clickedIndex = indexOfClicked(headers, pageY);
 	if (clickedIndex >= 0) {
 		if (clickedIndex < headers.length - 1) {
 			return headers[clickedIndex + 1];
@@ -117,8 +115,8 @@ function nextHeader(pageY) {
 }
 
 function compareTop(a, b) {
-	var aRect = a.getBoundingClientRect();
-	var bRect = b.getBoundingClientRect();
+	const aRect = a.getBoundingClientRect();
+	const bRect = b.getBoundingClientRect();
 	return aRect.top - bRect.top;	
 }
 
@@ -132,8 +130,8 @@ function level(comment) {
 }
 
 function matches(elem, selector) {
-	var proto = window.Element.prototype;
-	var nativeMatches = proto.matches ||
+	const proto = window.Element.prototype;
+	const nativeMatches = proto.matches ||
 		proto.mozMatchesSelector ||
 		proto.msMatchesSelector ||
 		proto.oMatchesSelector ||
@@ -150,16 +148,16 @@ function isHidden(el) {
 	if (el.offsetParent === null) {
 		return true;
 	}
-    var style = window.getComputedStyle(el);
+    const style = window.getComputedStyle(el);
     return (style.display === 'none')
 }
 
 function indexOfClicked(elements, pageY) {
-	for (var i = 0; i < elements.length; i++) {
-		var elementY = window.scrollY + elements[i].getBoundingClientRect().top;
+	for (let i = 0; i < elements.length; i++) {
+		const elementY = window.scrollY + elements[i].getBoundingClientRect().top;
 		if (elementY < pageY) {
-			var isLast = i === elements.length - 1;
-			var nextElementY = window.scrollY 
+			const isLast = i === elements.length - 1;
+			const nextElementY = window.scrollY 
 				+ (isLast ? elements[i].getBoundingClientRect().bottom 
 					: elements[i + 1].getBoundingClientRect().top);
 			if (pageY < nextElementY) {
