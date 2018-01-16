@@ -1,6 +1,6 @@
 chrome.contextMenus.create({
   id: 'blog-skipper',
-  title: 'Skip Tree'
+  title: 'Skip'
 });
 
 chrome.contextMenus.onClicked.addListener(function (info, tab) {
