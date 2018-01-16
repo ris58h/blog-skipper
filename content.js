@@ -110,11 +110,16 @@ function isHidden(el) {
 }
 
 function indexOfClicked(elements, pageY) {
-	for (var i = 0; i < elements.length - 1; i++) {
+	for (var i = 0; i < elements.length; i++) {
 		var elementY = window.scrollY + elements[i].getBoundingClientRect().top;
-		var nextElementY = window.scrollY + elements[i + 1].getBoundingClientRect().top;
-		if (elementY < pageY && pageY < nextElementY) {
-			return i;
+		if (elementY < pageY) {
+			var isLast = i === elements.length - 1;
+			var nextElementY = window.scrollY 
+				+ (isLast ? elements[i].getBoundingClientRect().bottom 
+					: elements[i + 1].getBoundingClientRect().top);
+			if (pageY < nextElementY) {
+				return i;
+			}
 		}
 	}
 	return -1;
