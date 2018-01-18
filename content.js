@@ -1,7 +1,7 @@
 let commentSelector = null;
 let offset = null;
 //TODO it shouldn't be hardcoded
-if (window.location.hostname == 'habrahabr.ru') {
+if (window.location.hostname == 'habrahabr.ru') { //TODO geektimes.ru
 	commentSelector = '.comment';
 } else if (window.location.hostname == 'news.ycombinator.com') {
 	commentSelector = '.comment';
@@ -31,85 +31,86 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	doSkip(clickY);	
 });
 
-document.addEventListener('keyup', function(e) {
+let precalcFixedHeaderHeight = null;// hack to improve performance
+document.addEventListener('keyup', function(e) {//TODO Z
 	if (e.key == 'z') { //TODO
-		const windowCenterY = window.scrollY + (window.innerHeight / 2);
-		doSkip(windowCenterY);
+		const fixedHeaderHeight = calcFixedHeaderHeight();
+		precalcFixedHeaderHeight = fixedHeaderHeight;
+		const startFrom = window.scrollY + fixedHeaderHeight + 1; //TODO sticky header
+		doSkip(startFrom);
+		precalcFixedHeaderHeight = null;
 	}
 });
 
 function doSkip(pageY) {
-	let next = nextCommentRoot(pageY);
-	if (next == null) {
-		next = nextHeader(pageY);
-	}
+	const next = nextTarget(pageY);
 	if (next != null) {
 		goTo(next);
 	}
 }
 
-function nextCommentRoot(pageY) {
-	if (commentSelector == null) {
-		return null;
+function nextTarget(pageY) {
+	const elements = [];
+	
+	const headersSelector = 'article h1,article h2,article h3,article h4,article h5,article h6';
+	let headerList = document.querySelectorAll(headersSelector);
+	if (headerList.length == 0) {
+		const headersSelector2 = 'h1,h2,h3,h4,h5,h6';
+		headerList = document.querySelectorAll(headersSelector2);
+	}
+	for (const header of headerList) {
+		if (!isHidden(header)) {
+			elements.push(header);
+		}
 	}
 
-	const comments = [];
 	let rootLevel = null;
-	const nodeList = document.querySelectorAll(commentSelector);
-	if (nodeList.length == 0) {
-		return null;
-	}
-	for (const comment of nodeList) {
-		if (!isHidden(comment)) {
-			comments.push(comment);
-			const commentLevel = level(comment);
-			if (rootLevel == null || commentLevel < rootLevel) {
-				rootLevel = commentLevel;
+	if (commentSelector != null) {
+		const commentList = document.querySelectorAll(commentSelector);
+		for (const comment of commentList) {
+			if (!isHidden(comment)) {
+				markAsComment(comment);
+				elements.push(comment);
+				const commentLevel = level(comment);
+				if (rootLevel == null || commentLevel < rootLevel) {
+					rootLevel = commentLevel;
+				}
 			}
 		}
 	}
-	comments.sort(compareTop);
 
-	const index = indexOfSorted(comments, pageY);
-	if (index == -1) {
-		return null;
+	if (elements.length == 0) {
+		return 0;
 	}
-	const nextIndex = index < 0 ? -index - 1 : index + 1;
-	for (let i = nextIndex; i < comments.length; i++) {
-		const comment = comments[i];
-		if (level(comment) === rootLevel) {
-			return comment;
+
+	elements.sort(compareTop);
+
+	const index = indexOfSorted(elements, pageY);
+	const curIndex = index < 0 ? -index - 2 : index;
+	if (curIndex >= elements.length - 1) {
+		return null;
+	} else {
+		if (curIndex < 0 || !isMarkedAsComment(elements[curIndex])) {
+			return elements[curIndex + 1];
+		} else {
+			for (let i = curIndex + 1; i < elements.length; i++) {
+				const comment = elements[i]; //TODO it's not always a comment
+				if (level(comment) === rootLevel) {
+					return comment;
+				}
+			}
 		}
 	}
-
-	return null;
 }
 
-function nextHeader(pageY) {
-	const headers = [];
-	const headersSelector = 'article h1,article h2,article h3,article h4,article h5,article h6';
-	let nodeList = document.querySelectorAll(headersSelector);
-	if (nodeList.length == 0) {
-		const headersSelector2 = 'h1,h2,h3,h4,h5,h6';
-		nodeList = document.querySelectorAll(headersSelector2);
-	}
-	if (nodeList.length == 0) {
-		return null;
-	}
-	for (const header of nodeList) {
-		if (!isHidden(header)) {
-			headers.push(header);
-		}
-	}
-	headers.sort(compareTop);
+const markKey = '_blog-skipper-is-comment';
 
-	const index = indexOfSorted(headers, pageY);
-	const nextIndex = index < 0 ? -index - 1 : index + 1;
-	if (nextIndex < headers.length) {
-		return headers[nextIndex];
-	}
+function markAsComment(element) {
+	element[markKey] = true;
+}
 
-	return null;
+function isMarkedAsComment(element) {
+	return element[markKey];
 }
 
 function compareTop(a, b) {
@@ -123,7 +124,10 @@ function goTo(element) {
 	
 	let additionalScroll;
 	if (offset == null) {
-		additionalScroll = calcTopStuffHeight(element);	
+		const fixedHeaderHeight = precalcFixedHeaderHeight == null ? calcFixedHeaderHeight() 
+				: precalcFixedHeaderHeight;
+		const stickyHeaderHeight = calcStickyHeaderHeight(element);
+		additionalScroll = fixedHeaderHeight + stickyHeaderHeight;	
 	} else {
 		additionalScroll = offset;
 	}
@@ -132,33 +136,34 @@ function goTo(element) {
 	}
 }
 
-function calcTopStuffHeight(element) {
-	let pageHeaderHeight = 0;
+function calcFixedHeaderHeight() {
+	const minWidth = window.innerWidth / 2;
 	for (const e of document.body.getElementsByTagName("*")) {
-		const style = window.getComputedStyle(e, null);
-		if (style.getPropertyValue('position') == 'fixed') {
-			if (e.getBoundingClientRect().top == 0
-				&& e.offsetWidth > window.innerWidth / 2
-				&& e.offsetHeight > 0) {
-				pageHeaderHeight = e.offsetHeight;
-				break;
-			}
+		// we have to perform fast checks first
+		// TODO how to make it faster???
+		if (e.offsetWidth > minWidth
+			&& e.offsetHeight > 0
+			&& window.getComputedStyle(e, null).getPropertyValue('position') == 'fixed'
+			&& e.getBoundingClientRect().top == 0) {
+			return e.offsetHeight;
 		}
 	}
-	let stickyHeaderHeight = 0;
+	return 0;
+}
+
+function calcStickyHeaderHeight(element) {
 	let parent = element;
 	while ((parent = parent.parentElement) != null) {
 		for (const e of parent.children) {
 			const style = window.getComputedStyle(e, null);
 			if (style.getPropertyValue('position') == 'sticky') {
 				if (e.offsetHeight > 0) {
-					stickyHeaderHeight = e.offsetHeight;
-					break;
+					return e.offsetHeight;
 				}
 			}
 		}
 	}
-	return pageHeaderHeight + stickyHeaderHeight;
+	return 0;
 }
 
 function level(comment) {
