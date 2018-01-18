@@ -73,13 +73,15 @@ function nextCommentRoot(pageY) {
 	}
 	comments.sort(compareTop);
 
-	const clickedIndex = indexOfClicked(comments, pageY);
-	if (clickedIndex >= 0) {
-		for (let i = clickedIndex + 1; i < comments.length; i++) {
-			const comment = comments[i];
-			if (level(comment) === rootLevel) {
-				return comment;
-			}
+	const index = indexOfSorted(comments, pageY);
+	if (index == -1) {
+		return null;
+	}
+	const nextIndex = index < 0 ? -index - 1 : index + 1;
+	for (let i = nextIndex; i < comments.length; i++) {
+		const comment = comments[i];
+		if (level(comment) === rootLevel) {
+			return comment;
 		}
 	}
 
@@ -104,11 +106,10 @@ function nextHeader(pageY) {
 	}
 	headers.sort(compareTop);
 
-	const clickedIndex = indexOfClicked(headers, pageY);
-	if (clickedIndex >= 0) {
-		if (clickedIndex < headers.length - 1) {
-			return headers[clickedIndex + 1];
-		}
+	const index = indexOfSorted(headers, pageY);
+	const nextIndex = index < 0 ? -index - 1 : index + 1;
+	if (nextIndex < headers.length) {
+		return headers[nextIndex];
 	}
 
 	return null;
@@ -152,18 +153,19 @@ function isHidden(el) {
     return (style.display === 'none')
 }
 
-function indexOfClicked(elements, pageY) {
+function indexOfSorted(elements, pageY) { //TODO binary search
+	const y = pageY - window.scrollY;
+	let prevBottom = Number.NEGATIVE_INFINITY;
 	for (let i = 0; i < elements.length; i++) {
-		const elementY = window.scrollY + elements[i].getBoundingClientRect().top;
-		if (elementY < pageY) {
-			const isLast = i === elements.length - 1;
-			const nextElementY = window.scrollY 
-				+ (isLast ? elements[i].getBoundingClientRect().bottom 
-					: elements[i + 1].getBoundingClientRect().top);
-			if (pageY < nextElementY) {
-				return i;
+		const rect = elements[i].getBoundingClientRect();
+		if (y < rect.top) {
+			if (y <= prevBottom) {
+				return i - 1;
+			} else {
+				return -i - 1;
 			}
 		}
+		prevBottom = rect.bottom;
 	}
-	return -1;
+	return -elements.length - 1;
 }
