@@ -1,7 +1,9 @@
 let commentSelector = null;
 let offset = null;
 //TODO it shouldn't be hardcoded
-if (window.location.hostname == 'habrahabr.ru') { //TODO geektimes.ru
+if (window.location.hostname == 'habrahabr.ru') {
+	commentSelector = '.comment';
+} else if (window.location.hostname == 'geektimes.ru') {
 	commentSelector = '.comment';
 } else if (window.location.hostname == 'news.ycombinator.com') {
 	commentSelector = '.comment';
