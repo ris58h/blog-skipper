@@ -1,29 +1,26 @@
 let commentSelector = null;
-let offset = 0;
+let offset = null;
 //TODO it shouldn't be hardcoded
 if (window.location.hostname == 'habrahabr.ru') {
 	commentSelector = '.comment';
 } else if (window.location.hostname == 'news.ycombinator.com') {
 	commentSelector = '.comment';
-	offset = 25;
+	offset = 25;//TODO better selector
 } else if (window.location.hostname == '4pda.ru') {
 	commentSelector = '[id^="comment-"]';
-	offset = 50;
 } else if (window.location.hostname.endsWith('.d3.ru')) {
 	commentSelector = '[id^="b-comment-"] > .b-comment__body';
 } else if (window.location.hostname == 'vc.ru') {
 	commentSelector = '.comments__item__self';
-	offset = 100;
 } else if (window.location.hostname == 'disqus.com') {
 	commentSelector = '.post-content';
 } else if (window.location.hostname == 'www.reddit.com') {
 	commentSelector = '[id^="form-t1_"]';
-	offset = 25;
+	offset = 25;//TODO better selector
 } else if (window.location.hostname == 'pikabu.ru') {
 	commentSelector = '.b-comment__body';
 } else if (window.location.hostname.endsWith('.livejournal.com')) {
 	commentSelector = '.mdspost-thread';
-	offset = 50;
 }
 
 let clickY;
@@ -99,7 +96,7 @@ function nextHeader(pageY) {
 	if (nodeList.length == 0) {
 		return null;
 	}
-	for (header of nodeList) {
+	for (const header of nodeList) {
 		if (!isHidden(header)) {
 			headers.push(header);
 		}
@@ -121,9 +118,47 @@ function compareTop(a, b) {
 	return aRect.top - bRect.top;	
 }
 
-function goTo(comment) {
-	comment.scrollIntoView();
-	window.scrollBy(0, -offset);
+function goTo(element) {
+	element.scrollIntoView();
+	
+	let additionalScroll;
+	if (offset == null) {
+		additionalScroll = calcTopStuffHeight(element);	
+	} else {
+		additionalScroll = offset;
+	}
+	if (additionalScroll != 0) {
+		window.scrollBy(0, -additionalScroll);
+	}
+}
+
+function calcTopStuffHeight(element) {
+	let pageHeaderHeight = 0;
+	for (const e of document.body.getElementsByTagName("*")) {
+		const style = window.getComputedStyle(e, null);
+		if (style.getPropertyValue('position') == 'fixed') {
+			if (e.getBoundingClientRect().top == 0
+				&& e.offsetWidth > window.innerWidth / 2
+				&& e.offsetHeight > 0) {
+				pageHeaderHeight = e.offsetHeight;
+				break;
+			}
+		}
+	}
+	let stickyHeaderHeight = 0;
+	let parent = element;
+	while ((parent = parent.parentElement) != null) {
+		for (const e of parent.children) {
+			const style = window.getComputedStyle(e, null);
+			if (style.getPropertyValue('position') == 'sticky') {
+				if (e.offsetHeight > 0) {
+					stickyHeaderHeight = e.offsetHeight;
+					break;
+				}
+			}
+		}
+	}
+	return pageHeaderHeight + stickyHeaderHeight;
 }
 
 function level(comment) {
