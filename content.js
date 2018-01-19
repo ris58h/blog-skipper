@@ -33,12 +33,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	doSkip(clickY);	
 });
 
-let precalcFixedHeaderHeight = null;// hack to improve performance
+let precalcFixedHeaderHeight = null;//TODO get rid of this hack to improve performance
 document.addEventListener('keyup', function(e) {//TODO Z
 	if (e.key == 'z') { //TODO
-		const fixedHeaderHeight = calcFixedHeaderHeight();
-		precalcFixedHeaderHeight = fixedHeaderHeight;
-		const startFrom = window.scrollY + fixedHeaderHeight + 1; //TODO sticky header
+		let additionalScroll;
+		if (offset == null) {
+			precalcFixedHeaderHeight = calcFixedHeaderHeight();
+			additionalScroll = precalcFixedHeaderHeight;
+		} else {
+			additionalScroll = offset;
+		}
+		const startFrom = window.scrollY + additionalScroll + 1; //TODO sticky header
 		doSkip(startFrom);
 		precalcFixedHeaderHeight = null;
 	}
