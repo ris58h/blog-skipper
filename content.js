@@ -25,6 +25,8 @@ if (window.location.hostname == 'habrahabr.ru') {
 	commentSelector = '.mdspost-thread';
 }
 
+let prescrollPosition = null;
+
 let clickY;
 document.addEventListener('contextmenu', function(e) {
 	clickY = e.pageY;
@@ -49,6 +51,10 @@ document.addEventListener('keyup', function(e) {//TODO Z
 		const startFrom = window.scrollY + additionalScroll + 1; //TODO sticky header
 		doSkip(startFrom);
 		precalcFixedHeaderHeight = null;
+	} else if (e.key == 'Z') { //TODO
+		if (prescrollPosition != null) {
+			window.scrollTo(prescrollPosition.x, prescrollPosition.y);
+		}
 	}
 });
 
@@ -135,6 +141,11 @@ function compareTop(a, b) {
 }
 
 function goTo(element) {
+	prescrollPosition = {
+		'x': window.scrollX,
+		'y': window.scrollY
+	}
+	
 	element.scrollIntoView();
 
 	let additionalScroll;
