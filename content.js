@@ -38,7 +38,10 @@ document.addEventListener('keyup', function(e) {//TODO Z
 	if (e.key == 'z') { //TODO
 		let additionalScroll;
 		if (offset == null) {
+			// let t1 = Date.now();//TODO
 			precalcFixedHeaderHeight = calcFixedHeaderHeight();
+			// let t2 = Date.now();//TODO
+			// console.log('>>> fixed: ' + (t2 - t1));//TODO
 			additionalScroll = precalcFixedHeaderHeight;
 		} else {
 			additionalScroll = offset;
@@ -50,10 +53,15 @@ document.addEventListener('keyup', function(e) {//TODO Z
 });
 
 function doSkip(pageY) {
+	// let t1 = Date.now();//TODO
 	const next = nextTarget(pageY);
+	// let t2 = Date.now();//TODO
 	if (next != null) {
 		goTo(next);
 	}
+	// let t3 = Date.now();//TODO
+	// console.log('>>> next: ' + (t2 - t1));
+	// console.log('>>> goTo: ' + (t3 - t2));
 }
 
 function nextTarget(pageY) {
@@ -128,7 +136,7 @@ function compareTop(a, b) {
 
 function goTo(element) {
 	element.scrollIntoView();
-	
+
 	let additionalScroll;
 	if (offset == null) {
 		const fixedHeaderHeight = precalcFixedHeaderHeight == null ? calcFixedHeaderHeight() 
@@ -145,11 +153,13 @@ function goTo(element) {
 
 function calcFixedHeaderHeight() {
 	const minWidth = window.innerWidth / 2;
+	const maxHeight = window.innerHeight / 2;
 	for (const e of document.body.getElementsByTagName("*")) {
 		// we have to perform fast checks first
 		// TODO how to make it faster???
 		if (e.offsetWidth > minWidth
 			&& e.offsetHeight > 0
+			&& e.offsetHeight < maxHeight
 			&& window.getComputedStyle(e, null).getPropertyValue('position') == 'fixed'
 			&& e.getBoundingClientRect().top == 0) {
 			return e.offsetHeight;
