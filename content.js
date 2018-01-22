@@ -16,8 +16,7 @@ if (window.location.hostname == 'habrahabr.ru') {
 } else if (window.location.hostname == 'disqus.com') {
 	commentSelector = '.post-content';
 } else if (window.location.hostname == 'www.reddit.com') {
-	commentSelector = '[id^="form-t1_"]';
-	offset = 25;//TODO better selector
+	commentSelector = '.commentarea .comment > .entry';
 } else if (window.location.hostname == 'pikabu.ru') {
 	commentSelector = '.b-comment__body';
 } else if (window.location.hostname.endsWith('.livejournal.com')) {
