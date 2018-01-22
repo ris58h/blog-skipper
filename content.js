@@ -114,12 +114,17 @@ function nextTarget(pageY) {
 		if (curIndex < 0 || !isMarkedAsComment(elements[curIndex])) {
 			return elements[curIndex + 1];
 		} else {
+			let lastComment = null;
 			for (let i = curIndex + 1; i < elements.length; i++) {
-				const comment = elements[i]; //TODO it's not always a comment
-				if (level(comment) === rootLevel) {
-					return comment;
+				const e = elements[i];
+				if (isMarkedAsComment(e)) {
+					if (level(e) === rootLevel) {
+						return e;
+					}
+					lastComment = e;
 				}
 			}
+			return lastComment;
 		}
 	}
 }
