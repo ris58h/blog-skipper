@@ -6,8 +6,7 @@ if (window.location.hostname == 'habrahabr.ru') {
 } else if (window.location.hostname == 'geektimes.ru') {
 	commentSelector = '.comment';
 } else if (window.location.hostname == 'news.ycombinator.com') {
-	commentSelector = '.comment';
-	offset = 25;//TODO better selector
+	commentSelector = '.comment-tree .comhead';
 } else if (window.location.hostname == '4pda.ru') {
 	commentSelector = '[id^="comment-"]';
 } else if (window.location.hostname.endsWith('.d3.ru')) {
