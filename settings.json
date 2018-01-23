@@ -1,0 +1,44 @@
+{
+    "sites": [
+        {
+            "urlPattern": "https://disqus.com/embed/comments/*",
+            "commentSelector": ".post-content"
+        },
+        {
+            "urlPattern": "https://news.ycombinator.com/*",
+            "commentSelector": ".comment-tree .comhead"
+        },
+        {
+            "urlPattern": "https://www.reddit.com/*",
+            "commentSelector": ".commentarea .comment > .entry"
+        },
+        {
+            "urlPattern": "https://habrahabr.ru/*",
+            "commentSelector": ".comment"
+        },
+        {
+            "urlPattern": "https://geektimes.ru/*",
+            "commentSelector": ".comment"
+        },
+        {
+            "urlPattern": "https?://4pda.ru/*",
+            "commentSelector": "[id^='comment-']"
+        },
+        {
+            "urlPattern": "https://*.d3.ru/*",
+            "commentSelector": "[id^='b-comment-'] > .b-comment__body"
+        },
+        {
+            "urlPattern": "https://vc.ru/*",
+            "commentSelector": ".comments__item__self"
+        },
+        {
+            "urlPattern": "https://pikabu.ru/story/*",
+            "commentSelector": ".b-comment__body"
+        },
+        {
+            "urlPattern": "https://*.livejournal.com/*",
+            "commentSelector": ".mdspost-thread"
+        }
+    ]
+}

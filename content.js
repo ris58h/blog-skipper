@@ -1,27 +1,21 @@
 let commentSelector = null;
 let offset = null;
-//TODO it shouldn't be hardcoded
-if (window.location.hostname == 'habrahabr.ru') {
-	commentSelector = '.comment';
-} else if (window.location.hostname == 'geektimes.ru') {
-	commentSelector = '.comment';
-} else if (window.location.hostname == 'news.ycombinator.com') {
-	commentSelector = '.comment-tree .comhead';
-} else if (window.location.hostname == '4pda.ru') {
-	commentSelector = '[id^="comment-"]';
-} else if (window.location.hostname.endsWith('.d3.ru')) {
-	commentSelector = '[id^="b-comment-"] > .b-comment__body';
-} else if (window.location.hostname == 'vc.ru') {
-	commentSelector = '.comments__item__self';
-} else if (window.location.hostname == 'disqus.com') {
-	commentSelector = '.post-content';
-} else if (window.location.hostname == 'www.reddit.com') {
-	commentSelector = '.commentarea .comment > .entry';
-} else if (window.location.hostname == 'pikabu.ru') {
-	commentSelector = '.b-comment__body';
-} else if (window.location.hostname.endsWith('.livejournal.com')) {
-	commentSelector = '.mdspost-thread';
-}
+
+//TODO: race condition
+const settingsUrl = chrome.runtime.getURL('settings.json');
+fetch(settingsUrl).then(function(response) {
+    response.json().then(function(data) {
+		for (s of data.sites) {
+			const urlRegExp = new RegExp("^" + s.urlPattern.replace(/\*/g, ".*") + "$");
+			if (urlRegExp.test(window.location.href)) {
+				if (s.commentSelector) {
+					commentSelector = s.commentSelector;
+				}
+				return;
+			}
+		}
+	});
+});
 
 let prescrollPosition = null;
 
