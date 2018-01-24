@@ -5,6 +5,10 @@
             "commentSelector": ".post-content"
         },
         {
+            "urlPattern": "https://*.spot.im/*",
+            "commentSelector": ".sppre_message-details"
+        },
+        {
             "urlPattern": "https://news.ycombinator.com/*",
             "commentSelector": ".comment-tree .comhead"
         },
