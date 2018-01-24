@@ -17,6 +17,10 @@
             "commentSelector": ".commentarea .comment > .entry"
         },
         {
+            "urlPattern": "https://www.youtube.com/watch*",
+            "commentSelector": "ytd-comment-renderer"
+        },
+        {
             "urlPattern": "https://habrahabr.ru/*",
             "commentSelector": ".comment"
         },
