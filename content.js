@@ -75,6 +75,42 @@ function doSkip(pageY) {
 function nextTarget(pageY) {
 	const elements = [];
 	
+	let commentsBounds = null;
+	if (commentSelector != null) {
+		const commentList = document.querySelectorAll(commentSelector);
+		for (const comment of commentList) {
+			if (!isHidden(comment)) {
+				elements.push(comment);
+				const rect = comment.getBoundingClientRect();
+				if (commentsBounds == null) {
+					commentsBounds = {
+						left: rect.left,
+						top: rect.top,
+						bottom: rect.bottom
+					};
+				} else {
+					if (rect.left < commentsBounds.left) {
+						commentsBounds.left = rect.left;
+					}
+					if (rect.top < commentsBounds.top) {
+						commentsBounds.top = rect.top;
+					}
+					if (rect.bottom > commentsBounds.bottom) {
+						commentsBounds.bottom = rect.bottom;
+					}
+				}
+			}
+		}
+	}
+
+	const inVertCommentBounds = function (e) {
+		if (commentsBounds == null) {
+			return false;
+		}
+		const rect = e.getBoundingClientRect();
+		return commentsBounds.top <= rect.top && rect.bottom <= commentsBounds.bottom;	
+	}
+
 	const headersSelector = 'article h1,article h2,article h3,article h4,article h5,article h6';
 	let headerList = document.querySelectorAll(headersSelector);
 	if (headerList.length == 0) {
@@ -82,23 +118,8 @@ function nextTarget(pageY) {
 		headerList = document.querySelectorAll(headersSelector2);
 	}
 	for (const header of headerList) {
-		if (!isHidden(header)) {
+		if (!isHidden(header) && !inVertCommentBounds(header)) {
 			elements.push(header);
-		}
-	}
-
-	let rootLevel = null;
-	if (commentSelector != null) {
-		const commentList = document.querySelectorAll(commentSelector);
-		for (const comment of commentList) {
-			if (!isHidden(comment)) {
-				markAsComment(comment);
-				elements.push(comment);
-				const commentLevel = level(comment);
-				if (rootLevel == null || commentLevel < rootLevel) {
-					rootLevel = commentLevel;
-				}
-			}
 		}
 	}
 
@@ -113,14 +134,14 @@ function nextTarget(pageY) {
 	if (curIndex >= elements.length - 1) {
 		return null;
 	} else {
-		if (curIndex < 0 || !isMarkedAsComment(elements[curIndex])) {
+		if (curIndex < 0 || !inVertCommentBounds(elements[curIndex])) {
 			return elements[curIndex + 1];
 		} else {
 			let lastComment = null;
 			for (let i = curIndex + 1; i < elements.length; i++) {
 				const e = elements[i];
-				if (isMarkedAsComment(e)) {
-					if (level(e) === rootLevel) {
+				if (inVertCommentBounds(e)) {
+					if (e.getBoundingClientRect().left === commentsBounds.left) {
 						return e;
 					}
 					lastComment = e;
@@ -129,16 +150,6 @@ function nextTarget(pageY) {
 			return lastComment;
 		}
 	}
-}
-
-const markKey = '_blog-skipper-is-comment';
-
-function markAsComment(element) {
-	element[markKey] = true;
-}
-
-function isMarkedAsComment(element) {
-	return element[markKey];
 }
 
 function compareTop(a, b) {
@@ -199,10 +210,6 @@ function calcStickyHeaderHeight(element) {
 		}
 	}
 	return 0;
-}
-
-function level(comment) {
-	return comment.getBoundingClientRect().left;
 }
 
 function matches(elem, selector) {
