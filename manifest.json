@@ -12,7 +12,8 @@
   },
 
   "permissions": [
-    "contextMenus"
+    "contextMenus",
+    "storage"
   ],
   "background": {
     "scripts": ["background.js"]
@@ -24,6 +25,10 @@
       "js": ["content.js"]
     }
   ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
   "web_accessible_resources": [
     "settings.json"
   ]

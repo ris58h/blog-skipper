@@ -2,20 +2,30 @@ let commentSelector = null;
 let offset = null;
 
 //TODO: race condition
-const settingsUrl = chrome.runtime.getURL('settings.json');
-fetch(settingsUrl).then(function(response) {
-    response.json().then(function(data) {
-		for (s of data.sites) {
-			const urlRegExp = new RegExp("^" + s.urlPattern.replace(/\*/g, ".*") + "$");
-			if (urlRegExp.test(window.location.href)) {
-				if (s.commentSelector) {
-					commentSelector = s.commentSelector;
-				}
-				return;
-			}
-		}
-	});
+chrome.storage.sync.get("settings", function(result) {
+    if (result && result.settings) {
+      	processSettings(result.settings);
+    } else {
+		const settingsUrl = chrome.runtime.getURL('settings.json');
+		fetch(settingsUrl).then(function(response) {
+			response.json().then(function(settings) {
+				processSettings(settings);
+			});
+		});
+    }
 });
+
+function processSettings(settings) {
+	for (site of settings.sites) {
+		const urlRegExp = new RegExp("^" + site.urlPattern.replace(/\*/g, ".*") + "$");
+		if (urlRegExp.test(window.location.href)) {
+			if (site.commentSelector) {
+				commentSelector = site.commentSelector;
+			}
+			return;
+		}
+	}
+}
 
 let prescrollPosition = null;
 

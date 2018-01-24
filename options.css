@@ -1,0 +1,11 @@
+.sites .row {
+    display: flex;
+}
+
+.sites .site .url-pattern {
+    width: 300px;
+}
+
+.sites .site .comment-selector {
+    width: 300px;
+}
