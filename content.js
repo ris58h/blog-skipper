@@ -38,14 +38,20 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 let precalcFixedHeaderHeight = null;//TODO get rid of this hack to improve performance
-document.addEventListener('keyup', function(e) {//TODO Z
+document.addEventListener('keyup', function(e) {
+	if (document.activeElement 
+		&& (document.activeElement.tagName == "INPUT" 
+			|| document.activeElement.tagName == "SELECT"
+			|| document.activeElement.tagName == "TEXTAREA")) {
+		return;
+	}
 	if (e.key == 'z') { //TODO
 		let additionalScroll;
 		if (offset == null) {
-			// let t1 = Date.now();//TODO
+			let t1 = Date.now();//TODO
 			precalcFixedHeaderHeight = calcFixedHeaderHeight();
-			// let t2 = Date.now();//TODO
-			// console.log('>>> fixed: ' + (t2 - t1));//TODO
+			let t2 = Date.now();//TODO
+			console.log('>>> fixed: ' + (t2 - t1));//TODO
 			additionalScroll = precalcFixedHeaderHeight;
 		} else {
 			additionalScroll = offset;
@@ -61,15 +67,15 @@ document.addEventListener('keyup', function(e) {//TODO Z
 });
 
 function doSkip(pageY) {
-	// let t1 = Date.now();//TODO
+	let t1 = Date.now();//TODO
 	const next = nextTarget(pageY);
-	// let t2 = Date.now();//TODO
+	let t2 = Date.now();//TODO
 	if (next != null) {
 		goTo(next);
 	}
-	// let t3 = Date.now();//TODO
-	// console.log('>>> next: ' + (t2 - t1));
-	// console.log('>>> goTo: ' + (t3 - t2));
+	let t3 = Date.now();//TODO
+	console.log('>>> next: ' + (t2 - t1));
+	console.log('>>> goTo: ' + (t3 - t2));
 }
 
 function nextTarget(pageY) {
