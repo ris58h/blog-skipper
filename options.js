@@ -11,8 +11,8 @@ function saveOptions(e) {
   e.preventDefault();
 
   const settings = {};
-  settings["sites"] = [];
 
+  settings["sites"] = [];
   const sites = document.querySelectorAll(".sites .site");
   for (site of sites) {
     const urlPattern = site.querySelector(".url-pattern").value;
@@ -23,6 +23,16 @@ function saveOptions(e) {
         "commentSelector": commentSelector
       });
     }
+  }
+
+  settings["shortcuts"] = {};
+  const skipShortcut = document.querySelector(".shortcuts .skip").value;
+  if (skipShortcut) {
+    settings["shortcuts"]["skip"] = skipShortcut;
+  }
+  const undoShortcut = document.querySelector(".shortcuts .undo").value;
+  if (undoShortcut) {
+    settings["shortcuts"]["undo"] = undoShortcut;
   }
 
   chrome.storage.sync.set({
@@ -51,6 +61,14 @@ function renderSettings(settings) {
   }
   for (site of settings.sites) {
     sitesElement.appendChild(createSiteRowElement(site));
+  }
+
+  const shortcuts = settings["shortcuts"];
+  if (shortcuts["skip"]) {
+    document.querySelector(".shortcuts .skip").value = shortcuts["skip"];
+  }
+  if (shortcuts["undo"]) {
+    document.querySelector(".shortcuts .undo").value = shortcuts["undo"];
   }
 }
 

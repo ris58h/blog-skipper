@@ -1,6 +1,8 @@
 let commentSelector = null;
 let offset = null;
 
+let shortcuts = {};
+
 //TODO: race condition
 chrome.storage.sync.get("settings", function(result) {
     if (result && result.settings) {
@@ -22,8 +24,11 @@ function processSettings(settings) {
 			if (site.commentSelector) {
 				commentSelector = site.commentSelector;
 			}
-			return;
+			break;
 		}
+	}
+	if (settings.shortcuts) {
+		shortcuts = settings.shortcuts;
 	}
 }
 
@@ -45,7 +50,7 @@ document.addEventListener('keyup', function(e) {
 			|| document.activeElement.tagName == "TEXTAREA")) {
 		return;
 	}
-	if (e.key == 'z') { //TODO
+	if (e.key == shortcuts["skip"]) {
 		let additionalScroll;
 		if (offset == null) {
 			let t1 = Date.now();//TODO
@@ -59,7 +64,7 @@ document.addEventListener('keyup', function(e) {
 		const startFrom = window.scrollY + additionalScroll + 1; //TODO sticky header
 		doSkip(startFrom);
 		precalcFixedHeaderHeight = null;
-	} else if (e.key == 'Z') { //TODO
+	} else if (e.key == shortcuts["undo"]) {
 		if (prescrollPosition != null) {
 			window.scrollTo(prescrollPosition.x, prescrollPosition.y);
 		}

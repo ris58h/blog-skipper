@@ -48,5 +48,9 @@
             "urlPattern": "https://*.livejournal.com/*",
             "commentSelector": ".mdspost-thread"
         }
-    ]
+    ],
+    "shortcuts": {
+        "skip": "z",
+        "undo": "Z"
+    }
 }
