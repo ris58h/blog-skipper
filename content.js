@@ -53,10 +53,7 @@ document.addEventListener('keyup', function(e) {
 	if (e.key == shortcuts["skip"]) {
 		let additionalScroll;
 		if (offset == null) {
-			let t1 = Date.now();//TODO
 			precalcFixedHeaderHeight = calcFixedHeaderHeight();
-			let t2 = Date.now();//TODO
-			console.log('>>> fixed: ' + (t2 - t1));//TODO
 			additionalScroll = precalcFixedHeaderHeight;
 		} else {
 			additionalScroll = offset;
@@ -72,15 +69,10 @@ document.addEventListener('keyup', function(e) {
 });
 
 function doSkip(pageY) {
-	let t1 = Date.now();//TODO
 	const next = nextTarget(pageY);
-	let t2 = Date.now();//TODO
 	if (next != null) {
 		goTo(next);
 	}
-	let t3 = Date.now();//TODO
-	console.log('>>> next: ' + (t2 - t1));
-	console.log('>>> goTo: ' + (t3 - t2));
 }
 
 function nextTarget(pageY) {
