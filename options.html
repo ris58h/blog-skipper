@@ -5,26 +5,30 @@
     <link rel="stylesheet" type="text/css" href="options.css">
   </head>
   <body>
-    <h1>Blog Skipper Settings</h1>
+    <h1 class="main-header">Blog Skipper Settings</h1>
     <form>
-      <div>
-        <h2>Sites</h2>
+      <div class="section">
+        <h2 class="header">Sites</h2>
         <div class="sites"></div>
         <button class="add-site">Add</button>
       </div>
-      <div>
-        <h2>Shortcuts</h2>
+      <div class="section">
+        <h2 class="header">Shortcuts</h2>
         <div class="shortcuts">
           <div class="shortcut">
-            <label>Skip<input type="text" class="skip" placeholder="undefined" /></label>
+            <label>Skip</label>
+            <input type="text" class="skip" placeholder="unassigned" />
           </div>
           <div class="shortcut">
-            <label>Undo<input type="text" class="undo" placeholder="undefined" /></label>
+            <label>Undo</label>
+            <input type="text" class="undo" placeholder="unassigned" />
           </div>
         </div>
       </div>
-      <button class="default">Default</button>
-      <button type="submit">Save</button>
+      <div class="actions">
+        <button class="default">Default</button>
+        <button type="submit">Save</button>
+      </div>
     </form>
     <script src="options.js"></script>
   </body>

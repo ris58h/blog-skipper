@@ -79,7 +79,7 @@ function createSiteRowElement(site) {
   row.appendChild(createSiteElement(site));
   
   const buttonElement = document.createElement('button');
-  buttonElement.innerHTML = 'Remove';
+  buttonElement.innerHTML = 'X';
   buttonElement.addEventListener('click', function() {
     row.parentElement.removeChild(row);
   });

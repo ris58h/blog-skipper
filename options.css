@@ -1,3 +1,18 @@
+.main-header {
+    margin: 0;
+    font-size: 24px;
+    border-bottom: 1px solid;
+}
+
+.section {
+    padding: 8px 0;
+}
+
+.section .header {
+    margin: 0;
+    font-size: 16px;
+}
+
 .sites .row {
     display: flex;
 }
@@ -8,4 +23,18 @@
 
 .sites .site .comment-selector {
     width: 300px;
+}
+
+.shortcuts .shortcut label {
+    display: inline-block;
+    width: 150px;
+}
+
+.shortcuts .shortcut input {
+    width: 146px;
+}
+
+.actions {
+    padding: 8px 0;
+    border-top: 1px solid;
 }
