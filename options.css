@@ -1,16 +1,56 @@
+body {
+    font: message-box;
+    background-color: rgb(249, 249, 250);
+}
+
+button {
+    font: caption;
+    padding: 3px;
+    padding-left: 20px;
+    padding-right: 20px;
+    min-width: 100px;
+    margin: 0 4px;
+    min-height: 30px;
+    border: 1px solid #d7d7db;
+    border-radius: 2px;
+    background-color: rgb(249, 249, 250);
+    cursor: pointer;
+}
+
+input {
+    min-height: 30px;
+    color: #0c0c0d;
+    border: 1px solid #d7d7db;
+    border-radius: 2px;
+    background-color: #fff;
+    cursor: text;
+    margin: 4px;
+    padding: 2px;
+}
+
+.main {
+    margin: 16px;
+}
+
 .main-header {
-    margin: 0;
-    font-size: 24px;
-    border-bottom: 1px solid;
+    margin-bottom: 15px;
 }
 
 .section {
-    padding: 8px 0;
 }
 
-.section .header {
-    margin: 0;
-    font-size: 16px;
+.section-header {
+    margin-bottom: 10px;
+}
+
+.section-content {
+    background-color: #fff;
+    border: 1px solid #d7d7db;
+    padding: 16px;
+}
+
+.section-content button {
+    margin-top: 4px;
 }
 
 .sites .row {
@@ -25,6 +65,15 @@
     width: 300px;
 }
 
+.sites .remove-site {
+    margin: 4px;
+    padding: 2px;
+    min-width: auto;
+    min-height: auto;
+    width: 36px;
+    height: 36px;
+}
+
 .shortcuts .shortcut label {
     display: inline-block;
     width: 150px;
@@ -35,6 +84,11 @@
 }
 
 .actions {
-    padding: 8px 0;
-    border-top: 1px solid;
+    margin-top: 16px;
+    border-top: 1px solid #d7d7db;
+    padding-top: 16px;
+}
+
+.actions button:first-of-type {
+    margin-left: 0px;
 }

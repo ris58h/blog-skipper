@@ -5,23 +5,29 @@
     <link rel="stylesheet" type="text/css" href="options.css">
   </head>
   <body>
+    <div class="main">
     <h1 class="main-header">Blog Skipper Settings</h1>
     <form>
       <div class="section">
-        <h2 class="header">Sites</h2>
-        <div class="sites"></div>
-        <button class="add-site">Add</button>
+        <h2 class="section-header">Sites</h2>
+        <div class="section-content">
+          <div class="sites"></div>
+          <button class="add-site">Add</button>
+        </div>
       </div>
       <div class="section">
-        <h2 class="header">Shortcuts</h2>
-        <div class="shortcuts">
-          <div class="shortcut">
-            <label>Skip</label>
-            <input type="text" class="skip" placeholder="unassigned" />
-          </div>
-          <div class="shortcut">
-            <label>Undo</label>
-            <input type="text" class="undo" placeholder="unassigned" />
+        <h2 class="section-header">Shortcuts</h2>
+        <span>This is an experimental feature and it may not work properly!</span>
+        <div class="section-content">
+          <div class="shortcuts">
+            <div class="shortcut">
+              <label>Skip</label>
+              <input type="text" class="skip" placeholder="unassigned" />
+            </div>
+            <div class="shortcut">
+              <label>Undo</label>
+              <input type="text" class="undo" placeholder="unassigned" />
+            </div>
           </div>
         </div>
       </div>
@@ -31,5 +37,6 @@
       </div>
     </form>
     <script src="options.js"></script>
+  </div>
   </body>
 </html>
