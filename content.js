@@ -171,13 +171,11 @@ function goTo(element) {
 }
 
 function calcFixedHeaderHeight() {
-	const minWidth = window.innerWidth / 2;
 	const maxHeight = window.innerHeight / 2;
 	for (const e of document.body.getElementsByTagName("*")) {
 		// we have to perform fast checks first
 		// TODO how to make it faster???
-		if (e.offsetWidth > minWidth
-			&& e.offsetHeight > 0
+		if (e.offsetHeight > 0
 			&& e.offsetHeight < maxHeight
 			&& window.getComputedStyle(e, null).getPropertyValue('position') == 'fixed'
 			&& e.getBoundingClientRect().top == 0) {
