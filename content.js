@@ -191,11 +191,10 @@ function calcStickyHeaderHeight(element) {
 	let parent = element;
 	while ((parent = parent.parentElement) != null) {
 		for (const e of parent.children) {
-			const style = window.getComputedStyle(e, null);
-			if (style.getPropertyValue('position') == 'sticky') {
-				if (e.offsetHeight > 0) {
-					return e.offsetHeight;
-				}
+			if (e.offsetHeight > 0
+				&& e.offsetHeight < e.offsetWidth
+				&& window.getComputedStyle(e, null).getPropertyValue('position') == 'sticky') {
+				return e.offsetHeight;
 			}
 		}
 	}
