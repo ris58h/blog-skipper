@@ -58,10 +58,7 @@ document.addEventListener('keyup', function(e) {
 function doSkip(pageY) {
 	const next = nextTarget(pageY);
 	if (next != null) {
-		const t1 = Date.now();
 		goTo(next);
-		const t2 = Date.now();
-		console.log(t2 - t1);
 	}
 }
 
