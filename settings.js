@@ -16,3 +16,9 @@ function load(callback) {
         }
     });
 }
+
+function save(settings) {
+    chrome.storage.sync.set({
+        "settings": settings
+    });
+}

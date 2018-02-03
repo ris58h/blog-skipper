@@ -26,9 +26,7 @@ function saveOptions(e) {
     settings["shortcuts"]["undo"] = undoShortcut;
   }
 
-  chrome.storage.sync.set({
-    "settings": settings
-  });
+  save(settings);
 }
 
 function restoreDefault() {
