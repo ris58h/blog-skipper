@@ -58,7 +58,10 @@ document.addEventListener('keyup', function(e) {
 function doSkip(pageY) {
 	const next = nextTarget(pageY);
 	if (next != null) {
+		const t1 = Date.now();
 		goTo(next);
+		const t2 = Date.now();
+		console.log(t2 - t1);
 	}
 }
 
@@ -172,9 +175,7 @@ function goTo(element) {
 
 function calcFixedHeaderHeight() {
 	const maxHeight = window.innerHeight / 2;
-	for (const e of document.body.getElementsByTagName("*")) {
-		// we have to perform fast checks first
-		// TODO how to make it faster???
+	for (const e of document.body.querySelectorAll("div,nav,header")) {
 		if (e.offsetHeight > 0
 			&& e.offsetHeight < maxHeight
 			&& window.getComputedStyle(e, null).getPropertyValue('position') == 'fixed'
