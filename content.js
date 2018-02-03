@@ -4,20 +4,7 @@ let offset = null;
 let shortcuts = {};
 
 //TODO: race condition
-chrome.storage.sync.get("settings", function(result) {
-    if (result && result.settings) {
-      	processSettings(result.settings);
-    } else {
-		const settingsUrl = chrome.runtime.getURL('settings.json');
-		fetch(settingsUrl).then(function(response) {
-			response.json().then(function(settings) {
-				processSettings(settings);
-			});
-		});
-    }
-});
-
-function processSettings(settings) {
+load(function (settings) {
 	for (site of settings.sites) {
 		const urlRegExp = new RegExp("^" + site.urlPattern.replace(/\*/g, ".*") + "$");
 		if (urlRegExp.test(window.location.href)) {
@@ -30,7 +17,7 @@ function processSettings(settings) {
 	if (settings.shortcuts) {
 		shortcuts = settings.shortcuts;
 	}
-}
+});
 
 let prescrollPosition = null;
 

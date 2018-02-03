@@ -22,7 +22,7 @@
     {
       "all_frames": true,
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": ["settings.js", "content.js"]
     }
   ],
   "options_ui": {

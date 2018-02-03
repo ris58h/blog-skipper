@@ -1,12 +1,3 @@
-function loadDefault(callback) {
-  const settingsUrl = chrome.runtime.getURL('settings.json');
-  fetch(settingsUrl).then(function(response) {
-    response.json().then(function(data) {
-      callback(data);
-    });
-  });
-}
-
 function saveOptions(e) {
   e.preventDefault();
 
@@ -45,13 +36,7 @@ function restoreDefault() {
 }
 
 function restoreOptions() {
-  chrome.storage.sync.get("settings", function(result) {
-    if (result && result.settings) {
-      renderSettings(result.settings);
-    } else {
-      restoreDefault();
-    }
-  });
+  load(renderSettings);
 }
 
 function renderSettings(settings) {
