@@ -12,6 +12,7 @@
   },
 
   "permissions": [
+    "webNavigation",
     "contextMenus",
     "storage"
   ],

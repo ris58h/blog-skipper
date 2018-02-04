@@ -25,8 +25,13 @@ let clickY;
 document.addEventListener('contextmenu', function(e) {
 	clickY = e.pageY;
 });
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	doSkip(clickY);	
+chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
+	if (msg.type == 'skip') {
+		doSkip(clickY);
+	} else if (msg.type == 'scroll-header') {
+		const fixedHeaderHeight = calcFixedHeaderHeight();//TODO sticky header
+		window.scrollBy(0, -(fixedHeaderHeight - msg.data.scrolled));
+	}
 });
 
 let precalcFixedHeaderHeight = null;//TODO get rid of this hack to improve performance
@@ -166,9 +171,13 @@ function goTo(element) {
 	} else {
 		additionalScroll = offset;
 	}
-	if (additionalScroll != 0) {
-		window.scrollBy(0, -additionalScroll);
-	}
+	window.scrollBy(0, -additionalScroll);
+	chrome.runtime.sendMessage({
+		type: 'scroll-parent-header',
+		data: {
+			scrolled: additionalScroll
+		}
+	})
 }
 
 function calcFixedHeaderHeight() {
