@@ -51,6 +51,7 @@ document.addEventListener('keyup', function(e) {
 	} else if (e.key == shortcuts["undo"]) {
 		if (prescrollPosition != null) {
 			window.scrollTo(prescrollPosition.x, prescrollPosition.y);
+			prescrollPosition == null;
 		}
 	}
 });
