@@ -4,5 +4,5 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.onClicked.addListener(function (info, tab) {
-  chrome.tabs.sendMessage(tab.id, {});
+  chrome.tabs.sendMessage(tab.id, {type: 'skip'}, {frameId: info.frameId});
 });
