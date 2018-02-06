@@ -3,7 +3,7 @@
 
   "name": "Blog Skipper",
   "description": "Skip longreads and comment threads.",
-  "version": "0.1",
+  "version": "1.0.0",
 
   "applications": {
     "gecko": {
