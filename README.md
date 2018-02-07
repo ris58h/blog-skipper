@@ -1,5 +1,5 @@
 # About
-Blog Skipper is a Web Extension to skip longreads and comment threads. It works great for 'holy wars' and won't let you fingers get tired \o/.
+Blog Skipper is a Web Extension to skip longreads and comment threads. It works great for 'holy wars' and won't let your fingers get tired \o/.
 
 # Get
 [Chrome](https://chrome.google.com/webstore/detail/blog-skipper/chjnbemclefhkdeihphnkkgacddeejom)
