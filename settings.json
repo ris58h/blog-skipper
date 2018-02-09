@@ -17,7 +17,7 @@
             "commentSelector": ".commentarea .comment > .entry"
         },
         {
-            "urlPattern": "https://www.youtube.com/watch*",
+            "urlPattern": "https://www.youtube.com/*",
             "commentSelector": "ytd-comment-renderer"
         },
         {
