@@ -6,7 +6,7 @@ Blog Skipper is a Web Extension to skip longreads and comment threads. It works 
 
 [Firefox](https://addons.mozilla.org/en-US/firefox/addon/blog-skipper/)
 
-# How to use
+# How to use it
 ## Mouse
 Right-click on a part of an article or a comment thread you want to skip. In the context menu click 'Skip'. It'll scroll the page to the next header in case of article click or to the next comment tree (last comment if there is no next comment tree) in case of comment click.
 
