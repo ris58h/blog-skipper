@@ -1,19 +1,16 @@
-let commentSelector = null;
+let sites = [];
 let offset = null;
 
 let shortcuts = {};
 
 //TODO: race condition
 load(function (settings) {
-	for (site of settings.sites) {
-		const urlRegExp = new RegExp("^" + site.urlPattern.replace(/\*/g, ".*") + "$");
-		if (urlRegExp.test(window.location.href)) {
-			if (site.commentSelector) {
-				commentSelector = site.commentSelector;
-			}
-			break;
+	sites = settings.sites.map(site => {
+		return {
+			urlRegex: new RegExp("^" + site.urlPattern.replace(/\*/g, ".*") + "$"),
+			commentSelector: site.commentSelector
 		}
-	}
+	});
 	if (settings.shortcuts) {
 		shortcuts = settings.shortcuts;
 	}
@@ -72,6 +69,15 @@ function nextTarget(pageY) {
 	const elements = [];
 	
 	let commentsBounds = null;
+	let commentSelector = null;
+	for (site of sites) {
+		if (site.urlRegex.test(window.location.href)) {
+			if (site.commentSelector) {
+				commentSelector = site.commentSelector;
+			}
+			break;
+		}
+	}
 	if (commentSelector != null) {
 		const commentList = document.querySelectorAll(commentSelector);
 		for (const comment of commentList) {
