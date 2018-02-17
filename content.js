@@ -70,15 +70,17 @@ function nextTarget(pageY) {
 	
 	let commentsBounds = null;
 	let commentSelector = null;
+	let hasMatched = false;
 	for (const site of sites) {
 		if (site.urlRegex.test(window.location.href)) {
+			hasMatched = true;
 			if (site.commentSelector) {
 				commentSelector = site.commentSelector;
 			}
 			break;
 		}
 	}
-	if (commentSelector == null) {
+	if (commentSelector == null && hasMatched) {
 		commentSelector = guessComentSelector();
 	}
 	if (commentSelector != null) {
@@ -241,51 +243,70 @@ function indexOfSorted(elements, pageY) { //TODO binary search
 	return -elements.length - 1;
 }
 
-function guessComentSelector() {
-	let commentSelector = null;
-	const stats = {};
-	const commentCandiateList = document.querySelectorAll('[class*="comment"] :not(:empty)');
-	for (const commentCandidate of commentCandiateList) {
-		if (!commentCandidate.innerText || commentCandidate.innerText.trim().length == 0) {
-			continue;
-		}
-		if (commentCandidate.tagName == 'SPAN') {
-			continue;
-		}
-		let element = commentCandidate;
-		do {
-			const propName = '__blog-skipper-stats';
-			if (!element[propName]) {
-				element[propName] = true;
-				for (const className of element.classList) {
-					if (!className.includes('comment')) {
-						continue;
-					}
-					if (!stats[className]) {
-						stats[className] = 0;	
-					}
-					stats[className]++;
-				}
-			} else {
-				break;
-			}
-		} while ((element = element.parentElement) != null);
+
+const commentCandidateSelector = '[class*="comment"] :not(:empty)';
+const statsPropName = '__blog-skipper-stats';
+
+const addToStats = function(commentCandidate, stats) {
+	if (!commentCandidate.innerText || commentCandidate.innerText.trim().length == 0) {
+		return;
 	}
+	if (commentCandidate.tagName == 'SPAN') {
+		return;
+	}
+	let element = commentCandidate;
+	do {
+		if (!element[statsPropName]) {
+			element[statsPropName] = true;
+			for (const className of element.classList) {
+				if (!className.includes('comment')) {
+					continue;
+				}
+				if (!stats[className]) {
+					stats[className] = 0;	
+				}
+				stats[className]++;
+			}
+		} else {
+			break;
+		}
+	} while ((element = element.parentElement) != null);
+}
+
+function removeStatsProperties(stats) {
+	for (const className of Object.keys(stats)) {
+		for (const e of document.querySelectorAll('.' + className)) {
+			delete e[statsPropName];
+		}
+	}
+}
+
+function guessComentSelector() {
+	const stats = {};
+	const commentCandidates = document.querySelectorAll(commentCandidateSelector);
+	for (const commentCandidate of commentCandidates) {
+		addToStats(commentCandidate, stats);
+	}
+	removeStatsProperties(stats);
+	let commentSelector = null;
 	console.log(stats);//TODO
 	const topClasses = topStatsClasses(stats);
 	console.log(topClasses);//TODO
-	let minAvgDepth = -1;
 	let bestClass = null;
 	for (const topClassName of topClasses) {
-		let depthSum = 0;
-		const es = document.querySelectorAll('.' + topClassName);
-		for (const e of es) {
-			depthSum += depth(e);	
+		let domTop = true;
+		let element = document.querySelector('.' + topClassName);
+		while (domTop && (element = element.parentElement) != null) {
+			for (const tc of topClasses) {
+				if (tc != topClassName && element.classList.contains(tc)) {
+					domTop = false;
+					break;
+				}
+			}
 		}
-		const avgDepth = depthSum / es.length;
-		if (avgDepth > minAvgDepth) {
-			minAvgDepth = avgDepth;
+		if (domTop) {
 			bestClass = topClassName;
+			break;
 		}
 	}
 	if (bestClass != null) {
@@ -309,12 +330,4 @@ function topStatsClasses(stats) {
 		}
 	}
 	return topClasses;
-}
-
-function depth(element) {
-	let res = 0;
-	while ((element = element.parentElement) != null) {
-		res++;
-	}
-	return res;
 }
