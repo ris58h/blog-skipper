@@ -1,19 +1,16 @@
-let commentSelector = null;
+let sites = [];
 let offset = null;
 
 let shortcuts = {};
 
 //TODO: race condition
 load(function (settings) {
-	for (site of settings.sites) {
-		const urlRegExp = new RegExp("^" + site.urlPattern.replace(/\*/g, ".*") + "$");
-		if (urlRegExp.test(window.location.href)) {
-			if (site.commentSelector) {
-				commentSelector = site.commentSelector;
-			}
-			break;
+	sites = settings.sites.map(site => {
+		return {
+			urlRegex: new RegExp("^" + site.urlPattern.replace(/\*/g, ".*") + "$"),
+			commentSelector: site.commentSelector
 		}
-	}
+	});
 	if (settings.shortcuts) {
 		shortcuts = settings.shortcuts;
 	}
@@ -101,7 +98,7 @@ let clickY;
 document.addEventListener('contextmenu', function(e) {
 	clickY = e.pageY;
 });
-chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(msg) {
 	if (msg.type == 'skip') {
 		doSkip(clickY);
 	} else if (msg.type == 'scroll-header') {
@@ -148,6 +145,15 @@ function nextTarget(pageY) {
 	const elements = [];
 	
 	let commentsBounds = null;
+	let commentSelector = null;
+	for (const site of sites) {
+		if (site.urlRegex.test(window.location.href)) {
+			if (site.commentSelector) {
+				commentSelector = site.commentSelector;
+			}
+			break;
+		}
+	}
 	if (commentSelector != null) {
 		const commentList = document.querySelectorAll(commentSelector);
 		for (const comment of commentList) {
@@ -281,21 +287,6 @@ function calcStickyHeaderHeight(element) {
 		}
 	}
 	return 0;
-}
-
-function matches(elem, selector) {
-	const proto = window.Element.prototype;
-	const nativeMatches = proto.matches ||
-		proto.mozMatchesSelector ||
-		proto.msMatchesSelector ||
-		proto.oMatchesSelector ||
-		proto.webkitMatchesSelector;
-  
-	if (!elem || elem.nodeType !== 1) {
-	  return false;
-	}
-  
-	return nativeMatches.call(elem, selector);
 }
 
 function isHidden(el) {
