@@ -14,83 +14,7 @@ load(function (settings) {
 	if (settings.shortcuts) {
 		shortcuts = settings.shortcuts;
 	}
-
-	if (commentSelector == null) {
-		const stats = {};
-		const commentCandiateList = document.querySelectorAll('[class*="comment"] :not(:empty)');
-		for (const commentCandidate of commentCandiateList) {
-			if (!commentCandidate.innerText || commentCandidate.innerText.trim().length == 0) {
-				continue;
-			}
-			if (commentCandidate.tagName == 'SPAN') {
-				continue;
-			}
-			let element = commentCandidate;
-			do {
-				const propName = '__blog-skipper-stats';
-				if (!element[propName]) {
-					element[propName] = true;
-					for (const className of element.classList) {
-						if (!className.includes('comment')) {
-							continue;
-						}
-						if (!stats[className]) {
-							stats[className] = 0;	
-						}
-						stats[className]++;
-					}
-				} else {
-					break;
-				}
-			} while ((element = element.parentElement) != null);
-		}
-		console.log(stats);//TODO
-		const topClasses = topStatsClasses(stats);
-		console.log(topClasses);//TODO
-		let minAvgDepth = -1;
-		let bestClass = null;
-		for (const topClassName of topClasses) {
-			let depthSum = 0;
-			const es = document.querySelectorAll('.' + topClassName);
-			for (const e of es) {
-				depthSum += depth(e);	
-			}
-			const avgDepth = depthSum / es.length;
-			if (avgDepth > minAvgDepth) {
-				minAvgDepth = avgDepth;
-				bestClass = topClassName;
-			}
-		}
-		if (bestClass != null) {
-			commentSelector = '.' + bestClass;
-		}
-	}
-	console.log('>>> commentSelector: ' + commentSelector);//TODO
 });
-
-function topStatsClasses(stats) {
-	let topCount = 0;
-	let topClasses = [];
-	for (const className of Object.keys(stats)) {
-		const count = stats[className];
-		if (count > topCount) {
-			topCount = count;
-			topClasses = [];
-			topClasses.push(className);
-		} else if (count == topCount) {
-			topClasses.push(className);
-		}
-	}
-	return topClasses;
-}
-
-function depth(element) {
-	let res = 0;
-	while ((element = element.parentElement) != null) {
-		res++;
-	}
-	return res;
-}
 
 let prescrollPosition = null;
 
@@ -111,9 +35,9 @@ let precalcFixedHeaderHeight = null;//TODO get rid of this hack to improve perfo
 document.addEventListener('keyup', function(e) {
 	if (document.activeElement 
 		&& (document.activeElement.tagName == "INPUT" 
-			|| document.activeElement.tagName == "SELECT"
+		|| document.activeElement.tagName == "SELECT"
 			|| document.activeElement.tagName == "TEXTAREA")) {
-		return;
+				return;
 	}
 	if (e.key == shortcuts["skip"]) {
 		let additionalScroll;
@@ -153,6 +77,9 @@ function nextTarget(pageY) {
 			}
 			break;
 		}
+	}
+	if (commentSelector == null) {
+		commentSelector = guessComentSelector();
 	}
 	if (commentSelector != null) {
 		const commentList = document.querySelectorAll(commentSelector);
@@ -312,4 +239,82 @@ function indexOfSorted(elements, pageY) { //TODO binary search
 		prevBottom = rect.bottom;
 	}
 	return -elements.length - 1;
+}
+
+function guessComentSelector() {
+	let commentSelector = null;
+	const stats = {};
+	const commentCandiateList = document.querySelectorAll('[class*="comment"] :not(:empty)');
+	for (const commentCandidate of commentCandiateList) {
+		if (!commentCandidate.innerText || commentCandidate.innerText.trim().length == 0) {
+			continue;
+		}
+		if (commentCandidate.tagName == 'SPAN') {
+			continue;
+		}
+		let element = commentCandidate;
+		do {
+			const propName = '__blog-skipper-stats';
+			if (!element[propName]) {
+				element[propName] = true;
+				for (const className of element.classList) {
+					if (!className.includes('comment')) {
+						continue;
+					}
+					if (!stats[className]) {
+						stats[className] = 0;	
+					}
+					stats[className]++;
+				}
+			} else {
+				break;
+			}
+		} while ((element = element.parentElement) != null);
+	}
+	console.log(stats);//TODO
+	const topClasses = topStatsClasses(stats);
+	console.log(topClasses);//TODO
+	let minAvgDepth = -1;
+	let bestClass = null;
+	for (const topClassName of topClasses) {
+		let depthSum = 0;
+		const es = document.querySelectorAll('.' + topClassName);
+		for (const e of es) {
+			depthSum += depth(e);	
+		}
+		const avgDepth = depthSum / es.length;
+		if (avgDepth > minAvgDepth) {
+			minAvgDepth = avgDepth;
+			bestClass = topClassName;
+		}
+	}
+	if (bestClass != null) {
+		commentSelector = '.' + bestClass;
+	}
+	console.log('>>> commentSelector: ' + commentSelector);//TODO
+	return commentSelector;
+}
+
+function topStatsClasses(stats) {
+	let topCount = 0;
+	let topClasses = [];
+	for (const className of Object.keys(stats)) {
+		const count = stats[className];
+		if (count > topCount) {
+			topCount = count;
+			topClasses = [];
+			topClasses.push(className);
+		} else if (count == topCount) {
+			topClasses.push(className);
+		}
+	}
+	return topClasses;
+}
+
+function depth(element) {
+	let res = 0;
+	while ((element = element.parentElement) != null) {
+		res++;
+	}
+	return res;
 }
