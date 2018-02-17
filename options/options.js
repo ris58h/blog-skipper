@@ -5,7 +5,7 @@ function saveOptions(e) {
 
   settings["sites"] = [];
   const sites = document.querySelectorAll(".sites .site");
-  for (site of sites) {
+  for (const site of sites) {
     const urlPattern = site.querySelector(".url-pattern").value;
     const commentSelector = site.querySelector(".comment-selector").value;
     if (urlPattern) {
@@ -42,7 +42,7 @@ function renderSettings(settings) {
   while (sitesElement.firstChild) {
     sitesElement.removeChild(sitesElement.firstChild);
   }
-  for (site of settings.sites) {
+  for (const site of settings.sites) {
     sitesElement.appendChild(createSiteRowElement(site));
   }
 

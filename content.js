@@ -22,7 +22,7 @@ let clickY;
 document.addEventListener('contextmenu', function(e) {
 	clickY = e.pageY;
 });
-chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(msg) {
 	if (msg.type == 'skip') {
 		doSkip(clickY);
 	} else if (msg.type == 'scroll-header') {
@@ -70,7 +70,7 @@ function nextTarget(pageY) {
 	
 	let commentsBounds = null;
 	let commentSelector = null;
-	for (site of sites) {
+	for (const site of sites) {
 		if (site.urlRegex.test(window.location.href)) {
 			if (site.commentSelector) {
 				commentSelector = site.commentSelector;
@@ -211,21 +211,6 @@ function calcStickyHeaderHeight(element) {
 		}
 	}
 	return 0;
-}
-
-function matches(elem, selector) {
-	const proto = window.Element.prototype;
-	const nativeMatches = proto.matches ||
-		proto.mozMatchesSelector ||
-		proto.msMatchesSelector ||
-		proto.oMatchesSelector ||
-		proto.webkitMatchesSelector;
-  
-	if (!elem || elem.nodeType !== 1) {
-	  return false;
-	}
-  
-	return nativeMatches.call(elem, selector);
 }
 
 function isHidden(el) {
