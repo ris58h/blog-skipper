@@ -87,12 +87,12 @@ function nextTarget(pageY) {
 				const rect = comment.getBoundingClientRect();
 				if (commentsBounds == null) {
 					commentsBounds = {
-						left: rect.left,
+						contentLeft: rect.left + leftPadding(comment),
 						top: rect.top,
 						bottom: rect.bottom
 					};
 				} else {
-					if (rect.left < commentsBounds.left) {
+					if (rect.left + leftPadding(comment) < commentsBounds.contentLeft) {
 						commentsBounds.left = rect.left;
 					}
 					if (rect.top < commentsBounds.top) {
@@ -144,7 +144,8 @@ function nextTarget(pageY) {
 			for (let i = curIndex + 1; i < elements.length; i++) {
 				const e = elements[i];
 				if (inVertCommentBounds(e)) {
-					if (e.getBoundingClientRect().left === commentsBounds.left) {
+					const rect = e.getBoundingClientRect();
+					if (rect.left + leftPadding(e) === commentsBounds.contentLeft) {
 						return e;
 					}
 					lastComment = e;
@@ -153,6 +154,10 @@ function nextTarget(pageY) {
 			return lastComment;
 		}
 	}
+}
+
+function leftPadding(e) {
+	return window.getComputedStyle(e, null).getPropertyValue('padding-left')
 }
 
 function compareTop(a, b) {
@@ -254,12 +259,15 @@ const addToStats = function(commentCandidate, stats) {
 	do {
 		if (!element[statsPropName]) {
 			element[statsPropName] = true;
+			if (isHidden(element)) {
+				continue;
+			}
 			for (const className of element.classList) {
 				if (!className.includes('comment')) {
 					continue;
 				}
 				if (!stats[className]) {
-					stats[className] = 0;	
+					stats[className] = 0;
 				}
 				stats[className]++;
 			}
