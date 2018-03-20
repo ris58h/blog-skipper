@@ -194,15 +194,20 @@ function goTo(element) {
 
 function calcFixedHeaderHeight() {
 	const maxHeight = window.innerHeight / 2;
+	const minWidth = window.innerWidth / 2;
+	let lowestBottom = 0;
 	for (const e of document.body.querySelectorAll("div,nav,header")) {
 		if (e.offsetHeight > 0
 			&& e.offsetHeight < maxHeight
-			&& window.getComputedStyle(e, null).getPropertyValue('position') == 'fixed'
-			&& e.getBoundingClientRect().top == 0) {
-			return e.offsetHeight;
+			&& e.offsetWidth > minWidth
+			&& window.getComputedStyle(e, null).getPropertyValue('position') == 'fixed') {
+			const bottom = e.getBoundingClientRect().bottom;
+			if (bottom < window.innerWidth / 2 && bottom > lowestBottom) {
+				lowestBottom = bottom;
+			}
 		}
 	}
-	return 0;
+	return lowestBottom;
 }
 
 function calcStickyHeaderHeight(element) {
