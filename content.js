@@ -266,10 +266,11 @@ const addToStats = function(commentCandidate, stats) {
 				if (!className.includes('comment')) {
 					continue;
 				}
-				if (!stats[className]) {
-					stats[className] = 0;
+				const selector = '.' + className;
+				if (!stats[selector]) {
+					stats[selector] = 0;
 				}
-				stats[className]++;
+				stats[selector]++;
 			}
 		} else {
 			break;
@@ -278,8 +279,8 @@ const addToStats = function(commentCandidate, stats) {
 }
 
 function removeStatsProperties(stats) {
-	for (const className of Object.keys(stats)) {
-		for (const e of document.querySelectorAll('.' + className)) {
+	for (const selector of Object.keys(stats)) {
+		for (const e of document.querySelectorAll(selector)) {
 			delete e[statsPropName];
 		}
 	}
@@ -294,44 +295,47 @@ function guessComentSelector() {
 	removeStatsProperties(stats);
 	let commentSelector = null;
 	console.log(stats);//TODO
-	const topClasses = topStatsClasses(stats);
-	console.log(topClasses);//TODO
-	let bestClass = null;
-	for (const topClassName of topClasses) {
+	const topSelectors = topStatsSelectors(stats);
+	console.log(topSelectors);//TODO
+	let bestSelector = null;
+	for (const topSelector of topSelectors) {
 		let domTop = true;
-		let element = document.querySelector('.' + topClassName);
+		let element = document.querySelector(topSelector);
 		while (domTop && (element = element.parentElement) != null) {
-			for (const tc of topClasses) {
-				if (tc != topClassName && element.classList.contains(tc)) {
+			for (const tc of topSelectors) {
+				if (tc == topSelector) {
+					continue;
+				}
+				if (tc.startsWith('.') && element.classList.contains(tc.substring(1))) {
 					domTop = false;
 					break;
 				}
 			}
 		}
 		if (domTop) {
-			bestClass = topClassName;
+			bestSelector = topSelector;
 			break;
 		}
 	}
-	if (bestClass != null) {
-		commentSelector = '.' + bestClass;
+	if (bestSelector != null) {
+		commentSelector = bestSelector;
 	}
 	console.log('>>> commentSelector: ' + commentSelector);//TODO
 	return commentSelector;
 }
 
-function topStatsClasses(stats) {
+function topStatsSelectors(stats) {
 	let topCount = 0;
-	let topClasses = [];
-	for (const className of Object.keys(stats)) {
-		const count = stats[className];
+	let topSelectors = [];
+	for (const selector of Object.keys(stats)) {
+		const count = stats[selector];
 		if (count > topCount) {
 			topCount = count;
-			topClasses = [];
-			topClasses.push(className);
+			topSelectors = [];
+			topSelectors.push(selector);
 		} else if (count == topCount) {
-			topClasses.push(className);
+			topSelectors.push(selector);
 		}
 	}
-	return topClasses;
+	return topSelectors;
 }
