@@ -82,7 +82,7 @@ function createSiteElement(site) {
   
   const selectorElement = document.createElement('input');
   selectorElement.classList.add('comment-selector');
-  selectorElement.placeholder = 'auto';
+  selectorElement.placeholder = 'none';
   siteElement.appendChild(selectorElement);
   
   if (site) {

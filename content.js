@@ -70,20 +70,16 @@ function nextTarget(pageY) {
 	
 	let commentsBounds = null;
 	let commentSelector = null;
-	let hasMatched = false;
 	for (const site of sites) {
 		if (site.urlRegex.test(window.location.href)) {
-			hasMatched = true;
-			if (site.commentSelector) {
-				commentSelector = site.commentSelector;
-			}
+			commentSelector = site.commentSelector;
 			break;
 		}
 	}
-	if (commentSelector == null && hasMatched) {
+	if (commentSelector == null) {
 		commentSelector = guessComentSelector();
 	}
-	if (commentSelector != null) {
+	if (commentSelector) {
 		const commentList = document.querySelectorAll(commentSelector);
 		for (const comment of commentList) {
 			if (!isHidden(comment)) {
