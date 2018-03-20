@@ -241,7 +241,7 @@ function indexOfSorted(elements, pageY) { //TODO binary search
 
 
 const commentCandidateSelector = '[class*="comment"] :not(:empty)';
-const statsPropName = '__blog-skipper-stats';
+const statsPropName = Symbol('blog-skipper-stats');
 
 const addToStats = function(commentCandidate, stats) {
 	if (!commentCandidate.innerText || commentCandidate.innerText.trim().length == 0) {
