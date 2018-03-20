@@ -244,8 +244,8 @@ function indexOfSorted(elements, pageY) { //TODO binary search
 	return -elements.length - 1;
 }
 
-
-const commentCandidateSelector = '[class*="comment"] :not(:empty)';
+const commentWord = 'comment';
+const commentCandidateSelector = '[class*="' + commentWord + '"] :not(:empty)';
 const statsPropName = Symbol('blog-skipper-stats');
 
 const addToStats = function(commentCandidate, stats) {
@@ -263,10 +263,17 @@ const addToStats = function(commentCandidate, stats) {
 				continue;
 			}
 			for (const className of element.classList) {
-				if (!className.includes('comment')) {
+				if (!className.includes(commentWord)) {
 					continue;
 				}
 				const selector = '.' + className;
+				if (!stats[selector]) {
+					stats[selector] = 0;
+				}
+				stats[selector]++;
+			}
+			if (element.id && element.id.includes(commentWord)) {
+				const selector = normalizeSelector('#' + element.id);
 				if (!stats[selector]) {
 					stats[selector] = 0;
 				}
@@ -280,10 +287,32 @@ const addToStats = function(commentCandidate, stats) {
 
 function removeStatsProperties(stats) {
 	for (const selector of Object.keys(stats)) {
-		for (const e of document.querySelectorAll(selector)) {
+		const ds = denormalizeSelector(selector);
+		for (const e of document.querySelectorAll(ds)) {
 			delete e[statsPropName];
 		}
 	}
+}
+
+function normalizeSelector(value) {
+	return value.replace(/\d+$/, '*');
+}
+
+function denormalizeSelector(s) {
+	if (!s.endsWith('*')) {
+		return s;
+	}
+	if (s.startsWith('#')) {
+		return startsWithSelector('id', s.substring(1, s.length - 1));
+	} else if (s.startsWith('.')) {
+		return startsWithSelector('class', s.substring(1, s.length - 1));
+	} else {
+		return s;
+	}
+}
+
+function startsWithSelector(attr, s) {
+	return "[" + attr + "^='" + s + "']";
 }
 
 function guessComentSelector() {
@@ -293,20 +322,19 @@ function guessComentSelector() {
 		addToStats(commentCandidate, stats);
 	}
 	removeStatsProperties(stats);
-	let commentSelector = null;
 	console.log(stats);//TODO
 	const topSelectors = topStatsSelectors(stats);
 	console.log(topSelectors);//TODO
 	let bestSelector = null;
 	for (const topSelector of topSelectors) {
 		let domTop = true;
-		let element = document.querySelector(topSelector);
+		let element = document.querySelector(denormalizeSelector(topSelector));
 		while (domTop && (element = element.parentElement) != null) {
-			for (const tc of topSelectors) {
-				if (tc == topSelector) {
+			for (const ts of topSelectors) {
+				if (ts == topSelector) {
 					continue;
 				}
-				if (tc.startsWith('.') && element.classList.contains(tc.substring(1))) {
+				if (element.matches(denormalizeSelector(ts))) {
 					domTop = false;
 					break;
 				}
@@ -318,10 +346,10 @@ function guessComentSelector() {
 		}
 	}
 	if (bestSelector != null) {
-		commentSelector = bestSelector;
+		bestSelector = denormalizeSelector(bestSelector);
 	}
-	console.log('>>> commentSelector: ' + commentSelector);//TODO
-	return commentSelector;
+	console.log('>>> commentSelector: ' + bestSelector);//TODO
+	return bestSelector;
 }
 
 function topStatsSelectors(stats) {
