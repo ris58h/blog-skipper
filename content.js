@@ -1,6 +1,4 @@
 let sites = [];
-let offset = null;
-
 let shortcuts = {};
 
 //TODO: race condition
@@ -40,14 +38,9 @@ document.addEventListener('keyup', function(e) {
 				return;
 	}
 	if (e.key == shortcuts["skip"]) {
-		let additionalScroll;
-		if (offset == null) {
-			precalcFixedHeaderHeight = calcFixedHeaderHeight();
-			additionalScroll = precalcFixedHeaderHeight;
-		} else {
-			additionalScroll = offset;
-		}
-		const startFrom = window.scrollY + additionalScroll + 1; //TODO sticky header
+		precalcFixedHeaderHeight = calcFixedHeaderHeight();
+		const headerHeight = precalcFixedHeaderHeight;
+		const startFrom = window.scrollY + headerHeight + 1; //TODO sticky header
 		doSkip(startFrom);
 		precalcFixedHeaderHeight = null;
 	} else if (e.key == shortcuts["undo"]) {
@@ -174,20 +167,15 @@ function goTo(element) {
 	
 	element.scrollIntoView();
 
-	let additionalScroll;
-	if (offset == null) {
-		const fixedHeaderHeight = precalcFixedHeaderHeight == null ? calcFixedHeaderHeight() 
-				: precalcFixedHeaderHeight;
-		const stickyHeaderHeight = calcStickyHeaderHeight(element);
-		additionalScroll = fixedHeaderHeight + stickyHeaderHeight;	
-	} else {
-		additionalScroll = offset;
-	}
-	window.scrollBy(0, -additionalScroll);
+	const fixedHeaderHeight = precalcFixedHeaderHeight == null ? calcFixedHeaderHeight() 
+			: precalcFixedHeaderHeight;
+	const stickyHeaderHeight = calcStickyHeaderHeight(element);
+	const headerHeight = fixedHeaderHeight + stickyHeaderHeight;	
+	window.scrollBy(0, -headerHeight);
 	chrome.runtime.sendMessage({
 		type: 'scroll-parent-header',
 		data: {
-			scrolled: additionalScroll
+			scrolled: headerHeight
 		}
 	})
 }
