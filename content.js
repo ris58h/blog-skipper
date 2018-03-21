@@ -126,7 +126,7 @@ function nextTarget(pageY) {
 	}
 
 	if (elements.length == 0) {
-		return 0;
+		return null;
 	}
 
 	elements.sort(compareTop);
