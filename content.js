@@ -202,7 +202,7 @@ function calcFixedHeaderHeight() {
 			&& e.offsetWidth > minWidth
 			&& window.getComputedStyle(e, null).getPropertyValue('position') == 'fixed') {
 			const bottom = e.getBoundingClientRect().bottom;
-			if (bottom < window.innerWidth / 2 && bottom > lowestBottom) {
+			if (bottom < window.innerHeight / 2 && bottom > lowestBottom) {
 				lowestBottom = bottom;
 			}
 		}
