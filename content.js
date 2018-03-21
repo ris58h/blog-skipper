@@ -73,7 +73,13 @@ function nextTarget(pageY) {
 		commentSelector = guessComentSelector();
 	}
 	if (commentSelector) {
-		const commentList = document.querySelectorAll(commentSelector);
+		let commentList;
+		try {
+			commentList = document.querySelectorAll(commentSelector);
+		} catch (error) {
+			console.error('Invalid selector: ' + commentSelector);
+			return null;
+		}
 		for (const comment of commentList) {
 			if (!isHidden(comment)) {
 				elements.push(comment);
