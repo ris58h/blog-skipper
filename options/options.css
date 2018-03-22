@@ -73,19 +73,19 @@ input[type="checkbox"]:checked {
     margin-top: 4px;
 }
 
-.sites .row {
+#sites .row {
     display: flex;
 }
 
-.sites .site .url-pattern {
+#sites .site .url-pattern {
     width: 300px;
 }
 
-.sites .site .comment-selector {
+#sites .site .comment-selector {
     width: 300px;
 }
 
-.sites .remove-site {
+#sites .remove-site {
     margin: 4px;
     padding: 2px;
     min-width: auto;
@@ -94,12 +94,12 @@ input[type="checkbox"]:checked {
     height: 36px;
 }
 
-.shortcuts .shortcut label {
+#shortcuts .shortcut label {
     display: inline-block;
     width: 150px;
 }
 
-.shortcuts .shortcut input {
+#shortcuts .shortcut input {
     width: 146px;
 }
 

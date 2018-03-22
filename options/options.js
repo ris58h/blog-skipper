@@ -6,7 +6,7 @@ function saveOptions(e) {
   settings["autoDetectComments"] = document.querySelector("#autoDetectComments").checked;
 
   settings["sites"] = [];
-  const sites = document.querySelectorAll(".sites .site");
+  const sites = document.querySelectorAll("#sites .site");
   for (const site of sites) {
     const urlPattern = site.querySelector(".url-pattern").value;
     const commentSelector = site.querySelector(".comment-selector").value;
@@ -19,11 +19,11 @@ function saveOptions(e) {
   }
 
   settings["shortcuts"] = {};
-  const skipShortcut = document.querySelector(".shortcuts .skip").value;
+  const skipShortcut = document.querySelector("#shortcuts .skip").value;
   if (skipShortcut) {
     settings["shortcuts"]["skip"] = skipShortcut;
   }
-  const undoShortcut = document.querySelector(".shortcuts .undo").value;
+  const undoShortcut = document.querySelector("#shortcuts .undo").value;
   if (undoShortcut) {
     settings["shortcuts"]["undo"] = undoShortcut;
   }
@@ -40,7 +40,7 @@ function restoreOptions() {
 }
 
 function renderSettings(settings) {
-  const sitesElement = document.querySelector(".sites");
+  const sitesElement = document.querySelector("#sites");
   while (sitesElement.firstChild) {
     sitesElement.removeChild(sitesElement.firstChild);
   }
@@ -51,10 +51,10 @@ function renderSettings(settings) {
   document.querySelector("#autoDetectComments").checked = settings["autoDetectComments"];
   const shortcuts = settings["shortcuts"];
   if (shortcuts["skip"]) {
-    document.querySelector(".shortcuts .skip").value = shortcuts["skip"];
+    document.querySelector("#shortcuts .skip").value = shortcuts["skip"];
   }
   if (shortcuts["undo"]) {
-    document.querySelector(".shortcuts .undo").value = shortcuts["undo"];
+    document.querySelector("#shortcuts .undo").value = shortcuts["undo"];
   }
 }
 
@@ -99,11 +99,11 @@ function createSiteElement(site) {
 }
 
 function addNewSite() {
-  const sitesElement = document.querySelector(".sites");
+  const sitesElement = document.querySelector("#sites");
   sitesElement.appendChild(createSiteRowElement());
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
-document.querySelector(".add-site").addEventListener("click", addNewSite);
-document.querySelector(".default").addEventListener("click", restoreDefault);
+document.querySelector("#add-site").addEventListener("click", addNewSite);
+document.querySelector("#default").addEventListener("click", restoreDefault);
 document.querySelector("form").addEventListener("submit", saveOptions);
