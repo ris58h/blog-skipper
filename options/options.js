@@ -3,6 +3,8 @@ function saveOptions(e) {
 
   const settings = {};
 
+  settings["autoDetectComments"] = document.querySelector("#autoDetectComments").checked;
+
   settings["sites"] = [];
   const sites = document.querySelectorAll(".sites .site");
   for (const site of sites) {
@@ -46,6 +48,7 @@ function renderSettings(settings) {
     sitesElement.appendChild(createSiteRowElement(site));
   }
 
+  document.querySelector("#autoDetectComments").checked = settings["autoDetectComments"];
   const shortcuts = settings["shortcuts"];
   if (shortcuts["skip"]) {
     document.querySelector(".shortcuts .skip").value = shortcuts["skip"];
@@ -77,10 +80,12 @@ function createSiteElement(site) {
   siteElement.classList.add('site');
 
   const urlElement = document.createElement('input');
+  urlElement.type = "text";
   urlElement.classList.add('url-pattern');
   siteElement.appendChild(urlElement);
   
   const selectorElement = document.createElement('input');
+  selectorElement.type = "text";
   selectorElement.classList.add('comment-selector');
   selectorElement.placeholder = 'none';
   siteElement.appendChild(selectorElement);

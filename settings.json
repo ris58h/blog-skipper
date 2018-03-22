@@ -1,4 +1,5 @@
 {
+    "autoDetectComments": true,
     "sites": [
         {
             "urlPattern": "https://disqus.com/embed/comments/*",

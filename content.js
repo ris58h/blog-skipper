@@ -1,8 +1,12 @@
+let autoDetectComments = false;
 let sites = [];
 let shortcuts = {};
 
 //TODO: race condition
 load(function (settings) {
+	if (settings.autoDetectComments != null) {
+		autoDetectComments = settings.autoDetectComments;
+	}
 	sites = settings.sites.map(site => {
 		return {
 			urlRegex: new RegExp("^" + site.urlPattern.replace(/\*/g, ".*") + "$"),
@@ -69,7 +73,7 @@ function nextTarget(pageY) {
 			break;
 		}
 	}
-	if (commentSelector == null) {
+	if (commentSelector == null && autoDetectComments) {
 		commentSelector = guessComentSelector();
 	}
 	if (commentSelector) {

@@ -17,7 +17,7 @@ button {
     cursor: pointer;
 }
 
-input {
+input[type="text"] {
     min-height: 30px;
     color: #0c0c0d;
     border: 1px solid #d7d7db;
@@ -26,6 +26,26 @@ input {
     cursor: text;
     margin: 4px;
     padding: 2px;
+}
+
+input[type="checkbox"] {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    width: 23px;
+    height: 23px;
+    border: 1px solid #d7d7db;
+    border-radius: 2px;
+    margin-inline-end: 10px;
+    background-color: #fff;
+}
+
+input[type="checkbox"]:checked {
+    background-image: url("check.svg");
+}
+
+.flex-row {
+    display: flex;
+    align-items: center;
 }
 
 .main {
