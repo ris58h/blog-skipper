@@ -330,9 +330,9 @@ function guessComentSelector() {
 		addToStats(commentCandidate, stats);
 	}
 	removeStatsProperties(stats);
-	console.log(stats);//TODO
+	// console.log(stats);//TODO
 	const topSelectors = topStatsSelectors(stats);
-	console.log(topSelectors);//TODO
+	// console.log(topSelectors);//TODO
 	let bestSelector = null;
 	for (const topSelector of topSelectors) {
 		let domTop = true;
@@ -356,7 +356,7 @@ function guessComentSelector() {
 	if (bestSelector != null) {
 		bestSelector = denormalizeSelector(bestSelector);
 	}
-	console.log('>>> commentSelector: ' + bestSelector);//TODO
+	// console.log('>>> commentSelector: ' + bestSelector);//TODO
 	return bestSelector;
 }
 
