@@ -247,8 +247,9 @@ function indexOfSorted(elements, pageY) { //TODO binary search
 	return -elements.length - 1;
 }
 
-const commentWord = 'comment';
-const commentCandidateSelector = '[class*="' + commentWord + '"] :not(:empty)';
+const commentWord = "comment";
+const commentCandidateSelector = containsSelector("id", commentWord) + " :not(:empty)"
+	+ ", " + containsSelector("class", commentWord) + " :not(:empty)";
 const statsPropName = Symbol('blog-skipper-stats');
 
 const addToStats = function(commentCandidate, stats) {
@@ -316,6 +317,10 @@ function denormalizeSelector(s) {
 
 function startsWithSelector(attr, s) {
 	return "[" + attr + "^='" + s + "']";
+}
+
+function containsSelector(attr, s) {
+	return "[" + attr + "*='" + s + "']";
 }
 
 function guessComentSelector() {
