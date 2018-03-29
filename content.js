@@ -247,9 +247,14 @@ function indexOfSorted(elements, pageY) { //TODO binary search
 	return -elements.length - 1;
 }
 
-const commentWord = "comment";
-const commentCandidateSelector = containsSelector("id", commentWord) + " :not(:empty)"
-	+ ", " + containsSelector("class", commentWord) + " :not(:empty)";
+const commentWords = ["comment", "post", "message"];
+const commentCandidateSelectors = [];
+for (const commentWord of commentWords) {
+	commentCandidateSelectors.push(containsSelector("id", commentWord) + " :not(:empty)");
+	commentCandidateSelectors.push(containsSelector("class", commentWord) + " :not(:empty)");
+}
+const commentCandidateSelector = commentCandidateSelectors.join();
+const includesCommentWord = s => commentWords.some(cw => s.includes(cw));
 const statsPropName = Symbol('blog-skipper-stats');
 
 const addToStats = function(commentCandidate, stats) {
@@ -267,7 +272,7 @@ const addToStats = function(commentCandidate, stats) {
 				continue;
 			}
 			for (const className of element.classList) {
-				if (!className.includes(commentWord)) {
+				if (!includesCommentWord(className)) {
 					continue;
 				}
 				const selector = '.' + className;
@@ -276,7 +281,7 @@ const addToStats = function(commentCandidate, stats) {
 				}
 				stats[selector]++;
 			}
-			if (element.id && element.id.includes(commentWord)) {
+			if (element.id && includesCommentWord(element.id)) {
 				const selector = normalizeSelector('#' + element.id);
 				if (!stats[selector]) {
 					stats[selector] = 0;
@@ -330,9 +335,9 @@ function guessComentSelector() {
 		addToStats(commentCandidate, stats);
 	}
 	removeStatsProperties(stats);
-	// console.log(stats);//TODO
+	console.log(stats);//TODO
 	const topSelectors = topStatsSelectors(stats);
-	// console.log(topSelectors);//TODO
+	console.log(topSelectors);//TODO
 	let bestSelector = null;
 	for (const topSelector of topSelectors) {
 		let domTop = true;
@@ -356,7 +361,7 @@ function guessComentSelector() {
 	if (bestSelector != null) {
 		bestSelector = denormalizeSelector(bestSelector);
 	}
-	// console.log('>>> commentSelector: ' + bestSelector);//TODO
+	console.log('>>> commentSelector: ' + bestSelector);//TODO
 	return bestSelector;
 }
 
