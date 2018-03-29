@@ -248,12 +248,12 @@ function indexOfSorted(elements, pageY) { //TODO binary search
 }
 
 const commentWords = ["comment", "post", "message"];
-const parentCandidates = [];
+const commentCandidatesSelectors = [];
 for (const commentWord of commentWords) {
-	parentCandidates.push("* > " + containsSelector("id", commentWord));
-	parentCandidates.push("* > " + containsSelector("class", commentWord));
+	commentCandidatesSelectors.push(containsSelector("id", commentWord));
+	commentCandidatesSelectors.push(containsSelector("class", commentWord));
 }
-const parentCandidatesSelector = parentCandidates.join();
+const commentCandidatesSelector = commentCandidatesSelectors.join();
 const includesCommentWord = s => commentWords.some(cw => s.includes(cw));
 
 function normalizeSelector(value) {
@@ -267,7 +267,10 @@ function denormalizeSelector(s) {
 	if (s.startsWith('#')) {
 		return startsWithSelector('id', s.substring(1, s.length - 1));
 	} else if (s.startsWith('.')) {
-		return startsWithSelector('class', s.substring(1, s.length - 1));
+		// StartsWith matches against whole class list string.
+		// We have to use contains instead.
+		// return startsWithSelector('class', s.substring(1, s.length - 1));
+		return containsSelector('class', s.substring(1, s.length - 1));
 	} else {
 		return s;
 	}
@@ -322,8 +325,18 @@ function footprintToSelector(footprint) {
 
 function guessComentSelector() {
 	const stats = {};
-	const parents = document.querySelectorAll(parentCandidatesSelector);
+	const commentCandidates = document.querySelectorAll(commentCandidatesSelector);
+	const parents = [];
+	const processed = Symbol();
+	for (const commentCandidate of commentCandidates) {
+		const parent = commentCandidate.parentElement;
+		if (parent && !parent[processed]) {
+			parent[processed] = true;
+			parents.push(parent);
+		}
+	}
 	for (const parent of parents) {
+		delete parent[processed];
 		const parentFootprint = footprint(parent) || '*';
 		let i = 0;
 		for (const child of parent.children) {
