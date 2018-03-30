@@ -311,7 +311,7 @@ function pairFootprintToSelector(pairFootprint) {
 	const childFootprint = second.substring(spaceIndex + 1);
 	const parentSelector = footprintToSelector(parentFootprint);
 	const childSelector = footprintToSelector(childFootprint);
-	return parentSelector + ' > ' + childSelector;//TODO index
+	return parentSelector + ' > ' + childSelector + ":nth-child(" + index + ")";
 }
 
 function footprintToSelector(footprint) {
