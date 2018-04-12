@@ -326,17 +326,21 @@ function footprintToSelector(footprint) {
 function guessComentSelector() {
 	const stats = {};
 	const commentCandidates = document.querySelectorAll(commentCandidatesSelector);
-	const parents = [];
-	const processed = Symbol();
+	const elementsToCheck = [];
+	const processedKey = Symbol();
 	for (const commentCandidate of commentCandidates) {
+		if (!commentCandidate[processedKey]) {
+			commentCandidate[processedKey] = true;
+			elementsToCheck.push(commentCandidate);
+		}
 		const parent = commentCandidate.parentElement;
-		if (parent && !parent[processed]) {
-			parent[processed] = true;
-			parents.push(parent);
+		if (parent && !parent[processedKey]) {
+			parent[processedKey] = true;
+			elementsToCheck.push(parent);
 		}
 	}
-	for (const parent of parents) {
-		delete parent[processed];
+	for (const parent of elementsToCheck) {
+		delete parent[processedKey];
 		const parentFootprint = footprint(parent) || '*';
 		let i = 0;
 		for (const child of parent.children) {
@@ -344,7 +348,10 @@ function guessComentSelector() {
 			if (isHidden(child)) {
 				continue;
 			}
-			const childFootprint = footprint(child);
+			const childFootprint = footprint(child) || '*';
+			if (parentFootprint == '*' && childFootprint == '*') {
+				continue;
+			}
 			if (childFootprint) {
 				const pairFootprint = parentFootprint + ' | ' + i + ' ' + childFootprint;
 				if (!stats[pairFootprint]) {
