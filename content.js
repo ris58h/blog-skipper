@@ -348,6 +348,12 @@ function guessComentSelector() {
 			if (isHidden(child)) {
 				continue;
 			}
+			// It's just a quick hack for 4pda.ru.
+			// There are nested comment lists even for 'leaf' comments (empty of course),
+			// that spoil stats.
+			if (!child.hasChildNodes()) {
+				continue;
+			}
 			const childFootprint = footprint(child) || '*';
 			if (parentFootprint == '*' && childFootprint == '*') {
 				continue;
