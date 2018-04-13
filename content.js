@@ -227,7 +227,7 @@ function isHidden(el) {
 		return true;
 	}
     const style = window.getComputedStyle(el);
-    return (style.display === 'none')
+    return style.display === 'none' || style.opacity == '0';
 }
 
 function indexOfSorted(elements, pageY) { //TODO binary search
@@ -329,12 +329,12 @@ function guessComentSelector() {
 	const elementsToCheck = [];
 	const processedKey = Symbol();
 	for (const commentCandidate of commentCandidates) {
-		if (!commentCandidate[processedKey]) {
+		if (!commentCandidate[processedKey] && !isHidden(commentCandidate)) {
 			commentCandidate[processedKey] = true;
 			elementsToCheck.push(commentCandidate);
 		}
 		const parent = commentCandidate.parentElement;
-		if (parent && !parent[processedKey]) {
+		if (parent && !parent[processedKey] && !isHidden(parent)) {
 			parent[processedKey] = true;
 			elementsToCheck.push(parent);
 		}
