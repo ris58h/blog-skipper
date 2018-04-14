@@ -322,27 +322,6 @@ function footprint(element) {
 	}
 }
 
-function pairFootprintToSelector(pairFootprint) {
-	const pair = pairFootprint.split(' | ');
-	const parentFootprint = pair[0];
-	const second = pair[1];
-	const spaceIndex = second.indexOf(' ');
-	const index = second.substring(0, spaceIndex);
-	const childFootprint = second.substring(spaceIndex + 1);
-	const parentSelector = footprintToSelector(parentFootprint);
-	const childSelector = footprintToSelector(childFootprint);
-	return parentSelector + ' > ' + childSelector + ":nth-child(" + index + ")";
-}
-
-function footprintToSelector(footprint) {
-	const split = footprint.split(' ');
-	if (split.length == 1) {
-		return denormalizeSelector(split[0]);
-	} else {
-		return split.map(denormalizeSelector).join('');
-	}
-}
-
 function guessComentSelector() {
 	const stats = {};
 	const commentCandidates = document.querySelectorAll(commentCandidatesSelector);
@@ -380,29 +359,29 @@ function guessComentSelector() {
 				continue;
 			}
 			if (childFootprint) {
-				const pairFootprint = parentFootprint + ' | ' + i + ' ' + childFootprint;
-				if (!stats[pairFootprint]) {
-					stats[pairFootprint] = 0;
+				const selector = parentFootprint + " > " + childFootprint + ":nth-child(" + i + ")";
+				if (!stats[selector]) {
+					stats[selector] = 0;
 				}
-				stats[pairFootprint]++;
+				stats[selector]++;
 			}
 		}
 	}
 	console.log(stats);//TODO
-	const topFootprints = topKeys(stats);
-	console.log(topFootprints);//TODO
+	const topSelectors = topKeys(stats);
+	console.log(topSelectors);//TODO
 	let bestSelector = null;
-	if (topFootprints.length == 0) {
+	if (topSelectors.length == 0) {
 		// do nothing
-	} else if (topFootprints.length == 1) {
+	} else if (topSelectors.length == 1) {
 		bestSelector = {
-			selector: pairFootprintToSelector(topFootprints[0]),
+			selector: topSelectors[0],
 			parent: 0,
 		};
 	} else {
 		// Lowest Common Ancestor & the closest comment element
 		let lcaIndex = 0;
-		let closestSelector = pairFootprintToSelector(topFootprints[0]);
+		let closestSelector = topSelectors[0];
 		let parentGap = 0;
 		const path = []; {
 			let element = document.querySelector(closestSelector);
@@ -410,8 +389,8 @@ function guessComentSelector() {
 				path.push(element);
 			} while ((element = element.parentElement) != null);
 		}
-		for (let i = 1; i < topFootprints.length; i++) {
-			const selector = pairFootprintToSelector(topFootprints[i]);
+		for (let i = 1; i < topSelectors.length; i++) {
+			const selector = topSelectors[i];
 			let element = document.querySelector(selector);
 			let parentCount = -1;
 			do {
