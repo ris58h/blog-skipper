@@ -326,13 +326,6 @@ function guessComentSelector() {
 		if (isHidden(candidate)) {
 			continue;
 		}
-		//TODO
-		// It's just a quick hack for 4pda.ru.
-		// There are nested comment lists even for 'leaf' comments (empty of course),
-		// that spoil stats.
-		if (!candidate.hasChildNodes()) {
-			continue;
-		}
 		const cs = extractCommentSelector(candidate);
 		if (cs) {
 			const n = nthChild(candidate);
@@ -412,18 +405,28 @@ function nthChild(element) {
 	return i;
 }
 
+// TODO better name for this function.
 function topKeys(stats) {
 	let topCount = 0;
 	let topKeys = [];
+	let prevTopCount = 0;
+	let prevTopKeys = [];
 	for (const key of Object.keys(stats)) {
 		const count = stats[key];
 		if (count > topCount) {
+			prevTopCount = topCount;
 			topCount = count;
+			prevTopKeys = topKeys;
 			topKeys = [];
 			topKeys.push(key);
 		} else if (count == topCount) {
 			topKeys.push(key);
 		}
+	}
+	if (topKeys.length == 1
+		&& prevTopKeys.length > 1
+		&& topCount - prevTopCount == 1) {
+			return prevTopKeys;
 	}
 	return topKeys;
 }
