@@ -247,7 +247,7 @@ function isHidden(el) {
 		return true;
 	}
     const style = window.getComputedStyle(el);
-    return style.display === 'none' || style.opacity == '0';
+    return style.display === 'none';
 }
 
 function indexOfSorted(elements, pageY) { //TODO binary search
