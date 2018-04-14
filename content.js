@@ -68,22 +68,19 @@ function nextTarget(pageY) {
 	let commentsBounds = null;
 	let commentSelector = null;
 	for (const site of sites) {
-		if (site.urlRegex.test(window.location.href)) {
-			commentSelector = site.commentSelector;
+		if (site.urlRegex.test(window.location.href) && site.commentSelector) {
+			commentSelector = {
+				selector: site.commentSelector,
+				parent: 0,
+			};
 			break;
 		}
 	}
-	if (commentSelector == null && autoDetectComments) {
+	if (!commentSelector && autoDetectComments) {
 		commentSelector = guessComentSelector();
 	}
 	if (commentSelector) {
-		let commentList;
-		try {
-			commentList = document.querySelectorAll(commentSelector);
-		} catch (error) {
-			console.error('Invalid selector: ' + commentSelector);
-			return null;
-		}
+		let commentList = querySuperSelector(commentSelector);
 		for (const comment of commentList) {
 			if (!isHidden(comment)) {
 				elements.push(comment);
@@ -157,6 +154,29 @@ function nextTarget(pageY) {
 			return lastComment;
 		}
 	}
+}
+
+function querySuperSelector(superSelector) {
+	const elements = document.querySelectorAll(superSelector.selector);
+	if (superSelector.parent == 0) {
+		return elements;
+	}
+	const parents = [];
+	const processedKey = Symbol();
+	for (const element of elements) {
+		let parent = element;
+		for (let i = 0; i < superSelector.parent; i++) {
+			parent = parent.parentElement;
+		}
+		if (!parent[processedKey]) {
+			parents.push(parent);
+			parent[processedKey] = true;
+		}
+	}
+	for (const parent of parents) {
+		delete parent[processedKey];
+	}
+	return parents;
 }
 
 function leftPadding(e) {
@@ -348,6 +368,7 @@ function guessComentSelector() {
 			if (isHidden(child)) {
 				continue;
 			}
+			//TODO
 			// It's just a quick hack for 4pda.ru.
 			// There are nested comment lists even for 'leaf' comments (empty of course),
 			// that spoil stats.
@@ -371,28 +392,58 @@ function guessComentSelector() {
 	const topFootprints = topKeys(stats);
 	console.log(topFootprints);//TODO
 	let bestSelector = null;
-	for (const topFootprint of topFootprints) {
-		let domTop = true;
-		const topSelector = pairFootprintToSelector(topFootprint);
-		let element = document.querySelector(topSelector);
-		while (domTop && (element = element.parentElement) != null) {
-			for (const tf of topFootprints) {
-				if (tf == topFootprint) {
-					continue;
-				}
-				const ts = pairFootprintToSelector(tf);
-				if (element.matches(ts)) {
-					domTop = false;
+	if (topFootprints.length == 0) {
+		// do nothing
+	} else if (topFootprints.length == 1) {
+		bestSelector = {
+			selector: pairFootprintToSelector(topFootprints[0]),
+			parent: 0,
+		};
+	} else {
+		// Lowest Common Ancestor & the closest comment element
+		let lcaIndex = 0;
+		let closestSelector = pairFootprintToSelector(topFootprints[0]);
+		let parentGap = 0;
+		const path = []; {
+			let element = document.querySelector(closestSelector);
+			do {
+				path.push(element);
+			} while ((element = element.parentElement) != null);
+		}
+		for (let i = 1; i < topFootprints.length; i++) {
+			const selector = pairFootprintToSelector(topFootprints[i]);
+			let element = document.querySelector(selector);
+			let parentCount = -1;
+			do {
+				parentCount++;
+				const index = path.indexOf(element);
+				if (index >= 0) {
+					if (index == lcaIndex && parentCount < parentGap) {
+						parentGap = parentCount;
+						closestSelector = selector;
+					} else if (index > lcaIndex) {
+						const currentGap = index - lcaIndex;
+						if (parentCount  < currentGap) {
+							parentGap = parentCount;
+							closestSelector = selector;
+						} else {
+							parentGap += currentGap;
+						}
+						lcaIndex = index;
+					}
 					break;
 				}
+			} while ((element = element.parentElement) != null);
+			if (element == null) {
+				throw "Separated trees?!";
 			}
 		}
-		if (domTop) {
-			bestSelector = topSelector;
-			break;
+		bestSelector = {
+			selector: closestSelector,
+			parent: parentGap,
 		}
 	}
-	console.log('>>> commentSelector: ' + bestSelector);//TODO
+	console.log(bestSelector);//TODO
 	return bestSelector;
 }
 
