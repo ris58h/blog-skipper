@@ -276,24 +276,14 @@ for (const commentWord of commentWords) {
 const commentCandidatesSelector = commentCandidatesSelectors.join();
 const includesCommentWord = s => commentWords.some(cw => s.includes(cw));
 
-function normalizeSelector(value) {
-	return value.replace(/\d+$/, '*');
+const intEndingRegexp = /\d+$/;
+
+function endsWithInt(s) {
+	return intEndingRegexp.test(s);
 }
 
-function denormalizeSelector(s) {
-	if (!s.endsWith('*')) {
-		return s;
-	}
-	if (s.startsWith('#')) {
-		return startsWithSelector('id', s.substring(1, s.length - 1));
-	} else if (s.startsWith('.')) {
-		// StartsWith matches against whole class list string.
-		// We have to use contains instead.
-		// return startsWithSelector('class', s.substring(1, s.length - 1));
-		return containsSelector('class', s.substring(1, s.length - 1));
-	} else {
-		return s;
-	}
+function trimIntEnding(s) {
+	return s.replace(intEndingRegexp, '');
 }
 
 function startsWithSelector(attr, s) {
@@ -304,19 +294,26 @@ function containsSelector(attr, s) {
 	return "[" + attr + "*='" + s + "']";
 }
 
-
-function footprint(element) {
+function extractCommentSelector(element) {
 	if (element.id && includesCommentWord(element.id)) {
-		return normalizeSelector('#' + element.id);
+		if (endsWithInt(element.id)) {
+			return startsWithSelector("id", trimIntEnding(element.id));
+		} else {
+			return '#' + element.id;
+		}
 	}
 	const fpArray = [];
 	for (const className of element.classList) {
 		if (includesCommentWord(className)) {
-			fpArray.push(normalizeSelector('.' + className));
+			if (endsWithInt(className)) {
+				fpArray.push(containsSelector('class', trimIntEnding(className)));
+			} else {
+				fpArray.push('.' + className);
+			}
 		}
 	}
 	if (fpArray.length > 0) {
-		return fpArray.sort().join(' ');
+		return fpArray.sort().join('');
 	} else {
 		return null;
 	}
@@ -325,46 +322,25 @@ function footprint(element) {
 function guessComentSelector() {
 	const stats = {};
 	const commentCandidates = document.querySelectorAll(commentCandidatesSelector);
-	const elementsToCheck = [];
-	const processedKey = Symbol();
-	for (const commentCandidate of commentCandidates) {
-		if (!commentCandidate[processedKey] && !isHidden(commentCandidate)) {
-			commentCandidate[processedKey] = true;
-			elementsToCheck.push(commentCandidate);
+	for (const candidate of commentCandidates) {
+		if (isHidden(candidate)) {
+			continue;
 		}
-		const parent = commentCandidate.parentElement;
-		if (parent && !parent[processedKey] && !isHidden(parent)) {
-			parent[processedKey] = true;
-			elementsToCheck.push(parent);
+		//TODO
+		// It's just a quick hack for 4pda.ru.
+		// There are nested comment lists even for 'leaf' comments (empty of course),
+		// that spoil stats.
+		if (!candidate.hasChildNodes()) {
+			continue;
 		}
-	}
-	for (const parent of elementsToCheck) {
-		delete parent[processedKey];
-		const parentFootprint = footprint(parent) || '*';
-		let i = 0;
-		for (const child of parent.children) {
-			i++;
-			if (isHidden(child)) {
-				continue;
+		const cs = extractCommentSelector(candidate);
+		if (cs) {
+			const n = nthChild(candidate);
+			const selector = "* > " + cs + ":nth-child(" + n + ")";
+			if (!stats[selector]) {
+				stats[selector] = 0;
 			}
-			//TODO
-			// It's just a quick hack for 4pda.ru.
-			// There are nested comment lists even for 'leaf' comments (empty of course),
-			// that spoil stats.
-			if (!child.hasChildNodes()) {
-				continue;
-			}
-			const childFootprint = footprint(child) || '*';
-			if (parentFootprint == '*' && childFootprint == '*') {
-				continue;
-			}
-			if (childFootprint) {
-				const selector = parentFootprint + " > " + childFootprint + ":nth-child(" + i + ")";
-				if (!stats[selector]) {
-					stats[selector] = 0;
-				}
-				stats[selector]++;
-			}
+			stats[selector]++;
 		}
 	}
 	console.log(stats);//TODO
@@ -424,6 +400,16 @@ function guessComentSelector() {
 	}
 	console.log(bestSelector);//TODO
 	return bestSelector;
+}
+
+function nthChild(element) {
+	let i = 1;
+	while(element = element.previousSibling) {
+		if (element.nodeType == 1) {
+			i++;
+		}
+	}
+	return i;
 }
 
 function topKeys(stats) {
