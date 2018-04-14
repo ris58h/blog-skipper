@@ -267,13 +267,13 @@ function indexOfSorted(elements, pageY) { //TODO binary search
 	return -elements.length - 1;
 }
 
-const commentWords = ["comment", "post", "message"];
+const commentWords = ["comment", "message", "post"];
 const commentCandidatesSelectors = [];
 for (const commentWord of commentWords) {
-	commentCandidatesSelectors.push(containsSelector("id", commentWord));
-	commentCandidatesSelectors.push(containsSelector("class", commentWord));
+	const idSelector = containsSelector("id", commentWord);
+	const classSelector = containsSelector("class", commentWord);
+	commentCandidatesSelectors.push(idSelector + ',' + classSelector);
 }
-const commentCandidatesSelector = commentCandidatesSelectors.join();
 const includesCommentWord = s => commentWords.some(cw => s.includes(cw));
 
 const intEndingRegexp = /\d+$/;
@@ -320,79 +320,84 @@ function extractCommentSelector(element) {
 }
 
 function guessComentSelector() {
-	const stats = {};
-	const commentCandidates = document.querySelectorAll(commentCandidatesSelector);
-	for (const candidate of commentCandidates) {
-		if (isHidden(candidate)) {
-			continue;
-		}
-		const cs = extractCommentSelector(candidate);
-		if (cs) {
-			const n = nthChild(candidate);
-			const selector = "* > " + cs + ":nth-child(" + n + ")";
-			if (!stats[selector]) {
-				stats[selector] = 0;
+	for (const commentCandidatesSelector of commentCandidatesSelectors) {
+		const stats = {};
+		const commentCandidates = document.querySelectorAll(commentCandidatesSelector);
+		for (const candidate of commentCandidates) {
+			if (isHidden(candidate)) {
+				continue;
 			}
-			stats[selector]++;
+			const cs = extractCommentSelector(candidate);
+			if (cs) {
+				const n = nthChild(candidate);
+				const selector = "* > " + cs + ":nth-child(" + n + ")";
+				if (!stats[selector]) {
+					stats[selector] = 0;
+				}
+				stats[selector]++;
+			}
 		}
-	}
-	console.log(stats);//TODO
-	const topSelectors = topKeys(stats);
-	console.log(topSelectors);//TODO
-	let bestSelector = null;
-	if (topSelectors.length == 0) {
-		// do nothing
-	} else if (topSelectors.length == 1) {
-		bestSelector = {
-			selector: topSelectors[0],
-			parent: 0,
-		};
-	} else {
-		// Lowest Common Ancestor & the closest comment element
-		let lcaIndex = 0;
-		let closestSelector = topSelectors[0];
-		let parentGap = 0;
-		const path = []; {
-			let element = document.querySelector(closestSelector);
-			do {
-				path.push(element);
-			} while ((element = element.parentElement) != null);
-		}
-		for (let i = 1; i < topSelectors.length; i++) {
-			const selector = topSelectors[i];
-			let element = document.querySelector(selector);
-			let parentCount = -1;
-			do {
-				parentCount++;
-				const index = path.indexOf(element);
-				if (index >= 0) {
-					if (index == lcaIndex && parentCount < parentGap) {
-						parentGap = parentCount;
-						closestSelector = selector;
-					} else if (index > lcaIndex) {
-						const currentGap = index - lcaIndex;
-						if (parentCount  < currentGap) {
+		console.log(stats);//TODO
+		const topSelectors = topKeys(stats);
+		console.log(topSelectors);//TODO
+		let bestSelector = null;
+		if (topSelectors.length == 0) {
+			// do nothing
+		} else if (topSelectors.length == 1) {
+			bestSelector = {
+				selector: topSelectors[0],
+				parent: 0,
+			};
+		} else {
+			// Lowest Common Ancestor & the closest comment element
+			let lcaIndex = 0;
+			let closestSelector = topSelectors[0];
+			let parentGap = 0;
+			const path = []; {
+				let element = document.querySelector(closestSelector);
+				do {
+					path.push(element);
+				} while ((element = element.parentElement) != null);
+			}
+			for (let i = 1; i < topSelectors.length; i++) {
+				const selector = topSelectors[i];
+				let element = document.querySelector(selector);
+				let parentCount = -1;
+				do {
+					parentCount++;
+					const index = path.indexOf(element);
+					if (index >= 0) {
+						if (index == lcaIndex && parentCount < parentGap) {
 							parentGap = parentCount;
 							closestSelector = selector;
-						} else {
-							parentGap += currentGap;
+						} else if (index > lcaIndex) {
+							const currentGap = index - lcaIndex;
+							if (parentCount  < currentGap) {
+								parentGap = parentCount;
+								closestSelector = selector;
+							} else {
+								parentGap += currentGap;
+							}
+							lcaIndex = index;
 						}
-						lcaIndex = index;
+						break;
 					}
-					break;
+				} while ((element = element.parentElement) != null);
+				if (element == null) {
+					throw "Separated trees?!";
 				}
-			} while ((element = element.parentElement) != null);
-			if (element == null) {
-				throw "Separated trees?!";
+			}
+			bestSelector = {
+				selector: closestSelector,
+				parent: parentGap,
 			}
 		}
-		bestSelector = {
-			selector: closestSelector,
-			parent: parentGap,
+		console.log(bestSelector);//TODO
+		if (bestSelector) {
+			return bestSelector;
 		}
 	}
-	console.log(bestSelector);//TODO
-	return bestSelector;
+	return null;
 }
 
 function nthChild(element) {
