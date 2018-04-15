@@ -329,7 +329,7 @@ function guessComentSelector() {
 			}
 			const cs = extractCommentSelector(candidate);
 			if (cs) {
-				const n = nthChild(candidate);
+				const n = siblingIndex(candidate);
 				const selector = "* > " + cs + ":nth-child(" + n + ")";
 				if (!stats[selector]) {
 					stats[selector] = 0;
@@ -400,7 +400,7 @@ function guessComentSelector() {
 	return null;
 }
 
-function nthChild(element) {
+function siblingIndex(element) {
 	let i = 1;
 	while(element = element.previousSibling) {
 		if (element.nodeType == 1) {
