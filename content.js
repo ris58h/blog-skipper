@@ -412,26 +412,27 @@ function siblingIndex(element) {
 
 // TODO better name for this function.
 function topKeys(stats) {
-	let topCount = 0;
-	let topKeys = [];
-	let prevTopCount = 0;
-	let prevTopKeys = [];
-	for (const key of Object.keys(stats)) {
-		const count = stats[key];
-		if (count > topCount) {
-			prevTopCount = topCount;
-			topCount = count;
-			prevTopKeys = topKeys;
-			topKeys = [];
-			topKeys.push(key);
-		} else if (count == topCount) {
-			topKeys.push(key);
-		}
+	const keys = Object.keys(stats);
+	if (keys.left == 0) {
+		return [];
 	}
-	if (topKeys.length == 1
-		&& prevTopKeys.length > 1
-		&& topCount - prevTopCount == 1) {
-			return prevTopKeys;
+	if (keys.length == 1) {
+		return keys;
+	}
+	keys.sort((a, b) => stats[b] - stats[a]);
+	const topKeys = [];
+	for (let i = 0; topKeys.length == 0 || stats[keys[i]] == stats[keys[0]]; i++) {
+		topKeys.push(keys[i]);
+	}
+	if (topKeys.length == 1) {
+		const topKeys2 = [];
+		const start = topKeys.length;
+		for (let i = start; topKeys2.length == 0 || stats[keys[i]] == stats[keys[start]]; i++) {
+			topKeys2.push(keys[i]);
+		}
+		if (topKeys2.length > 1 && stats[topKeys[0]] - stats[topKeys2[0]] == 1) {
+			return topKeys2;
+		}
 	}
 	return topKeys;
 }
