@@ -413,7 +413,7 @@ function siblingIndex(element) {
 // TODO better name for this function.
 function topKeys(stats) {
 	const keys = Object.keys(stats);
-	if (keys.left == 0) {
+	if (keys.length == 0) {
 		return [];
 	}
 	if (keys.length == 1) {
