@@ -12,7 +12,7 @@
         {
             "urlPattern": "https://vc.ru/*",
             "commentSelector": ".comments__item__self"
-        },
+        }
     ],
     "shortcuts": {
         "skip": "z",
