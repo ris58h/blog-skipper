@@ -2,6 +2,13 @@ let autoDetectComments = false;
 let sites = [];
 let shortcuts = {};
 
+const loggingEnabled = false;
+function log(s) {
+	if (loggingEnabled) {
+		console.log(s);
+	}
+}
+
 //TODO: race condition
 load(function (settings) {
 	if (settings.autoDetectComments != null) {
@@ -321,7 +328,7 @@ function extractCommentSelector(element) {
 
 function guessComentSelector() {
 	if (document.querySelectorAll(".comment").length > 1) {
-		console.log("Dumb comments detection is used!");
+		log("Dumb comments detection is used!");
 		return {
 			selector: ".comment",
 			parent: 0,
@@ -344,9 +351,9 @@ function guessComentSelector() {
 				stats[selector]++;
 			}
 		}
-		console.log(stats);//TODO
+		log(stats);
 		const topSelectors = topKeys(stats);
-		console.log(topSelectors);//TODO
+		log(topSelectors);
 		let bestSelector = null;
 		if (topSelectors.length == 0) {
 			// do nothing
@@ -399,7 +406,7 @@ function guessComentSelector() {
 				parent: parentGap,
 			}
 		}
-		console.log(bestSelector);//TODO
+		log(bestSelector);
 		if (bestSelector) {
 			return bestSelector;
 		}
