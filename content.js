@@ -267,7 +267,7 @@ function indexOfSorted(elements, pageY) { //TODO binary search
 	return -elements.length - 1;
 }
 
-const commentWords = ["comment", "message", "post"];
+const commentWords = ["comment"];
 const commentCandidatesSelectors = [];
 for (const commentWord of commentWords) {
 	const idSelector = containsSelector("id", commentWord) + ":not(code)";
