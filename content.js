@@ -330,7 +330,7 @@ function guessComentSelector() {
 			const cs = extractCommentSelector(candidate);
 			if (cs) {
 				const n = siblingIndex(candidate);
-				const selector = "* > " + cs + ":nth-child(" + n + ")";
+				const selector = cs + ":nth-child(" + n + ")";
 				if (!stats[selector]) {
 					stats[selector] = 0;
 				}
