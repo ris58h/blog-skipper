@@ -320,6 +320,13 @@ function extractCommentSelector(element) {
 }
 
 function guessComentSelector() {
+	if (document.querySelectorAll(".comment").length > 1) {
+		console.log("Dumb comments detection is used!");
+		return {
+			selector: ".comment",
+			parent: 0,
+		};
+	} 
 	for (const commentCandidatesSelector of commentCandidatesSelectors) {
 		const stats = {};
 		const commentCandidates = document.querySelectorAll(commentCandidatesSelector);
