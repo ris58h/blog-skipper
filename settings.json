@@ -13,10 +13,6 @@
             "urlPattern": "https://vc.ru/*",
             "commentSelector": ".comments__item__self"
         },
-        {
-            "urlPattern": "https://*.livejournal.com/*",
-            "commentSelector": ".mdspost-thread"
-        }
     ],
     "shortcuts": {
         "skip": "z",
