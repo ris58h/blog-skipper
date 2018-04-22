@@ -1,4 +1,4 @@
-import {load, loadDefault, save} from "./settings";
+// import {load, loadDefault, save} from "./settings";
 
 function saveOptions(e) {
   e.preventDefault();

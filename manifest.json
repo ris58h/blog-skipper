@@ -31,7 +31,7 @@
     {
       "all_frames": true,
       "matches": ["<all_urls>"],
-      "js": ["settings.js", "content.js"]
+      "js": ["utils.js", "skipper.js", "settings.js", "content.js"]
     }
   ],
 
