@@ -1,4 +1,4 @@
-function loadDefault(callback) {
+/*export*/ function loadDefault(callback) {
     const settingsUrl = chrome.runtime.getURL('settings.json');
     fetch(settingsUrl).then(function(response) {
         response.json().then(function(settings) {
@@ -7,7 +7,7 @@ function loadDefault(callback) {
     });
 }
 
-function load(callback) {
+/*export*/ function load(callback) {
     chrome.storage.sync.get("settings", function(result) {
         if (result && result.settings) {
             callback(result.settings);
@@ -17,7 +17,7 @@ function load(callback) {
     });
 }
 
-function save(settings) {
+/*export*/ function save(settings) {
     chrome.storage.sync.set({
         "settings": settings
     });
