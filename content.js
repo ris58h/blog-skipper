@@ -1,3 +1,5 @@
+import {load} from "./settings";
+
 let autoDetectComments = false;
 let sites = [];
 let shortcuts = {};
