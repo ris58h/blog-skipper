@@ -21,7 +21,7 @@ before(async () => {
 });
 
 describe('reddit.com', () => {
-    it('should work', async () => {
+    it('next comment root', async () => {
         await page.evaluate('document.querySelector("#thing_t1_dxr2q90").scrollIntoView()');
         const nextTargetId = await page.evaluate('nextTarget(window.scrollY + 1, {autoDetectComments: true}).id');
         assert.equal("thing_t1_dxr6ht6", nextTargetId);
