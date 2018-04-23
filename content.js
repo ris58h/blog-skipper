@@ -24,17 +24,29 @@ load(function (settings) {
 
 let prescrollPosition = null;
 
+function doFullSkip(pageY, params) {
+	prescrollPosition = {
+		'x': window.scrollX,
+		'y': window.scrollY
+	}
+	const headerHeight = doSkip(pageY, params);
+	chrome.runtime.sendMessage({
+		type: 'scroll-parent-header',
+		data: {
+			scrolled: headerHeight
+		}
+	})
+}
+
 let clickY;
+
 document.addEventListener('contextmenu', function(e) {
 	clickY = e.pageY;
 });
+
 chrome.runtime.onMessage.addListener(function(msg) {
 	if (msg.type == 'skip') {
-		prescrollPosition = {
-			'x': window.scrollX,
-			'y': window.scrollY
-		}
-		doSkip(clickY, {autoDetectComments, sites});
+		doFullSkip(clickY, {autoDetectComments, sites});
 	} else if (msg.type == 'scroll-header') {
 		const fixedHeaderHeight = calcFixedHeaderHeight();//TODO sticky header
 		window.scrollBy(0, -(fixedHeaderHeight - msg.data.scrolled));
@@ -52,11 +64,7 @@ document.addEventListener('keyup', function(e) {
 		const fixedHeaderHeight = calcFixedHeaderHeight();
 		const headerHeight = fixedHeaderHeight;
 		const startFrom = window.scrollY + headerHeight + 1; //TODO sticky header
-		prescrollPosition = {
-			'x': window.scrollX,
-			'y': window.scrollY
-		}
-		doSkip(startFrom, {fixedHeaderHeight, autoDetectComments, sites});
+		doFullSkip(startFrom, {fixedHeaderHeight, autoDetectComments, sites});
 	} else if (e.key == shortcuts["undo"]) {
 		if (prescrollPosition != null) {
 			window.scrollTo(prescrollPosition.x, prescrollPosition.y);

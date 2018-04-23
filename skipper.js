@@ -9,9 +9,7 @@ function log(s) {
 
 function doSkip(pageY, params) {
 	const next = nextTarget(pageY, params);
-	if (next != null) {
-		goTo(next, params);
-	}
+	return next == null ? null : goTo(next, params);
 }
 
 function nextTarget(pageY, params = {}) {
@@ -150,12 +148,7 @@ function goTo(element, params = {}) {
 	const stickyHeaderHeight = calcStickyHeaderHeight(element);
 	const headerHeight = fixedHeaderHeight + stickyHeaderHeight;	
 	window.scrollBy(0, -headerHeight);
-	chrome.runtime.sendMessage({
-		type: 'scroll-parent-header',
-		data: {
-			scrolled: headerHeight
-		}
-	})
+	return headerHeight;
 }
 
 function calcFixedHeaderHeight() {
