@@ -1,16 +1,33 @@
-import { Selector } from 'testcafe';
-import fs from 'fs';
+const puppeteer = require('puppeteer');
+const assert = require("assert");
 
-const utilsScript = fs.readFileSync(process.cwd() + '/utils.js').toString()
-const skipperScript = fs.readFileSync(process.cwd() + '/skipper.js').toString()
+let page;
+let browser;
+// const width = 1200;
+// const height = 700;
 
-fixture `reddit.com`
-    .page `./reddit.html`;
-
-test('test', async t => {
-    await t.eval(new Function(utilsScript));
-    await t.eval(new Function(skipperScript));
-    await t.eval(() => {
-        doSkip(0, {});
+before(async () => {
+    browser = await puppeteer.launch({
+        headless: false,
+        slowMo: 100,
+        // args: [`--window-size=${width},${height}`]
     });
+    page = await browser.newPage();
+    // await page.setViewport({ width, height });
+
+    await page.goto("file://" + process.cwd() + "/test/reddit.html");
+    await page.addScriptTag({ path: process.cwd() + '/utils.js' });
+    await page.addScriptTag({ path: process.cwd() + '/skipper.js' });
+});
+
+describe('reddit.com', () => {
+    it('should work', async () => {
+        await page.evaluate('document.querySelector("#thing_t1_dxr2q90").scrollIntoView()');
+        const nextTargetId = await page.evaluate('nextTarget(window.scrollY + 1, {autoDetectComments: true}).id');
+        assert.equal("thing_t1_dxr6ht6", nextTargetId);
+    });
+});
+
+after(() => {
+    browser.close()
 });
