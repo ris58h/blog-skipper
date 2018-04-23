@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const assert = require("assert");
+const helper = require("./helper");
 
 let page;
 let browser;
@@ -22,9 +23,8 @@ before(async () => {
 
 describe('reddit.com', () => {
     it('next comment root', async () => {
-        await page.evaluate('document.querySelector("#thing_t1_dxr2q90").scrollIntoView()');
-        const nextTargetId = await page.evaluate('nextTarget(window.scrollY + 1, {autoDetectComments: true}).id');
-        assert.equal("thing_t1_dxr6ht6", nextTargetId);
+        const id = await helper.evalAgainstNext(page, "#thing_t1_dxr2q90", "id");
+        assert.equal("thing_t1_dxr6ht6", id);
     });
 });
 

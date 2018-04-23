@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const assert = require("assert");
+const helper = require("./helper");
 
 let page;
 let browser;
@@ -22,15 +23,13 @@ before(async () => {
 
 describe('habrahabr.ru', () => {
     it ('next header', async () => {
-        await page.evaluate('document.querySelector("h1").scrollIntoView()')
-        const nextTargetTextContent = await page.evaluate('nextTarget(window.scrollY + 1, {autoDetectComments: true}).textContent');
-        assert.equal("Установка certbot и плагинов", nextTargetTextContent);
+        const textContent = await helper.evalAgainstNext(page, "h1", "textContent");
+        assert.equal("Установка certbot и плагинов", textContent);
     });
 
     it('next comment root', async () => {
-        await page.evaluate('document.querySelector("#comment_10769168").scrollIntoView()');
-        const nextTargetId = await page.evaluate('nextTarget(window.scrollY + 1, {autoDetectComments: true}).id');
-        assert.equal("comment_10769254", nextTargetId);
+        const id = await helper.evalAgainstNext(page, "#comment_10769168", "id");
+        assert.equal("comment_10769254", id);
     });
 });
 
