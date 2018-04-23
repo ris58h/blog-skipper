@@ -1,7 +1,7 @@
 {
     "name": "blog-skipper",
     "scripts": {
-        "test": "mocha --timeout 10000"
+        "test": "mocha"
     },
     "devDependencies": {
         "mocha": "^5.1.1",
