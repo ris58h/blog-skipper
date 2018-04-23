@@ -1,4 +1,4 @@
-describe('d3.com', () => {
+describe('d3.ru', () => {
     let page;
 
     before(async () => {
