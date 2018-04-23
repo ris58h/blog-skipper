@@ -9,13 +9,16 @@ describe('habrahabr.ru', () => {
     });
 
     it('next header', async () => {
-        const textContent = await helper.evalAgainstNext(page, "h1", "textContent");
+        const from = await helper.evalAgainstElement(page, "h1", "getBoundingClientRect().top");
+        const textContent = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).textContent`);
         assert.equal("Установка certbot и плагинов", textContent);
     });
 
     it('next comment root', async () => {
-        const id = await helper.evalAgainstNext(page, "#comment_10769168", "id");
-        assert.equal("comment_10769254", id);
+        const from = await helper.evalAgainstElement(page, "#comment_10769168", "getBoundingClientRect().top");
+        const actualTop = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).getBoundingClientRect().top`);
+        const expectedTop = await helper.evalAgainstElement(page, "#comment_10769254", "getBoundingClientRect().top");
+        assert.equal(expectedTop, actualTop);
     });
 
     after(async () => {

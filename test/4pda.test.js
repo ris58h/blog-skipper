@@ -9,13 +9,16 @@ describe('4pda.ru', () => {
     });
 
     it('next header', async () => {
-        const textContent = await helper.evalAgainstNext(page, "h2", "textContent");
+        const from = await helper.evalAgainstElement(page, "h2", "getBoundingClientRect().top");
+        const textContent = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).textContent`);
         assert.equal("Новые подробности о Xiaomi Mi6X и Mi Pad 4", textContent);
     });
 
     it('next comment root', async () => {
-        const id = await helper.evalAgainstNext(page, "#comment-4750748", "firstChild.id");
-        assert.equal("comment4750749", id);
+        const from = await helper.evalAgainstElement(page, "#comment-4750748", "getBoundingClientRect().top");
+        const actualTop = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).getBoundingClientRect().top`);
+        const expectedTop = await helper.evalAgainstElement(page, "#comment-4750749", "getBoundingClientRect().top");
+        assert.equal(expectedTop, actualTop);
     });
 
     after(async () => {

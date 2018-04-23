@@ -9,7 +9,8 @@ describe('youtube.com', () => {
     });
 
     it('next comment root', async () => {
-        const actualTop = await helper.evalAgainstNext(page, "ytd-comment-thread-renderer:nth-child(4)", "getBoundingClientRect().top");
+        const from = await helper.evalAgainstElement(page, "ytd-comment-thread-renderer:nth-child(4)", "getBoundingClientRect().top");
+        const actualTop = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).getBoundingClientRect().top`);
         const expectedTop = await helper.evalAgainstElement(page, "ytd-comment-thread-renderer:nth-child(5)", "getBoundingClientRect().top");
         assert.equal(expectedTop, actualTop);
     });

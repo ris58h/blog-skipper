@@ -9,13 +9,16 @@ describe('geektimes.ru', () => {
     });
 
     it('next header', async () => {
-        const textContent = await helper.evalAgainstNext(page, "h1", "textContent");
+        const from = await helper.evalAgainstElement(page, "h1", "getBoundingClientRect().top");
+        const textContent = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).textContent`);
         assert.equal("STL", textContent);
     });
 
     it('next comment root', async () => {
-        const id = await helper.evalAgainstNext(page, "#comment_10743077", "id");
-        assert.equal("comment_10743481", id);
+        const from = await helper.evalAgainstElement(page, "#comment_10743077", "getBoundingClientRect().top");
+        const actualTop = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).getBoundingClientRect().top`);
+        const expectedTop = await helper.evalAgainstElement(page, "#comment_10743481", "getBoundingClientRect().top");
+        assert.equal(expectedTop, actualTop);
     });
 
     after(async () => {
