@@ -1,14 +1,16 @@
 import { Selector } from 'testcafe';
 import fs from 'fs';
 
-const contentScript = fs.readFileSync(process.cwd() + '/content.js').toString()
+const utilsScript = fs.readFileSync(process.cwd() + '/utils.js').toString()
+const skipperScript = fs.readFileSync(process.cwd() + '/skipper.js').toString()
 
 fixture `reddit.com`
     .page `./reddit.html`;
 
-test('My first test', async t => {
-    await t
-        .eval(new Function(contentScript));
-    await t
-        .eval(() => nextTarget(300));
+test('test', async t => {
+    await t.eval(new Function(utilsScript));
+    await t.eval(new Function(skipperScript));
+    await t.eval(() => {
+        doSkip(0, {});
+    });
 });
