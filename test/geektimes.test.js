@@ -1,3 +1,5 @@
+const helper = require("./helper");
+
 describe('geektimes.ru', () => {
     let page;
 
@@ -9,16 +11,11 @@ describe('geektimes.ru', () => {
     });
 
     it('next header', async () => {
-        const from = await helper.evalAgainstElement(page, "h1", "getBoundingClientRect().top");
-        const textContent = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).textContent`);
-        assert.equal("STL", textContent);
+        await helper.testNextTextContent(page, "h1", "STL");
     });
 
     it('next comment root', async () => {
-        const from = await helper.evalAgainstElement(page, "#comment_10743077", "getBoundingClientRect().top");
-        const actualTop = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).getBoundingClientRect().top`);
-        const expectedTop = await helper.evalAgainstElement(page, "#comment_10743481", "getBoundingClientRect().top");
-        assert.equal(expectedTop, actualTop);
+        await helper.testNextTop(page, "#comment_10743077", "#comment_10743481");
     });
 
     after(async () => {

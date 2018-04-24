@@ -1,3 +1,5 @@
+const helper = require("./helper");
+
 describe('livejournal.com', () => {
     let page;
 
@@ -9,16 +11,11 @@ describe('livejournal.com', () => {
     });
 
     it('next header', async () => {
-        const from = await helper.evalAgainstElement(page, "h2", "getBoundingClientRect().top");
-        const textContent = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).textContent`);
-        assert.equal("Мотивация и возможности", textContent);
+        await helper.testNextTextContent(page, "h2", "Мотивация и возможности");
     });
 
     it('next comment root', async () => {
-        const from = await helper.evalAgainstElement(page, "#t7122048", "getBoundingClientRect().top");
-        const actualTop = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).getBoundingClientRect().top`);
-        const expectedTop = await helper.evalAgainstElement(page, "#t7122304", "getBoundingClientRect().top");
-        assert.equal(expectedTop, actualTop);
+        await helper.testNextTop(page, "#t7122048", "#t7122304");      
     });
 
     after(async () => {

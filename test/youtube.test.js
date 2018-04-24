@@ -1,3 +1,5 @@
+const helper = require("./helper");
+
 describe('youtube.com', () => {
     let page;
 
@@ -9,10 +11,7 @@ describe('youtube.com', () => {
     });
 
     it('next comment root', async () => {
-        const from = await helper.evalAgainstElement(page, "ytd-comment-thread-renderer:nth-child(4)", "getBoundingClientRect().top");
-        const actualTop = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).getBoundingClientRect().top`);
-        const expectedTop = await helper.evalAgainstElement(page, "ytd-comment-thread-renderer:nth-child(5)", "getBoundingClientRect().top");
-        assert.equal(expectedTop, actualTop);
+        await helper.testNextTop(page, "ytd-comment-thread-renderer:nth-child(4)", "ytd-comment-thread-renderer:nth-child(5)");
     });
 
     after(async () => {

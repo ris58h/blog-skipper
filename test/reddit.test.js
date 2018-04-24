@@ -1,3 +1,5 @@
+const helper = require("./helper");
+
 describe('reddit.com', () => {
     let page;
 
@@ -9,10 +11,7 @@ describe('reddit.com', () => {
     });
 
     it('next comment root', async () => {
-        const from = await helper.evalAgainstElement(page, "#thing_t1_dxr2q90", "getBoundingClientRect().top");
-        const actualTop = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).getBoundingClientRect().top`);
-        const expectedTop = await helper.evalAgainstElement(page, "#thing_t1_dxr6ht6", "getBoundingClientRect().top");
-        assert.equal(expectedTop, actualTop);
+        await helper.testNextTop(page, "#thing_t1_dxr2q90", "#thing_t1_dxr6ht6");
     });
 
     after(async () => {

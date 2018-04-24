@@ -1,3 +1,5 @@
+const helper = require("./helper");
+
 describe("dataworld.info", () => {
     let page;
 
@@ -9,16 +11,11 @@ describe("dataworld.info", () => {
     });
 
     it('next header', async () => {
-        const from = await helper.evalAgainstElement(page, "h2", "getBoundingClientRect().top");
-        const textContent = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).textContent`);
-        assert.equal("Есть ли отличия от AdvCash и Perfect Money?", textContent);
+        await helper.testNextTextContent(page, "h2", "Есть ли отличия от AdvCash и Perfect Money?");
     });
 
     it('next comment root', async () => {
-        const from = await helper.evalAgainstElement(page, "#comment-9267", "getBoundingClientRect().top");
-        const actualTop = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).getBoundingClientRect().top`);
-        const expectedTop = await helper.evalAgainstElement(page, "#comment-9206", "getBoundingClientRect().top");
-        assert.equal(expectedTop, actualTop);
+        await helper.testNextTop(page, "#comment-9267", "#comment-9206");
     });
 
     after(async () => {

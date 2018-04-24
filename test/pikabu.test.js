@@ -1,3 +1,5 @@
+const helper = require("./helper");
+
 describe('pikabu.ru', () => {
     let page;
 
@@ -9,10 +11,7 @@ describe('pikabu.ru', () => {
     });
 
     it('next comment root', async () => {
-        const from = await helper.evalAgainstElement(page, "#comment_111899576", "getBoundingClientRect().top");
-        const actualTop = await page.evaluate(`nextTarget(${from},  {autoDetectComments: true}).getBoundingClientRect().top`);
-        const expectedTop = await helper.evalAgainstElement(page, "#comment_111899341", "getBoundingClientRect().top");
-        assert.equal(expectedTop, actualTop);
+        await helper.testNextTop(page, "#comment_111899576", "#comment_111899341");        
     });
 
     after(async () => {
