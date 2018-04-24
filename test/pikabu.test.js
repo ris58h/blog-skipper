@@ -4,10 +4,7 @@ describe('pikabu.ru', () => {
     let page;
 
     before(async () => {
-        page = await browser.newPage();
-        await page.goto("file://" + process.cwd() + "/test/pikabu.html");
-        await page.addScriptTag({ path: process.cwd() + '/utils.js' });
-        await page.addScriptTag({ path: process.cwd() + '/skipper.js' });
+        page = await helper.createPage(browser, "pikabu.html");
     });
 
     it('next comment root', async () => {

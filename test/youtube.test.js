@@ -4,10 +4,7 @@ describe('youtube.com', () => {
     let page;
 
     before(async () => {
-        page = await browser.newPage();
-        await page.goto("file://" + process.cwd() + "/test/youtube.html");
-        await page.addScriptTag({ path: process.cwd() + '/utils.js' });
-        await page.addScriptTag({ path: process.cwd() + '/skipper.js' });
+        page = await helper.createPage(browser, "youtube.html");
     });
 
     it('next comment root', async () => {

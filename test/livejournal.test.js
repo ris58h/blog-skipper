@@ -4,10 +4,7 @@ describe('livejournal.com', () => {
     let page;
 
     before(async () => {
-        page = await browser.newPage();
-        await page.goto("file://" + process.cwd() + "/test/livejournal.html");
-        await page.addScriptTag({ path: process.cwd() + '/utils.js' });
-        await page.addScriptTag({ path: process.cwd() + '/skipper.js' });
+        page = await helper.createPage(browser, "livejournal.html");
     });
 
     it('next header', async () => {

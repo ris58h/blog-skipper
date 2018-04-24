@@ -4,10 +4,7 @@ describe('habrahabr.ru', () => {
     let page;
 
     before(async () => {
-        page = await browser.newPage();
-        await page.goto("file://" + process.cwd() + "/test/habrahabr.html");
-        await page.addScriptTag({ path: process.cwd() + '/utils.js' });
-        await page.addScriptTag({ path: process.cwd() + '/skipper.js' });
+        page = await helper.createPage(browser, "habrahabr.html");
     });
 
     it('next header', async () => {

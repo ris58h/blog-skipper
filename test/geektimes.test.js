@@ -4,10 +4,7 @@ describe('geektimes.ru', () => {
     let page;
 
     before(async () => {
-        page = await browser.newPage();
-        await page.goto("file://" + process.cwd() + "/test/geektimes.html");
-        await page.addScriptTag({ path: process.cwd() + '/utils.js' });
-        await page.addScriptTag({ path: process.cwd() + '/skipper.js' });
+        page = await helper.createPage(browser, "geektimes.html");
     });
 
     it('next header', async () => {

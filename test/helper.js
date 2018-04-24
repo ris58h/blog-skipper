@@ -1,5 +1,13 @@
 const assert = require("assert");
 
+async function createPage(browser, name) {
+    const page = await browser.newPage();
+    await page.goto("file://" + process.cwd() + `/test/${name}`);
+    await page.addScriptTag({ path: process.cwd() + '/utils.js' });
+    await page.addScriptTag({ path: process.cwd() + '/skipper.js' });
+    return page;
+}
+
 async function evalAgainstElement(page, elementSelector, evalExpression) {
     return page.evaluate(`document.querySelector("${elementSelector}").` + evalExpression);
 }
@@ -19,6 +27,7 @@ async function testNextTop(page, fromSelector, nextSelector) {
     await testNext(page, fromSelector, "getBoundingClientRect().top", expectedTop);
 }
 
+module.exports.createPage = createPage;
 module.exports.evalAgainstElement = evalAgainstElement;
 module.exports.testNext = testNext;
 module.exports.testNextTextContent = testNextTextContent;
