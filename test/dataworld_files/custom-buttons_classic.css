@@ -1,0 +1,20 @@
+.social-likes__counter_livejournal {
+	border-color: #CADCF3;
+}
+.social-likes__counter_livejournal:after {
+	color: #fff;
+}
+
+.social-likes__counter_linkedin {
+	border-color: #0077b5;
+}
+.social-likes__counter_linkedin:after {
+	color: #fff;
+}
+
+.social-likes__counter_email {
+	border-color: #5a5;
+}
+.social-likes__counter_email:after {
+	color: #fff;
+}
