@@ -1,10 +1,11 @@
 const assert = require("assert");
+const fs = require("fs");
 
 async function createPage(browser, name) {
     const page = await browser.newPage();
     await page.goto("file://" + process.cwd() + `/test/${name}`);
-    await page.addScriptTag({ path: process.cwd() + '/utils.js' });
-    await page.addScriptTag({ path: process.cwd() + '/skipper.js' });
+    await page.evaluate(fs.readFileSync(process.cwd() + '/utils.js', 'utf8'));
+    await page.evaluate(fs.readFileSync(process.cwd() + '/skipper.js', 'utf8'));
     return page;
 }
 
