@@ -8,7 +8,7 @@ describe('news.ycombinator.com', () => {
     });
 
     it('next comment root', async () => {
-        await helper.testNextTop(page, "#unv_16909828", "#unv_16909655");
+        await helper.testNextTop(page, "#unv_16909828", "#unv_16909655", ".comment-tree .comhead");
     });
 
     after(async () => {
