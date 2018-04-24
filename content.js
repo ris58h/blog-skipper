@@ -3,7 +3,7 @@
 // import {guessComentSelector} from "./skipper"
 
 let autoDetectComments = false;
-let sites = [];
+let commentSelector = null;
 let shortcuts = {};
 
 //TODO: race condition
@@ -11,12 +11,15 @@ load(function (settings) {
 	if (settings.autoDetectComments != null) {
 		autoDetectComments = settings.autoDetectComments;
 	}
-	sites = settings.sites.map(site => {
-		return {
-			urlRegex: new RegExp("^" + site.urlPattern.replace(/\*/g, ".*") + "$"),
-			commentSelector: site.commentSelector
+	if (settings.sites) {
+		for (const site of settings.sites) {
+			const urlRegex = new RegExp("^" + site.urlPattern.replace(/\*/g, ".*") + "$");
+			if (urlRegex.test(window.location.href) && site.commentSelector) {
+				commentSelector = site.commentSelector;
+				break;
+			}
 		}
-	});
+	}
 	if (settings.shortcuts) {
 		shortcuts = settings.shortcuts;
 	}
@@ -46,7 +49,7 @@ document.addEventListener('contextmenu', function(e) {
 
 chrome.runtime.onMessage.addListener(function(msg) {
 	if (msg.type == 'skip') {
-		doFullSkip(clickY, {autoDetectComments, sites});
+		doFullSkip(clickY, {autoDetectComments, commentSelector});
 	} else if (msg.type == 'scroll-header') {
 		const fixedHeaderHeight = calcFixedHeaderHeight();//TODO sticky header
 		window.scrollBy(0, -(fixedHeaderHeight - msg.data.scrolled));
@@ -64,7 +67,7 @@ document.addEventListener('keyup', function(e) {
 		const fixedHeaderHeight = calcFixedHeaderHeight();
 		const headerHeight = fixedHeaderHeight;
 		const startFrom = window.scrollY + headerHeight + 1; //TODO sticky header
-		doFullSkip(startFrom, {fixedHeaderHeight, autoDetectComments, sites});
+		doFullSkip(startFrom, {fixedHeaderHeight, autoDetectComments, commentSelector});
 	} else if (e.key == shortcuts["undo"]) {
 		if (prescrollPosition != null) {
 			window.scrollTo(prescrollPosition.x, prescrollPosition.y);

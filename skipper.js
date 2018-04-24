@@ -16,18 +16,13 @@ function nextTarget(pageY, params = {}) {
 	const elements = [];
 	
 	let commentsBounds = null;
-    let commentSelector = null;
-    if (params.sites) {
-        for (const site of params.sites) {
-            if (site.urlRegex.test(window.location.href) && site.commentSelector) {
-                commentSelector = {
-                    selector: site.commentSelector,
-                    parent: 0,
-                };
-                break;
-            }
-        }
-    }
+	let commentSelector = null;
+	if (params.commentSelector) {
+		commentSelector = {
+			selector: params.commentSelector,
+			parent: 0,
+		};
+	}
 	if (!commentSelector && params.autoDetectComments) {
 		commentSelector = guessComentSelector();
 	}
