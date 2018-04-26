@@ -310,8 +310,7 @@ describe("sites", () => {
     async function createPage(browser, name) {
         const page = await browser.newPage();
         await page.goto("file://" + process.cwd() + `/test/sites_data/${name}`);
-        await page.evaluate(fs.readFileSync(process.cwd() + '/utils.js', 'utf8'));
-        await page.evaluate(fs.readFileSync(process.cwd() + '/skipper.js', 'utf8'));
+        await page.evaluate(fs.readFileSync(process.cwd() + '/core.js', 'utf8'));
         return page;
     }
     
