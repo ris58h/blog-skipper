@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ris58h/blog-skipper.svg?branch=master)](https://travis-ci.org/ris58h/blog-skipper)
+
 # About
 Blog Skipper is a Web Extension to skip longreads and comment threads. It works great for 'holy wars' and won't let your fingers get tired \o/.
 
