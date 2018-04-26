@@ -9,6 +9,7 @@ describe("sites", () => {
     before(async () => {
         browser = await puppeteer.launch({
             // headless: false,
+            args: ['--no-sandbox']
         });
         const settings = JSON.parse(fs.readFileSync(process.cwd() + '/settings.json', 'utf8'));
         getParamsForUrl = (url) => {
