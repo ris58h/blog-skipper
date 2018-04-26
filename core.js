@@ -172,20 +172,20 @@ function indexOfSorted(elements, pageY) { //TODO binary search
 			}
 		}
 		log(stats);
-		const topSelectors = topKeys(stats);
-		log(topSelectors);
+		const bestSelectors = bestKeys(stats);
+		log(bestSelectors);
 		let bestSelector = null;
-		if (topSelectors.length == 0) {
+		if (bestSelectors.length == 0) {
 			// do nothing
-		} else if (topSelectors.length == 1) {
+		} else if (bestSelectors.length == 1) {
 			bestSelector = {
-				selector: topSelectors[0],
+				selector: bestSelectors[0],
 				parent: 0,
 			};
 		} else {
 			// Lowest Common Ancestor & the closest comment element
 			let lcaIndex = 0;
-			let closestSelector = topSelectors[0];
+			let closestSelector = bestSelectors[0];
 			let parentGap = 0;
 			const path = []; {
 				let element = document.querySelector(closestSelector);
@@ -193,8 +193,8 @@ function indexOfSorted(elements, pageY) { //TODO binary search
 					path.push(element);
 				} while ((element = element.parentElement) != null);
 			}
-			for (let i = 1; i < topSelectors.length; i++) {
-				const selector = topSelectors[i];
+			for (let i = 1; i < bestSelectors.length; i++) {
+				const selector = bestSelectors[i];
 				let element = document.querySelector(selector);
 				let parentCount = -1;
 				do {
@@ -296,8 +296,7 @@ function siblingIndex(element) {
 	return i;
 }
 
-// TODO better name for this function.
-function topKeys(stats) {
+function bestKeys(stats) {
 	const keys = Object.keys(stats);
 	if (keys.length == 0) {
 		return [];
