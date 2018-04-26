@@ -9,7 +9,7 @@ function log(s) {
 
 function doSkip(pageY, params) {
 	const next = nextTarget(pageY, params);
-	return next == null ? null : goTo(next, params);
+	return next == null ? null : goTo(next);
 }
 
 function nextTarget(pageY, params = {}) {
@@ -136,46 +136,40 @@ function compareTop(a, b) {
 	return aRect.top - bRect.top;	
 }
 
-function goTo(element, params = {}) {
+function goTo(element) {
 	element.scrollIntoView();
 
-	const fixedHeaderHeight = params.fixedHeaderHeight == null ? calcFixedHeaderHeight() : params.fixedHeaderHeight;
-	const stickyHeaderHeight = calcStickyHeaderHeight(element);
-	const headerHeight = fixedHeaderHeight + stickyHeaderHeight;	
+	const headerHeight = calcHeaderHeight();
 	window.scrollBy(0, -headerHeight);
 	return headerHeight;
 }
 
-function calcFixedHeaderHeight() {
+function calcHeaderHeight() {
 	const maxHeight = window.innerHeight / 2;
 	const minWidth = window.innerWidth / 2;
 	let lowestBottom = 0;
 	for (const e of document.body.querySelectorAll("div,nav,header")) {
 		if (e.offsetHeight > 0
 			&& e.offsetHeight < maxHeight
-			&& e.offsetWidth > minWidth
-			&& window.getComputedStyle(e, null).getPropertyValue('position') == 'fixed') {
-			const bottom = e.getBoundingClientRect().bottom;
-			if (bottom < window.innerHeight / 2 && bottom > lowestBottom) {
-				lowestBottom = bottom;
+			&& e.offsetWidth > minWidth) {
+			const style = window.getComputedStyle(e, null);
+			const position = style.getPropertyValue('position');
+			if (position == 'fixed' || position == 'sticky') {
+				const rect = e.getBoundingClientRect();
+				if (position == 'sticky') {
+					const stuck = rect.top == parseFloat(e.style.top);
+					if (!stuck) {
+						continue;
+					}
+				}
+				const bottom = rect.bottom;
+				if (bottom < window.innerHeight / 2 && bottom > lowestBottom) {
+					lowestBottom = bottom;
+				}
 			}
 		}
 	}
 	return lowestBottom;
-}
-
-function calcStickyHeaderHeight(element) {
-	let parent = element;
-	while ((parent = parent.parentElement) != null) {
-		for (const e of parent.children) {
-			if (e.offsetHeight > 0
-				&& e.offsetHeight < e.offsetWidth
-				&& window.getComputedStyle(e, null).getPropertyValue('position') == 'sticky') {
-				return e.offsetHeight;
-			}
-		}
-	}
-	return 0;
 }
 
 function indexOfSorted(elements, pageY) { //TODO binary search

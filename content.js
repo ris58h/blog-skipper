@@ -27,12 +27,12 @@ load(function (settings) {
 
 let prescrollPosition = null;
 
-function doFullSkip(pageY, params) {
+function doFullSkip(pageY) {
 	prescrollPosition = {
 		'x': window.scrollX,
 		'y': window.scrollY
 	}
-	const headerHeight = doSkip(pageY, params);
+	const headerHeight = doSkip(pageY, {autoDetectComments, commentSelector});
 	chrome.runtime.sendMessage({
 		type: 'scroll-parent-header',
 		data: {
@@ -49,10 +49,10 @@ document.addEventListener('contextmenu', function(e) {
 
 chrome.runtime.onMessage.addListener(function(msg) {
 	if (msg.type == 'skip') {
-		doFullSkip(clickY, {autoDetectComments, commentSelector});
+		doFullSkip(clickY);
 	} else if (msg.type == 'scroll-header') {
-		const fixedHeaderHeight = calcFixedHeaderHeight();//TODO sticky header
-		window.scrollBy(0, -(fixedHeaderHeight - msg.data.scrolled));
+		const headerHeight = calcHeaderHeight();
+		window.scrollBy(0, -(headerHeight - msg.data.scrolled));
 	}
 });
 
@@ -64,10 +64,9 @@ document.addEventListener('keyup', function(e) {
 				return;
 	}
 	if (e.key == shortcuts["skip"]) {
-		const fixedHeaderHeight = calcFixedHeaderHeight();
-		const headerHeight = fixedHeaderHeight;
-		const startFrom = window.scrollY + headerHeight + 1; //TODO sticky header
-		doFullSkip(startFrom, {fixedHeaderHeight, autoDetectComments, commentSelector});
+		const headerHeight = calcHeaderHeight();
+		const startFrom = window.scrollY + headerHeight + 1;
+		doFullSkip(startFrom);
 	} else if (e.key == shortcuts["undo"]) {
 		if (prescrollPosition != null) {
 			window.scrollTo(prescrollPosition.x, prescrollPosition.y);
