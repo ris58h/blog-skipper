@@ -3,3 +3,5 @@ node_js:
  - "9"
 script: 
  - npm test
+addons:
+  chrome: stable
