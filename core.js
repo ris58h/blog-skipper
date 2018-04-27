@@ -288,7 +288,7 @@ function containsSelector(attr, s) {
 
 function siblingIndex(element) {
 	let i = 1;
-	while(element = element.previousSibling) {
+	while((element = element.previousSibling)) {
 		if (element.nodeType == 1) {
 			i++;
 		}
