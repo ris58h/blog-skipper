@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" dir="ltr" class="yui3-js-enabled" lang="en"><div id="yui3-css-stamp" style="position: absolute !important; visibility: hidden !important" class=""></div><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script charset="utf-8" id="yui_3_10_3_1_1524933450860_2" src="bugs.launchpad.net_files/a_004" async=""></script><script charset="utf-8" id="yui_3_10_3_1_1524933450860_3" src="bugs.launchpad.net_files/a_002" async=""></script><script charset="utf-8" id="yui_3_10_3_1_1524933450860_4" src="bugs.launchpad.net_files/a_006" async=""></script><script charset="utf-8" id="yui_3_10_3_1_1524933450860_40" src="bugs.launchpad.net_files/a_005" async=""></script><script charset="utf-8" id="yui_3_10_3_1_1524933450860_44" src="bugs.launchpad.net_files/a" async=""></script><!-- base href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+index" -->
+
+    <meta charset="UTF-8">
+    <title>Bug #566075 “no way to specify the password” : Bugs : linphone package : Ubuntu</title>
+    <link rel="shortcut icon" href="https://bugs.launchpad.net/@@/launchpad.png">
+    <link rel="canonical" href="https://bugs.launchpad.net/bugs/566075">
+    
+      <link rel="alternate" type="application/atom+xml" href="http://feeds.launchpad.net/bugs/566075/bug.atom" title="Bug 566075 Feed">
+    
+
+    
+  
+  <link type="text/css" rel="stylesheet" media="screen, print" href="bugs.launchpad.net_files/combo.css">
+
+
+    
+
+    
+      <meta name="description" content="Binary package hint: linphone
+
+I don't see a way for the current lucid linphone 3.2.1-1ubuntu4 to specify a password for a SIP account.  Registration with the SIP server naturally fails.">
+    
+
+    
+  
+
+  
+  
+  <script type="text/javascript">
+    var LP = {
+        cache: {},
+        links: {}
+    };
+  </script><style>@media print {#ghostery-purple-box {display:none !important}}</style>
+
+  
+
+  <script type="text/javascript">var cookie_scope = '; Path=/; Secure; Domain=.launchpad.net';</script>
+
+   <script type="text/javascript" src="bugs.launchpad.net_files/a_003"></script>
+   <script type="text/javascript">
+        var raw = null;
+        if (LP.devmode) {
+           raw = 'raw';
+        }
+        YUI.GlobalConfig = {
+            combine: true,
+            comboBase: '/+combo/rev18623/?',
+            root: 'yui/',
+            filter: raw,
+            debug: false,
+            fetchCSS: false,
+            maxURLLength: 2000,
+            groups: {
+                lp: {
+                    combine: true,
+                    base: '/+combo/rev18623/?lp/',
+                    comboBase: '/+combo/rev18623/?',
+                    root: 'lp/',
+                    // comes from including lp/meta.js
+                    modules: LP_MODULES,
+                    fetchCSS: false
+                }
+            }
+        }</script>
+
+  <script type="text/javascript">
+      // we need this to create a single YUI instance all events and code
+      // talks across. All instances of YUI().use should be based off of
+      // LPJS instead.
+      var LPJS = new YUI();
+  </script>
+
+
+
+    <script id="base-layout-load-scripts" type="text/javascript">
+        //<![CDATA[
+        LPJS.use('base', 'node', 'console', 'event',
+            'oop', 'lp', 'lp.app.foldables','lp.app.sorttable',
+            'lp.app.inlinehelp', 'lp.app.links', 'lp.app.longpoll',
+            'lp.bugs.bugtask_index', 'lp.bugs.subscribers',
+            'lp.app.ellipsis', 'lp.code.branchmergeproposal.diff',
+            'lp.views.global',
+             function(Y) {
+
+            Y.on("domready", function () {
+                var global_view = new Y.lp.views.Global();
+                global_view.render();
+
+                Y.lp.app.sorttable.SortTable.init();
+                Y.lp.app.inlinehelp.init_help();
+                Y.lp.activate_collapsibles();
+                Y.lp.app.foldables.activate();
+                Y.lp.app.links.check_valid_lp_links();
+                // Longpolling will only start if
+                // LP.cache.longpoll is populated.
+                // We use Y.later to work around a Safari/Chrome 'feature':
+                // The mouse cursor stays 'busy' until all the requests started during
+                // page load are finished.  Hence we want the long poll request to start
+                // right *after* the page has loaded.
+                Y.later(0, Y.lp.app.longpoll, Y.lp.app.longpoll.setupLongPollManager);
+
+            });
+
+            Y.on('lp:context:web_link:changed', function(e) {
+                  window.location = e.new_value;
+            });
+        });
+        //]]>
+    </script>
+    <script id="base-helper-functions" type="text/javascript">
+         //<![CDATA[
+        // This code is pulled from lp.js that needs to be available on every
+        // request. Pulling here to get it outside the scope of the YUI block.
+        function setFocusByName(name) {
+            // Focus the first element matching the given name which can be focused.
+            var nodes = document.getElementsByName(name);
+            var i, node;
+            for (i = 0; i < nodes.length; i++) {
+                node = nodes[i];
+                if (node.focus) {
+                    try {
+                        // Trying to focus a hidden element throws an error in IE8.
+                        if (node.offsetHeight !== 0) {
+                            node.focus();
+                        }
+                    } catch (e) {
+                        LPJS.use('console', function(Y) {
+                            Y.log('In setFocusByName(<' +
+                                node.tagName + ' type=' + node.type + '>): ' + e);
+                        });
+                    }
+                    break;
+                }
+            }
+        }
+
+        function selectWidget(widget_name, event) {
+          if (event && (event.keyCode === 9 || event.keyCode === 13)) {
+              // Avoid firing if user is tabbing through or simply pressing
+              // enter to submit the form.
+              return;
+          }
+          document.getElementById(widget_name).checked = true;
+        }
+        //]]>
+    </script>
+
+    
+      
+      <script type="text/javascript" id="available-official-tags-js">var available_official_tags = ["a11y", "appstream", "artful", "bionic", "bisect-done", "bitesize", "cherry-pick", "desktop-file", "dist-upgrade", "ftbfs", "hw-specific", "kernel-bug", "manpage", "metabug", "multiarch", "needs-bisect", "needs-design", "needs-packaging", "needs-reassignment", "package-conflict", "packaging", "patch", "patch-accepted-debian", "patch-accepted-upstream", "patch-forwarded-debian", "patch-forwarded-upstream", "patch-needswork", "patch-rejected", "patch-rejected-debian", "patch-rejected-upstream", "performing-bisect", "py2-removal", "qt4-removal", "regression-proposed", "regression-release", "regression-update", "string-fix", "suspend-resume", "systemd-boot", "testcase", "touch", "trusty", "unmetdeps", "upgrade-software-version", "verification-done-artful", "verification-done-bionic", "verification-done-trusty", "verification-done-xenial", "verification-failed-artful", "verification-failed-bionic", "verification-failed-trusty", "verification-failed-xenial", "wayland", "xenial"];</script>
+      <script type="text/javascript">
+        LPJS.use('base', 'node', 'oop', 'event', 'lp.bugs.bugtask_index',
+                  'lp.bugs.subscribers', 'lp.code.branchmergeproposal.diff',
+                  'lp.app.comment', function(Y) {
+            Y.on('domready', function() {
+                Y.lp.code.branchmergeproposal.diff.connect_diff_links();
+                Y.lp.bugs.bugtask_index.setup_bugtask_index();
+                Y.lp.bugs.bugtask_index.setup_bugtask_table();
+                LP.cache.comment_context = LP.cache.bug;
+                var cl = new Y.lp.app.comment.CommentList();
+                cl.render();
+                var sl = new Y.lp.bugs.subscribers.createBugSubscribersLoader({
+                    container_box: '#other-bug-subscribers',
+                    subscribers_details_view:
+                        '/+bug-portlet-subscribers-details',
+                    subscribe_someone_else_link: '.menu-link-addsubscriber'
+                }, window);
+            });
+         });
+      </script>
+      <style type="text/css">
+        /* Align the 'add comment' link to the right of the comment box. */
+        #add-comment-form textarea { width: 100%; }
+        #add-comment-form { max-width: 60em; padding-bottom: 4em; }
+        #add-comment-form .actions {float: right;}
+        .buglink-summary dd { font-size: 10px; }
+        a#privacy-link:link:hover, a#privacy-link:visited:hover {text-decoration:none;}
+      </style>
+      <style type="text/css">
+        .yui3-overlay .value label  {
+          /* It normally makes sense for form labels to be bold, but since
+          this form consists only of radio buttons, there's nothing but labels
+          so we just get wall-to-wall bold. */
+          font-weight: normal !important;
+        }
+      </style>
+    
+    
+  </head>
+
+  <body id="document" itemscope="" itemtype="http://schema.org/WebPage" class="tab-bugs
+      main_side
+      public
+      yui3-skin-sam"><div id="yui_3_10_3_1_1524933450860_95" class="yui3-widget yui3-commentlist"><div id="yui_3_10_3_1_1524933450860_97" class="yui3-commentlist-content"></div></div>
+          
+          
+    <div class="yui-d0">
+      <div id="locationbar" class="login-logout">
+        
+
+<div id="logincontrol"><a href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+login">Log in / Register</a></div>
+
+
+
+      </div><!--id="locationbar"-->
+
+      <div id="watermark" class="watermark-apps-portlet">
+        <div>
+          <a href="https://launchpad.net/ubuntu"><img alt="" src="bugs.launchpad.net_files/64_logo.png" width="64" height="64"></a>
+        </div>
+        <div class="wide">
+          <h2 id="watermark-heading"><a href="https://launchpad.net/ubuntu">Ubuntu</a><br><a href="https://launchpad.net/ubuntu/+source/linphone">linphone package</a></h2>
+        </div>
+        
+  <!-- Application Menu -->
+  <ul class="facetmenu">
+    
+      
+      <li class="overview"><a href="https://launchpad.net/ubuntu/+source/linphone">Overview</a></li>
+      
+    
+    
+      
+      <li class="branches"><a href="https://code.launchpad.net/ubuntu/+source/linphone">Code</a></li>
+      
+    
+    
+      <li class="bugs active"><a href="https://bugs.launchpad.net/ubuntu/+source/linphone">Bugs</a></li>
+      
+      
+    
+    
+      
+      
+      <li class="specifications disabled-tab"><span>Blueprints</span></li>
+    
+    
+      
+      <li class="translations"><a href="https://translations.launchpad.net/ubuntu/+source/linphone">Translations</a></li>
+      
+    
+    
+      
+      <li class="answers"><a href="https://answers.launchpad.net/ubuntu/+source/linphone">Answers</a></li>
+      
+    
+  </ul>
+
+      </div>
+
+      <div class="yui-t4">
+        <div id="maincontent" class="yui-main">
+          <div class="yui-b" dir="ltr">
+            <div class="context-publication">
+              
+      <h1 id="edit-title">
+<span class="yui3-editable_text-text ellipsis" style="max-width: 95%;">
+    no way to specify the password
+</span>
+  
+</h1>
+
+
+
+    
+              
+
+              <div id="registration" class="registering">
+                
+      Bug #566075 reported by
+      <a href="https://launchpad.net/~r0lf" class="sprite person">Rolf Leggewie</a>
+      <span title="2010-04-18 16:45:15 UTC">on 2010-04-18</span>
+    
+              </div>
+            </div>
+
+            
+            <div id="request-notifications">
+              
+            </div>
+
+            
+              <div>
+
+      
+
+      <div id="bug-is-duplicate">
+          
+      </div>
+      
+
+      <div style="float: right;">
+        <span><a href="https://bugs.launchpad.net/+help-bugs/bug-heat.html" target="help" class="sprite flame help">18</a></span>
+      </div>
+
+      
+
+
+  
+  
+    <div class="actions">
+      <span id="affectsmetoo" style="display: inline">This bug affects 3 people</span>
+    </div>
+  
+
+
+
+    <table id="affected-software" class="listing">
+      <thead>
+        <tr>
+          <th colspan="2">Affects</th>
+          <th>Status</th>
+          <th>Importance</th>
+          <th>Assigned to</th>
+          <th>Milestone</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        
+          
+  <tr class="highlight" id="tasksummary661078">
+    <td>
+      <a class="bugtask-expander treeCollapsed sprite" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+editstatus" style="cursor: pointer;">
+        ​
+      </a>
+    </td>
+    
+    <td>
+      <span id="bugtarget-picker-tasksummary661078">
+        <span class="yui3-activator-data-box">
+            <a href="https://bugs.launchpad.net/ubuntu/+source/linphone" title="Latest release: 3.6.1-3build1, uploaded to universe on 2018-02-27 13:54:17.806516+00:00 by Jeremy Bicha (jbicha), maintained by Debian VoIP Team (pkg-voip-maintainers)" class="sprite package-source">linphone (Ubuntu)</a>
+        </span>
+        <button class="lazr-btn yui3-activator-act yui3-activator-hidden">
+          Edit
+        </button>
+        <div class="yui3-activator-message-box yui3-activator-hidden"></div>
+        
+      </span>
+    </td>
+
+    
+
+    
+    <td style="width: 20%; vertical-align: middle">
+      <div class="status-content" style="width: 100%; float: left">
+        
+        
+          <a href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+editstatus" style="float: left" class="value statusCONFIRMED">Confirmed</a>
+          <a href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+editstatus" style="margin-left: 3px">
+            <img class="editicon" src="bugs.launchpad.net_files/edit.png">
+          </a>
+        
+      </div>
+    </td>
+
+    
+    <td style="width: 15em; vertical-align: middle">
+      <div class="importance-content" style="width: 100%; float: left">
+        <span style="float: left" class="value importanceCRITICAL">Critical</span>
+      </div>
+    </td>
+
+    <td style="width:20%; margin: 0; padding: 0;
+               vertical-align: middle; padding-left: 0.5em">
+      
+
+      
+        <span id="assignee-picker-tasksummary661078">
+          <span class="yui3-activator-data-box">
+            
+            
+              Unassigned
+            
+          </span>
+          
+          <button class="lazr-btn yui3-activator-act yui3-activator-hidden">
+            Edit
+          </button>
+          <div class="yui3-activator-message-box yui3-activator-hidden"></div>
+        </span>
+      
+    </td>
+
+    <td style="width: 20%; vertical-align: middle">
+      <div class="milestone-content" style="width: 100%; float: left">
+        
+        <a class="value" href=""></a>
+        
+      </div>
+    </td>
+
+    
+  </tr>
+
+  
+    <tr class="bugtask-collapsible-content hidden" id="task661078">
+     <td colspan="7"><form action="/ubuntu/+source/linphone/+bug/566075/+editstatus" method="post" enctype="multipart/form-data" class="lazr-closed" style="height: 0px; overflow: hidden;">
+  
+
+  <p class="error message">
+    You need to log in to change this bug's status.
+  </p>
+  
+  <table class="summary" style="float: right; margin-left: 1em;">
+    <tbody><tr>
+      <th>Affecting:</th>
+      <td><a href="https://bugs.launchpad.net/ubuntu/+source/linphone">linphone (Ubuntu)</a></td>
+    </tr>
+    <tr>
+      <th>Filed here by:</th>
+      <td><a href="https://launchpad.net/~r0lf" class="sprite person">Rolf Leggewie</a></td>
+    </tr>
+    <tr>
+      <th>When:</th>
+      <td>
+        <span title="2010-04-18 16:45:15 UTC">2010-04-18</span>
+      </td>
+    </tr>
+    <tr>
+      <th>Confirmed:</th>
+      <td>
+        <span title="2015-02-09 00:20:51 UTC">2015-02-09</span>
+      </td>
+    </tr>
+    
+    
+    
+  </tbody></table>
+  <div class="field">
+    <table>
+      <tbody><tr>
+        <td>
+          <label for="ubuntu_linphone.target">Target</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <table>
+  <tbody><tr>
+    <td>
+      <label>
+        <input class="radioType" checked="checked" id="ubuntu_linphone.target.option.package" name="ubuntu_linphone.target" value="package" type="radio">
+        Distribution
+      </label>
+    </td>
+    <td>
+      <select id="ubuntu_linphone.target.distribution" name="ubuntu_linphone.target.distribution" size="1">
+<option value="baltix">Baltix</option>
+<option value="boss">BOSS</option>
+<option value="charms">Juju Charms Collection</option>
+<option value="elbuntu">Elbuntu</option>
+<option value="guadalinex">Guadalinex</option>
+<option value="guadalinexedu">Guadalinex Edu</option>
+<option value="kiwilinux">Kiwi Linux</option>
+<option value="nubuntu">nUbuntu</option>
+<option value="pld-linux">PLD Linux</option>
+<option value="tilix">Tilix</option>
+<option value="tuxlab">tuXlab</option>
+<option selected="selected" value="ubuntu">Ubuntu</option>
+<option value="ubuntu-leb">Ubuntu Linaro Evaluation Build</option>
+<option value="ubuntu-rtm">Ubuntu RTM</option>
+</select>
+<input name="ubuntu_linphone.target.distribution-empty-marker" value="1" type="hidden">
+    </td>
+  </tr>
+  <tr>
+    <td align="right">
+      <label for="ubuntu_linphone.target.option.package">
+        Package
+      </label>
+    </td>
+    <td>
+      
+
+
+    <input value="linphone" id="ubuntu_linphone.target.package" name="ubuntu_linphone.target.package" size="20" maxlength="" onkeypress="selectWidget('ubuntu_linphone.target.option.package', event)" style="" class="" type="text">
+
+    
+      
+      <script type="text/javascript">
+          LPJS.use('node', 'lp.app.picker', function(Y) {
+              var text_input = Y.DOM.byId('ubuntu_linphone.target.package');
+              var select_menu = Y.DOM.byId('ubuntu_linphone.target.package-suggestions');
+              Y.lp.app.picker.connect_select_menu(
+                  select_menu, text_input);
+          });</script>
+    
+
+    <span class=""><a href="#" class="sprite search-icon action-icon js-action" id="show-widget-ubuntu_linphone-target-package">Choose…</a></span>
+    <script>
+  LPJS.use('node', 'lp.app.picker', function(Y) {
+      var config = {"show_remove_button": false, "show_assign_me_button": false, "assign_me_text": "Pick me", "remove_person_text": "Remove person", "header": "Select a package", "selected_value_metadata": null, "vocabulary_name": "DistributionSourcePackage", "show_widget_id": "show-widget-ubuntu_linphone-target-package", "selected_value": "linphone", "input_element": "ubuntu_linphone.target.package", "remove_team_text": "Remove team", "extra_no_results_message": null, "vocabulary_filters": [], "show_create_team": false, "picker_type": "default", "step_title": "Search by name"};
+      var distribution_name = '';
+      var distribution_id = 'ubuntu_linphone.target.distribution';
+      var distroseries_id = '';
+      if (distribution_name !== '') {
+          config.getContextPath = function() {
+              return '/' + distribution_name;
+          }
+      } else if (distribution_id !== '') {
+          config.getContextPath = function() {
+              return '/' + Y.DOM.byId(distribution_id).value;
+          };
+      } else if (distroseries_id !== '') {
+          config.getContextPath = function() {
+              return '/' + Y.DOM.byId(distroseries_id).value.split('/', 2)[0];
+          };
+      }
+      var show_widget_id = 'show-widget-ubuntu_linphone-target-package';
+      Y.on('domready', function(e) {
+          Y.lp.app.picker.addPicker(config, show_widget_id);
+      });
+  });
+  </script>
+  
+
+
+
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <label>
+        <input class="radioType" id="ubuntu_linphone.target.option.product" name="ubuntu_linphone.target" value="product" type="radio">
+       Project 
+      </label>
+    </td>
+    <td>
+      
+
+
+    <input id="ubuntu_linphone.target.product" name="ubuntu_linphone.target.product" size="20" maxlength="" onkeypress="selectWidget('ubuntu_linphone.target.option.product', event)" style="" class="" type="text">
+
+    
+      
+      <script type="text/javascript">
+          LPJS.use('node', 'lp.app.picker', function(Y) {
+              var text_input = Y.DOM.byId('ubuntu_linphone.target.product');
+              var select_menu = Y.DOM.byId('ubuntu_linphone.target.product-suggestions');
+              Y.lp.app.picker.connect_select_menu(
+                  select_menu, text_input);
+          });</script>
+    
+
+    <span class=""><a href="#" class="sprite search-icon action-icon js-action" id="show-widget-ubuntu_linphone-target-product">Choose…</a></span>
+    <script>
+    LPJS.use('node', 'lp.app.picker', function(Y) {
+        var config = {"show_remove_button": false, "show_assign_me_button": false, "assign_me_text": "Pick me", "remove_person_text": "Remove person", "header": "Select a project", "selected_value_metadata": null, "vocabulary_name": "Product", "show_widget_id": "show-widget-ubuntu_linphone-target-product", "selected_value": null, "input_element": "ubuntu_linphone.target.product", "remove_team_text": "Remove team", "extra_no_results_message": null, "vocabulary_filters": [], "show_create_team": false, "picker_type": "default", "step_title": "Search"};
+        var show_widget_id = 'show-widget-ubuntu_linphone-target-product';
+        Y.on('domready', function(e) {
+            Y.lp.app.picker.addPicker(config, show_widget_id);
+        });
+    });
+    </script>
+  
+
+
+
+    </td>
+  </tr>
+</tbody></table>
+
+          
+        </td>
+      </tr>
+    </tbody></table>
+    
+    <table>
+      <tbody><tr>
+        <td>
+          <label style="font-weight: bold" for="ubuntu_linphone.status">Status</label>
+        </td>
+        <td>
+          <label style="font-weight: bold" for="ubuntu_linphone.importance">Importance</label>
+        </td>
+        
+      </tr>
+      <tr>
+        <td><div>
+<div class="value">
+<select id="ubuntu_linphone.status" name="ubuntu_linphone.status" size="1">
+<option selected="selected" value="Confirmed">Confirmed</option>
+</select>
+</div>
+<input name="ubuntu_linphone.status-empty-marker" value="1" type="hidden">
+</div></td>
+        <td title="Changeable only by a project maintainer or bug supervisor">
+          <span class="sprite read-only"></span>
+          <span class="importanceCRITICAL">Critical</span>
+        </td>
+        
+      </tr>
+    </tbody></table>
+    <table>
+      <tbody><tr>
+        <td>
+          <label style="font-weight: bold" for="ubuntu_linphone.assignee">Assigned to</label>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" style="white-space: nowrap">
+
+  <table>
+    <tbody><tr>
+      <td style="padding: 0 2px 2px 0">
+        <input checked="checked" id="ubuntu_linphone.assignee.assign_to_nobody" name="ubuntu_linphone.assignee.option" value="ubuntu_linphone.assignee.assign_to_nobody" type="radio">
+      </td>
+      <td style="padding: 0">
+        <label style="font-weight: normal" for="ubuntu_linphone.assignee.assign_to_nobody">
+          Nobody
+        </label>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 0 2px 2px 0">
+        <input id="ubuntu_linphone.assignee.assign_to_me" name="ubuntu_linphone.assignee.option" value="ubuntu_linphone.assignee.assign_to_me" type="radio">
+      </td>
+      <td style="padding: 0">
+        <label style="font-weight: normal" for="ubuntu_linphone.assignee.assign_to_me">
+          Me
+        </label>
+      </td>
+    </tr>
+    
+    
+  </tbody></table>
+
+
+</td>
+      </tr>
+    </tbody></table>
+    
+  </div>
+  <div class="field">
+    <div>
+      <label style="font-weight: bold" for="ubuntu_linphone.comment_on_change">Comment on this change (optional)</label>
+      <textarea cols="62" rows="4" id="ubuntu_linphone.comment_on_change" name="ubuntu_linphone.comment_on_change"></textarea>
+    </div>
+    <div>
+      <label style="font-weight: normal">
+        <input name="subscribe" id="subscribe" value="Subscribe" type="checkbox">
+        Email me about changes to this bug report
+      </label>
+    </div>
+  </div>
+  
+</form>
+</td>
+    </tr>
+  
+
+
+        
+      </tbody>
+
+    </table>
+
+
+
+<div class="actions">
+  
+    <span id="also-affects-product" class="">
+    <a class="menu-link-addupstream sprite add" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+choose-affected-product">Also affects project</a>
+        <a href="https://bugs.launchpad.net/+help-bugs/also-affects-project-help.html" target="help" class="sprite maybe action-icon help">(?)</a>
+    </span>
+    <span id="also-affects-package" class="">
+    <a class="menu-link-adddistro sprite add" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+distrotask">Also affects distribution/package</a>
+    </span>
+    <a class="menu-link-nominate sprite milestone" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+nominate">Nominate for series</a>
+    
+  
+
+</div>
+
+
+
+
+      <div id="maincontentsub">
+        <div class="top-portlet">
+
+      <div itemprop="mainContentOfPage" class="report">
+        
+
+        <div>
+  <div class="lazr-multiline-edit" id="edit-description">
+  <div class="clearfix">
+    
+
+    <h3>Bug Description</h3>
+  </div>
+
+  <div class="yui3-editable_text-text"><p>Binary package hint: linphone</p>
+<p>I don't see a way for the current lucid linphone 3.2.1-1ubuntu4 to 
+specify a password for a SIP account.  Registration with the SIP server 
+naturally fails.</p></div>
+  </div>
+
+  
+</div>
+
+
+        <div style="margin:-10px 0 20px 5px" class="clearfix">
+          
+        </div>
+
+        <div id="bug-tags">
+          <span id="tags-heading">
+            Tags:
+          </span>
+          <span id="tag-list">
+            <a class="unofficial-tag" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bugs?field.tag=lucid">lucid</a>
+          </span>
+          
+          <a href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+edit" title="Edit tags" id="tags-trigger" class="sprite edit action-icon">Edit</a>
+          <a href="https://bugs.launchpad.net/+help-bugs/tag-help.html" target="help" class="sprite maybe action-icon help">Tag help</a>
+        </div>
+
+        <script type="text/javascript">
+          LPJS.use('event', 'node', 'lp.bugs.tags_entry', function(Y) {
+              Y.on('domready',
+                   function(e) {
+                       Y.lp.bugs.tags_entry.setup_tag_entry(
+                           available_official_tags);
+                   },
+                   window);
+          });
+        </script>
+
+        <div class="clearfix"></div>
+      </div>
+
+      <div id="branches-and-cves">
+        <div id="bug-branches-container" style="float: left">
+          
+        </div><!-- bug-branch-container -->
+
+        
+
+        <div class="clearfix"></div>
+      </div> <!-- branches and CVEs -->
+
+      </div>
+
+      <div>
+      
+        
+          
+            <div xmlns="http://www.w3.org/1999/xhtml" itemscope="" itemtype="http://schema.org/UserComments" class="boardComment 
+                 ">
+
+  <div class="boardCommentDetails">
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <a href="https://launchpad.net/~tommy-trussell" class="sprite person">Tommy Trussell (tommy-trussell)</a>
+            wrote
+            <time itemprop="commentTime" datetime="2010-05-24T15:13:03.482053+00:00" title="2010-05-24 15:13:03 UTC">on 2010-05-24</time>:
+              
+          </td>
+          
+
+          <td class="bug-comment-index">
+          <a itemprop="url" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/comments/1"> #1</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="boardCommentBody">
+    
+
+    
+
+    
+
+  
+  <div class="comment-text" itemprop="commentText"><p>I am using an 
+earlier version -- linphone 3.1.2 on Ubuntu 9.10 Karmic, and when I use a
+ SIP account for the first time, linphone prompts for the password and 
+apparently saves it. There is an "Erase all passwords" button on the 
+manage SIP Accounts page. The later version may be failing in trying to 
+use the system keyring. (This is speculation on my part; I don't know.)</p>
+<p>UNFORTUNATELY I have not been able to get linphone 3.2.1 to work at all on Ubuntu 10.4 Lucid  (crashes on startup -- see <a href="https://bugs.launchpad.net/bugs/582268" class="bug-link" title="Linphone-3 + Webcam = crash on startup">Bug #582268</a>).</p>
+<p>I have found linphone to work really well on my Karmic machine.</p></div>
+  
+  
+  
+
+
+  </div>
+
+  
+  
+</div>
+
+          
+
+          
+
+          
+
+        
+        
+          
+            <div xmlns="http://www.w3.org/1999/xhtml" itemscope="" itemtype="http://schema.org/UserComments" class="boardComment 
+                 ">
+
+  <div class="boardCommentDetails">
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <a href="https://launchpad.net/~diagonalarg" class="sprite person">DiagonalArg (diagonalarg)</a>
+            wrote
+            <time itemprop="commentTime" datetime="2015-02-09T00:20:39.724009+00:00" title="2015-02-09 00:20:39 UTC">on 2015-02-09</time>:
+              
+          </td>
+          
+
+          <td class="bug-comment-index">
+          <a itemprop="url" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/comments/2"> #2</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="boardCommentBody">
+    
+
+    
+
+    
+
+  
+  <div class="comment-text" itemprop="commentText"><p>I'm still seeing this bug in 3.3.2-4 under Ubuntu 12.04.  It never asks for a password and in the debug log, registration fails.</p></div>
+  
+  
+  
+
+
+  </div>
+
+  
+  
+</div>
+
+          
+
+          
+
+          
+
+        
+        
+          
+            <div xmlns="http://www.w3.org/1999/xhtml" itemscope="" itemtype="http://schema.org/UserComments" class="boardComment 
+                 ">
+
+  <div class="boardCommentDetails">
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <a href="https://launchpad.net/~janitor" class="sprite person-inactive">Launchpad Janitor (janitor)</a>
+            wrote
+            <time itemprop="commentTime" datetime="2015-02-09T00:20:50.117743+00:00" title="2015-02-09 00:20:50 UTC">on 2015-02-09</time>:
+              
+          </td>
+          
+
+          <td class="bug-comment-index">
+          <a itemprop="url" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/comments/3"> #3</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="boardCommentBody">
+    
+
+    
+
+    
+
+  
+  <div class="comment-text" itemprop="commentText"><p>Status changed to 'Confirmed' because the bug affects multiple users.</p></div>
+  
+  
+  
+
+
+  </div>
+
+  <div class="boardCommentActivity">
+    
+      <table class="bug-activity">
+  
+    
+      <tbody><tr>
+        <td colspan="2">Changed in linphone (Ubuntu): </td>
+      </tr>
+    
+    <tr>
+      <td style="text-align: right;">
+        <b>status</b>:
+      </td>
+      <td>
+        New → Confirmed
+      </td>
+    </tr>
+  
+</tbody></table>
+    
+    
+  </div>
+  
+</div>
+
+          
+
+          
+
+          
+
+        
+        
+          
+
+          
+              <div class="boardComment">
+  <div class="boardCommentDetails">
+    
+      <a href="https://launchpad.net/~r0lf" class="sprite person">Rolf Leggewie (r0lf)</a>
+    
+    <span title="2016-07-19 08:14:00 UTC">on 2016-07-19</span>
+  </div>
+  <div class="boardCommentActivity">
+    <table class="bug-activity">
+  
+    
+      <tbody><tr>
+        <td colspan="2">Changed in linphone (Ubuntu): </td>
+      </tr>
+    
+    <tr>
+      <td style="text-align: right;">
+        <b>importance</b>:
+      </td>
+      <td>
+        Undecided → Critical
+      </td>
+    </tr>
+  
+</tbody></table>
+  </div>
+</div>
+          
+
+          
+
+        
+        
+          
+            <div xmlns="http://www.w3.org/1999/xhtml" itemscope="" itemtype="http://schema.org/UserComments" class="boardComment 
+                 ">
+
+  <div class="boardCommentDetails">
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <a href="https://launchpad.net/~csindle" class="sprite person">Colin Sindle (csindle)</a>
+            wrote
+            <time itemprop="commentTime" datetime="2016-08-22T11:51:30.934385+00:00" title="2016-08-22 11:51:30 UTC">on 2016-08-22</time>:
+              
+          </td>
+          
+
+          <td class="bug-comment-index">
+          <a itemprop="url" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/comments/4"> #4</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="boardCommentBody">
+    
+
+    
+
+    
+
+  
+  <div class="comment-text" itemprop="commentText"><p>IIRC, some SIP 
+providers "successfully" register all attempts as a security/DOS 
+protection technique (obviously, later, when an [unauthorised] call is 
+attempted, it fails.).</p>
+<p>Perhaps, because there is never a SIP password authentication challenge, this is why Linphone never prompts for a password.</p>
+<p>It seems that persisting an account's password should be decoupled 
+from the future possibility of any provider needing it.  I.e. the 
+password is a property of the account, not the provider's implementation
+ (SIP stack's behaviour) at some arbitrary point in the future.</p></div>
+  
+  
+  
+
+
+  </div>
+
+  
+  
+</div>
+
+          
+
+          
+
+          
+
+        
+        
+          
+
+          
+              <div class="boardComment">
+  <div class="boardCommentDetails">
+    
+      <a href="https://launchpad.net/~simon.vall" class="sprite person">Simon Vall (simon.vall)</a>
+    
+    <span title="2017-01-24 05:31:41 UTC">on 2017-01-24</span>
+  </div>
+  <div class="boardCommentActivity">
+    <table class="bug-activity">
+  
+    
+      <tbody><tr>
+        <td colspan="2">Changed in linphone (Ubuntu): </td>
+      </tr>
+    
+    <tr>
+      <td style="text-align: right;">
+        <b>assignee</b>:
+      </td>
+      <td>
+        nobody → Simon Vall (simon.vall)
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align: right;">
+        <b>assignee</b>:
+      </td>
+      <td>
+        Simon Vall (simon.vall) → nobody
+      </td>
+    </tr>
+  
+</tbody></table>
+  </div>
+</div>
+          
+
+          
+
+        
+        
+          
+
+          
+              <div class="boardComment">
+  <div class="boardCommentDetails">
+    
+      <a href="https://launchpad.net/~1+ar08" class="sprite person">Armando Padilla (1+ar08)</a>
+    
+    <span title="2017-02-25 18:50:48 UTC">on 2017-02-25</span>
+  </div>
+  <div class="boardCommentActivity">
+    <table class="bug-activity">
+  
+    
+      <tbody><tr>
+        <td colspan="2">Changed in linphone (Ubuntu): </td>
+      </tr>
+    
+    <tr>
+      <td style="text-align: right;">
+        <b>status</b>:
+      </td>
+      <td>
+        Confirmed → Fix Committed
+      </td>
+    </tr>
+  
+</tbody></table>
+  </div>
+</div>
+          
+
+          
+
+        
+        
+          
+
+          
+              <div class="boardComment">
+  <div class="boardCommentDetails">
+    
+      <a href="https://launchpad.net/~r0lf" class="sprite person">Rolf Leggewie (r0lf)</a>
+    
+    <span title="2017-02-26 04:00:20 UTC">on 2017-02-26</span>
+  </div>
+  <div class="boardCommentActivity">
+    <table class="bug-activity">
+  
+    
+      <tbody><tr>
+        <td colspan="2">Changed in linphone (Ubuntu): </td>
+      </tr>
+    
+    <tr>
+      <td style="text-align: right;">
+        <b>status</b>:
+      </td>
+      <td>
+        Fix Committed → Confirmed
+      </td>
+    </tr>
+  
+</tbody></table>
+  </div>
+</div>
+          
+
+          
+
+        
+        
+          
+
+          
+              <div class="boardComment">
+  <div class="boardCommentDetails">
+    
+      <a href="https://launchpad.net/~ubuntufrazergazon" class="sprite person">Anonymous2 (ubuntufrazergazon)</a>
+    
+    <span title="2017-05-01 14:26:54 UTC">on 2017-05-01</span>
+  </div>
+  <div class="boardCommentActivity">
+    <table class="bug-activity">
+  
+    
+      <tbody><tr>
+        <td colspan="2">Changed in linphone (Ubuntu): </td>
+      </tr>
+    
+    <tr>
+      <td style="text-align: right;">
+        <b>status</b>:
+      </td>
+      <td>
+        Confirmed → In Progress
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align: right;">
+        <b>status</b>:
+      </td>
+      <td>
+        In Progress → Confirmed
+      </td>
+    </tr>
+  
+</tbody></table>
+  </div>
+</div>
+          
+
+          
+
+        
+        
+          
+            <div xmlns="http://www.w3.org/1999/xhtml" itemscope="" itemtype="http://schema.org/UserComments" class="boardComment 
+                 ">
+
+  <div class="boardCommentDetails">
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <a href="https://launchpad.net/~manjunathcn" class="sprite person">mannjunath (manjunathcn)</a>
+            wrote
+            <time itemprop="commentTime" datetime="2017-05-02T10:23:24.847856+00:00" title="2017-05-02 10:23:24 UTC">on 2017-05-02</time>:
+              
+          </td>
+          
+
+          <td class="bug-comment-index">
+          <a itemprop="url" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/comments/5"> #5</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="boardCommentBody">
+    
+
+    
+
+    
+
+  
+  <div class="comment-text" itemprop="commentText"><p>I'm still seeing this bug in 3.3.2-4 under Ubuntu 12.04. It never asks for a password and in the debug log, registration fails.</p></div>
+  
+  
+  
+
+
+  </div>
+
+  <div class="boardCommentActivity">
+    
+      <table class="bug-activity">
+  
+    
+      <tbody><tr>
+        <td colspan="2">Changed in linphone (Ubuntu): </td>
+      </tr>
+    
+    <tr>
+      <td style="text-align: right;">
+        <b>assignee</b>:
+      </td>
+      <td>
+        nobody → mannjunath (manjunathcn)
+      </td>
+    </tr>
+  
+</tbody></table>
+    
+    
+  </div>
+  
+</div>
+
+          
+
+          
+
+          
+
+        
+        
+          
+
+          
+              <div class="boardComment">
+  <div class="boardCommentDetails">
+    
+      <a href="https://launchpad.net/~r0lf" class="sprite person">Rolf Leggewie (r0lf)</a>
+    
+    <span title="2017-05-02 17:54:06 UTC">on 2017-05-02</span>
+  </div>
+  <div class="boardCommentActivity">
+    <table class="bug-activity">
+  
+    
+      <tbody><tr>
+        <td colspan="2">Changed in linphone (Ubuntu): </td>
+      </tr>
+    
+    <tr>
+      <td style="text-align: right;">
+        <b>assignee</b>:
+      </td>
+      <td>
+        mannjunath (manjunathcn) → nobody
+      </td>
+    </tr>
+  
+</tbody></table>
+  </div>
+</div>
+          
+
+          
+
+        
+        
+          
+            <div xmlns="http://www.w3.org/1999/xhtml" itemscope="" itemtype="http://schema.org/UserComments" class="boardComment 
+                 ">
+
+  <div class="boardCommentDetails">
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <a href="https://launchpad.net/~mightyowl" class="sprite person">T (mightyowl)</a>
+            wrote
+            <time itemprop="commentTime" datetime="2017-05-04T19:33:21.840775+00:00" title="2017-05-04 19:33:21 UTC">on 2017-05-04</time>:
+              
+          </td>
+          
+
+          <td class="bug-comment-index">
+          <a itemprop="url" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/comments/6"> #6</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="boardCommentBody">
+    
+
+    
+
+    
+
+  
+  <div class="comment-text" itemprop="commentText"><p>I have a Dell XPS 15 and connect over USB C to a display port hub to a HDMI external monitor.</p>
+<p>Sometime in the past few months I ran into this issue. When I would 
+lock my screen (xflock4) or go into standby the computer would lock up 
+on resume and I had plenty of the following in the logs.</p>
+<p>drm:intel_<wbr>wait_ddi_<wbr>buf_idle [i915_bpo]] *ERROR* Timeout waiting for DDI BUF B idle bit</p>
+<p>It was fine on startup, as long as it didn't lock the screen.</p>
+<p>I had been running kernel 4.4.0 on Xubuntu 16.04</p>
+<p>I upgraded to kernel to 4.10.0 and my issue is now fixed.</p></div>
+  
+  
+  
+
+
+  </div>
+
+  
+  
+</div>
+
+          
+
+          
+
+          
+
+        
+        
+          
+            <div xmlns="http://www.w3.org/1999/xhtml" itemscope="" itemtype="http://schema.org/UserComments" class="boardComment 
+                 ">
+
+  <div class="boardCommentDetails">
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <a href="https://launchpad.net/~mightyowl" class="sprite person">T (mightyowl)</a>
+            wrote
+            <time itemprop="commentTime" datetime="2017-05-05T18:42:53.406690+00:00" title="2017-05-05 18:42:53 UTC">on 2017-05-05</time>:
+              
+          </td>
+          
+
+          <td class="bug-comment-index">
+          <a itemprop="url" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/comments/7"> #7</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="boardCommentBody">
+    
+
+    
+
+    
+
+  
+  <div class="comment-text" itemprop="commentText"><p>Oops, updated the wrong bug</p></div>
+  
+  
+  
+
+
+  </div>
+
+  
+  
+</div>
+
+          
+
+          
+
+          
+
+        
+        
+          
+            <div xmlns="http://www.w3.org/1999/xhtml" itemscope="" itemtype="http://schema.org/UserComments" class="boardComment 
+                 ">
+
+  <div class="boardCommentDetails">
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <a href="https://launchpad.net/~luisa.casey" class="sprite person">Luisa Casey (luisa.casey)</a>
+            wrote
+            <time itemprop="commentTime" datetime="2018-01-25T11:17:35.459992+00:00" title="2018-01-25 11:17:35 UTC">on 2018-01-25</time>:
+              
+          </td>
+          
+
+          <td class="bug-comment-index">
+          <a itemprop="url" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/comments/8"> #8</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="boardCommentBody">
+    
+
+    
+
+    
+
+  
+  <div class="comment-text" itemprop="commentText"><p>Adding a property 
+or field for passwords seems to be a very plausible thing to do anyway. 
+Has anyone captured the traffic for debugging purposes btw?</p>
+<p>------------<br>
+Luisa Casey<br>
+mail: &lt;email address hidden&gt;<br>
+phone: 04 67 33 67 33</p></div>
+  
+  
+  
+
+
+  </div>
+
+  
+  
+</div>
+
+          
+
+          
+
+          
+
+        
+        
+          
+            <div xmlns="http://www.w3.org/1999/xhtml" itemscope="" itemtype="http://schema.org/UserComments" class="boardComment 
+                 ">
+
+  <div class="boardCommentDetails">
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <a href="https://launchpad.net/~sara-64-deactivatedaccount" class="sprite person-inactive">sara-64 (sara-64-deactivatedaccount)</a>
+            wrote
+            <time itemprop="commentTime" datetime="2018-04-23T12:21:27.848395+00:00" title="2018-04-23 12:21:27 UTC">on 2018-04-23</time>:
+              
+          </td>
+          
+
+          <td class="bug-comment-index">
+          <a itemprop="url" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/comments/9"> #9</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="boardCommentBody">
+    
+
+    
+
+    
+
+  
+  <div class="comment-text" itemprop="commentText"><p>hi</p></div>
+  
+  
+  
+
+
+  </div>
+
+  
+  
+</div>
+
+          
+
+          
+
+          
+
+        
+        <div style="float: right;">
+          <a class="menu-link-activitylog" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+activity">See full activity log</a>
+        </div>
+        <div class="clearfix"></div>
+
+        
+          
+
+          
+            <div id="add-comment-login-first" align="center">
+              To post a comment you must <a href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+login?comments=all">log in</a>.
+            </div>
+          
+        
+        
+      
+
+      </div><!-- class="top-portlet" -->
+      </div><!--- id="maincontentsub"-->
+      <div>
+        <div id="duplicate-form-container"></div>
+        <div id="privacy-form-container"></div>
+      </div>
+    </div>
+            
+            
+          </div><!-- yui-b -->
+        </div><!-- yui-main -->
+
+        
+          <div id="side-portlets" class="yui-b side">
+            
+      <div id="involvement" class="portlet">
+        <ul class="involvement">
+          <li class="single">
+            <a class="sprite bugs" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+filebug">
+              Report a bug
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div id="privacy" class="first portlet public">
+  <div id="privacy-text">
+     <span id="information-type-summary" class="sprite public">This report contains
+         <strong id="information-type">Public</strong>
+         information
+     </span>&nbsp;<a class="sprite edit action-icon" id="privacy-link" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+secrecy">Edit</a>
+
+     <div id="information-type-description" style="padding-top: 5px">Everyone can see this information.
+</div>
+  </div>
+</div>
+
+      <div id="portlet-actions" class="portlet vertical">
+  <ul id="duplicate-actions">
+    <li class="sprite bug-dupe">
+    <span id="mark-duplicate-text">
+    <a class="menu-link-mark-dupe" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+duplicate">Mark as duplicate</a>
+    </span>
+    </li>
+    
+    <li><a class="menu-link-createquestion sprite add" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+create-question">Convert to a question</a></li>
+    
+    <li><a class="menu-link-addbranch sprite add" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+addbranch">Link a related branch</a></li>
+    <li><a class="menu-link-linktocve sprite add" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+linkcve">Link to <abbr title="Common Vulnerabilities and Exposures Index">CVE</abbr></a></li>
+    
+  </ul>
+</div>
+
+      
+
+      <div class="portlet vertical" id="portlet-subscription">
+  <div class="section">
+    <div id="current_user_subscription" class="False">
+      
+        <span>You are</span>
+        
+        <a class="menu-link-subscription sprite modify edit" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+subscribe">
+           
+           
+           
+           not directly subscribed to this bug's notifications.
+        </a>
+      
+      
+    </div>
+    <div id="sub-unsub-spinner">Subscribing...</div>
+    <ul>
+      
+      <li><a class="menu-link-editsubscriptions sprite modify edit" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+subscriptions" title="View and change your subscriptions to this bug">Edit bug mail</a></li>
+    </ul>
+  </div>
+  <script type="text/javascript">
+    LPJS.use('io-base', 'node',
+            'lp.bugs.bugtask_index.portlets.subscription', function(Y) {
+        Y.on('domready', function() {
+            Y.lp.bugs.bugtask_index.portlets.subscription.initialize();
+        });
+    });
+  </script>
+</div>
+
+      <div class="portlet vertical" id="portlet-subscribers">
+  <h2>Other bug subscribers</h2>
+  <div>
+    <div><a class="menu-link-addsubscriber sprite add" href="https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+addsubscriber" title="Launchpad will email that person whenever this bugs changes">Subscribe someone else</a></div>
+  </div>
+  <div id="other-bug-subscribers"><div class="subscribers-section subscribers-section-discussion" id="yui_3_10_3_1_1524933450860_153"><h3>Notified of all changes</h3><ul class="subscribers-list"><li class="subscriber" id="subscriber-diagonalarg"><a href="https://launchpad.net/~diagonalarg" title="Self-subscribed"><span class="sprite person">DiagonalArg</span></a></li><li class="subscriber" id="subscriber-peter-mazdermind"><a href="https://launchpad.net/~peter-mazdermind" title="Self-subscribed"><span class="sprite person">Peter Körner</span></a></li><li class="subscriber" id="subscriber-r0lf"><a href="https://launchpad.net/~r0lf" title="Self-subscribed"><span class="sprite person">Rolf Leggewie</span></a></li></ul></div><div class="subscribers-section subscribers-section-maybe" id="yui_3_10_3_1_1524933450860_166"><h3>May be notified</h3><ul class="subscribers-list"><li class="subscriber" id="subscriber-alvarez-ciencia"><a href="https://launchpad.net/~alvarez-ciencia"><span class="sprite person">Alejandro J. Alva...</span></a></li><li class="subscriber" id="subscriber-shani2k8"><a href="https://launchpad.net/~shani2k8"><span class="sprite person">Ashani Holland</span></a></li><li class="subscriber" id="subscriber-kowalczykb"><a href="https://launchpad.net/~kowalczykb"><span class="sprite person">Bogdan Kowalczyk</span></a></li><li class="subscriber" id="subscriber-bruno2112"><a href="https://launchpad.net/~bruno2112"><span class="sprite person">Bruno Garcia</span></a></li><li class="subscriber" id="subscriber-crc-error-mail"><a href="https://launchpad.net/~crc-error-mail"><span class="sprite person">CRC</span></a></li><li class="subscriber" id="subscriber-cjsmo"><a href="https://launchpad.net/~cjsmo"><span class="sprite person">Charlie_Smotherman</span></a></li><li class="subscriber" id="subscriber-debianpts"><a href="https://launchpad.net/~debianpts"><span class="sprite person">Debian PTS</span></a></li><li class="subscriber" id="subscriber-barkerashley36"><a href="https://launchpad.net/~barkerashley36"><span class="sprite person">Doraann2</span></a></li><li class="subscriber" id="subscriber-huananhu"><a href="https://launchpad.net/~huananhu"><span class="sprite person">Franko Fang</span></a></li><li class="subscriber" id="subscriber-haysaycheese"><a href="https://launchpad.net/~haysaycheese"><span class="sprite person">HaySayCheese</span></a></li><li class="subscriber" id="subscriber-hidagawa"><a href="https://launchpad.net/~hidagawa"><span class="sprite person">Hidagawa</span></a></li><li class="subscriber" id="subscriber-jesse-jones123"><a href="https://launchpad.net/~jesse-jones123"><span class="sprite person">Jesse Jones</span></a></li><li class="subscriber" id="subscriber-ftprj45"><a href="https://launchpad.net/~ftprj45"><span class="sprite person">José Alfonso</span></a></li><li class="subscriber" id="subscriber-ja3k3l"><a href="https://launchpad.net/~ja3k3l"><span class="sprite person">Matt j</span></a></li><li class="subscriber" id="subscriber-imhell99"><a href="https://launchpad.net/~imhell99"><span class="sprite person">Mr. MInhaj</span></a></li><li class="subscriber" id="subscriber-b1130560"><a href="https://launchpad.net/~b1130560"><span class="sprite person">Name Changed</span></a></li><li class="subscriber" id="subscriber-pcfixupllc"><a href="https://launchpad.net/~pcfixupllc"><span class="sprite person">PCTeacher012</span></a></li><li class="subscriber" id="subscriber-donkavo"><a href="https://launchpad.net/~donkavo"><span class="sprite person">Paolo Topa</span></a></li><li class="subscriber" id="subscriber-skyluc00mind"><a href="https://launchpad.net/~skyluc00mind"><span class="sprite person">Peter Bullert</span></a></li><li class="subscriber" id="subscriber-anubhavgupta1990"><a href="https://launchpad.net/~anubhavgupta1990"><span class="sprite person">Punnsa</span></a></li><li class="subscriber" id="subscriber-b-launchpad-transubuntu-ca"><a href="https://launchpad.net/~b-launchpad-transubuntu-ca"><span class="sprite person">Richard Seguin</span></a></li><li class="subscriber" id="subscriber-rkwill"><a href="https://launchpad.net/~rkwill"><span class="sprite person">Richard Williams</span></a></li><li class="subscriber" id="subscriber-tsimonq2"><a href="https://launchpad.net/~tsimonq2"><span class="sprite person">Simon Quigley</span></a></li><li class="subscriber" id="subscriber-thomas-r-weiss"><a href="https://launchpad.net/~thomas-r-weiss"><span class="sprite person">Tom Weiss</span></a></li><li class="subscriber" id="subscriber-ubuntu-bugs"><a href="https://launchpad.net/~ubuntu-bugs"><span class="sprite team">Ubuntu Bugs</span></a></li><li class="subscriber" id="subscriber-mail-vasanth"><a href="https://launchpad.net/~mail-vasanth"><span class="sprite person">Vasanth</span></a></li><li class="subscriber" id="subscriber-v-parker2"><a href="https://launchpad.net/~v-parker2"><span class="sprite person">Vic Parker</span></a></li><li class="subscriber" id="subscriber-zzou"><a href="https://launchpad.net/~zzou"><span class="sprite person">ahepas</span></a></li><li class="subscriber" id="subscriber-vgavrilubuntu"><a href="https://launchpad.net/~vgavrilubuntu"><span class="sprite person">basilisgabri</span></a></li><li class="subscriber" id="subscriber-geawaifr"><a href="https://launchpad.net/~geawaifr"><span class="sprite person">dsfkj dfjx</span></a></li><li class="subscriber" id="subscriber-eoininmoran"><a href="https://launchpad.net/~eoininmoran"><span class="sprite person">eoininmoran</span></a></li><li class="subscriber" id="subscriber-ganeshredcobra"><a href="https://launchpad.net/~ganeshredcobra"><span class="sprite person">ganesh</span></a></li><li class="subscriber" id="subscriber-gi--js"><a href="https://launchpad.net/~gi--js"><span class="sprite person">linuxgijs</span></a></li><li class="subscriber" id="subscriber-nikonikic42"><a href="https://launchpad.net/~nikonikic42"><span class="sprite person">nikonikic42</span></a></li><li class="subscriber" id="subscriber-projevie"><a href="https://launchpad.net/~projevie"><span class="sprite person">projevie@hotmail.com</span></a></li><li class="subscriber" id="subscriber-juniorlhkaceh"><a href="https://launchpad.net/~juniorlhkaceh"><span class="sprite person">qadir</span></a></li><li class="subscriber" id="subscriber-payyoormana"><a href="https://launchpad.net/~payyoormana"><span class="sprite person">sankaran</span></a></li><li class="subscriber" id="subscriber-angeles-van-deactivatedaccount"><a href="https://launchpad.net/~angeles-van-deactivatedaccount"><span class="sprite person">van</span></a></li></ul></div></div>
+</div>
+
+      
+
+      
+
+      
+  
+  
+
+
+      
+
+    
+          </div><!-- yui-b side -->
+        
+      </div><!-- yui-t4 -->
+
+      
+  <div id="footer" class="footer">
+    <div class="lp-arcana">
+        <div class="lp-branding">
+          <a href="https://launchpad.net/"><img src="bugs.launchpad.net_files/launchpad-logo-and-name-hierarchy.png" alt="Launchpad"></a>
+          &nbsp;•&nbsp;
+          <a href="https://launchpad.net/+tour">Take the tour</a>
+          &nbsp;•&nbsp;
+          <a href="https://help.launchpad.net/">Read the guide</a>
+          &nbsp;
+          <form id="globalsearch" method="get" accept-charset="UTF-8" action="https://launchpad.net/+search">
+            <input id="search-text" name="field.text" type="search">
+            <input src="bugs.launchpad.net_files/search.png" style="vertical-align:5%" alt="Search Launchpad" type="image">
+          </form>
+        </div>
+        
+  
+
+    </div>
+
+    <div class="colophon">
+      © 2004-2018
+      <a href="http://canonical.com/">Canonical&nbsp;Ltd.</a>
+      &nbsp;•&nbsp;
+      <a href="https://launchpad.net/legal">Terms of use</a>
+      &nbsp;•&nbsp;
+      <a href="https://bugs.launchpad.net/feedback">Contact Launchpad Support</a>
+      
+      &nbsp;•&nbsp;
+      <a href="http://blog.launchpad.net/">Blog</a>
+      
+	&nbsp;•&nbsp;
+	<a href="http://www.canonical.com/about-canonical/careers">Careers</a>
+      
+      &nbsp;•&nbsp;
+      <a href="https://twitter.com/launchpadstatus">System status</a>
+      <span id="lp-version">
+      &nbsp;•&nbsp;
+        r18623
+        
+        
+        (<a href="https://dev.launchpad.net/">Get the code!</a>)
+      </span>
+    </div>
+  </div>
+
+    </div><!-- yui-d0-->
+
+    
+  
+  
+  <script id="json-cache-script">LP.cache = {"bug_is_private": false, "related_features": {}, "bugtask_data": {"661078": {"milestone_value": null, "form_row_id": "task661078", "target_is_product": false, "importance_value": "Critical", "prefix": "ubuntu_linphone", "hide_assignee_team_selection": true, "delete_link": "https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075/+delete", "id": 661078, "assignee_is_team": null, "milestone_widget_items": "[]", "assignee_vocabulary": "AllUserTeamsParticipation", "bug_title": "no way to specify the password", "user_can_delete": false, "assignee_value": null, "user_can_edit_importance": false, "assignee_vocabulary_filters": [], "importance_widget_items": "[]", "status_value": "Confirmed", "user_can_unassign": false, "user_can_edit_milestone": false, "user_can_edit_assignee": false, "user_can_edit_status": true, "status_widget_items": "[]", "bugtask_path": "/ubuntu/+source/linphone/+bug/566075", "row_id": "tasksummary661078", "targetname": "linphone (Ubuntu)"}}, "total_comments_and_activity": 21, "context": {"date_closed": null, "date_assigned": null, "title": "Bug #566075 in linphone (Ubuntu): \"no way to specify the password\"", "bug_link": "https://bugs.launchpad.net/api/devel/bugs/566075", "bug_watch_link": null, "milestone_link": null, "http_etag": "\"1ac38c85c5ba329c6873af3102e93f852ebdef83-b7d00369b3ae6757497e141d5ee90307e6739b8b\"", "date_left_closed": null, "date_fix_committed": null, "date_fix_released": null, "date_in_progress": null, "resource_type_link": "https://bugs.launchpad.net/api/devel/#bug_task", "status": "Confirmed", "bug_target_name": "linphone (Ubuntu)", "importance": "Critical", "assignee_link": null, "date_triaged": null, "self_link": "https://bugs.launchpad.net/api/devel/ubuntu/+source/linphone/+bug/566075", "target_link": "https://bugs.launchpad.net/api/devel/ubuntu/+source/linphone", "bug_target_display_name": "linphone (Ubuntu)", "related_tasks_collection_link": "https://bugs.launchpad.net/api/devel/ubuntu/+source/linphone/+bug/566075/related_tasks", "date_confirmed": "2015-02-09T00:20:51.119364+00:00", "date_left_new": "2015-02-09T00:20:51.119364+00:00", "web_link": "https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075", "owner_link": "https://bugs.launchpad.net/api/devel/~r0lf", "date_created": "2010-04-18T16:45:15.999797+00:00", "date_incomplete": null, "is_complete": false}, "information_type_data": {"PRIVATESECURITY": {"name": "Private Security", "value": "PRIVATESECURITY", "description_css_class": "choice-description", "order": 2, "is_private": true, "description": "Only the security group can see this information.\n "}, "USERDATA": {"name": "Private", "value": "USERDATA", "description_css_class": "choice-description", "order": 3, "is_private": true, "description": "Only shared with users permitted to see private user information.\n"}, "PUBLICSECURITY": {"name": "Public Security", "value": "PUBLICSECURITY", "description_css_class": "choice-description", "order": 1, "is_private": false, "description": "Everyone can see this security related information.\n"}, "PUBLIC": {"name": "Public", "value": "PUBLIC", "description_css_class": "choice-description", "order": 0, "is_private": false, "description": "Everyone can see this information.\n"}}, "subscribers_portlet_url_data": {"self_link": "https://bugs.launchpad.net/api/devel/bugs/566075", "web_link": "https://bugs.launchpad.net/bugs/566075"}, "initial_comment_batch_offset": 41, "bug": {"users_unaffected_collection_link": "https://bugs.launchpad.net/api/devel/bugs/566075/users_unaffected", "latest_patch_uploaded": null, "users_affected_count_with_dupes": 3, "security_related": false, "private": false, "bug_watches_collection_link": "https://bugs.launchpad.net/api/devel/bugs/566075/bug_watches", "date_made_private": null, "linked_branches_collection_link": "https://bugs.launchpad.net/api/devel/bugs/566075/linked_branches", "subscriptions_collection_link": "https://bugs.launchpad.net/api/devel/bugs/566075/subscriptions", "number_of_duplicates": 0, "id": 566075, "users_unaffected_count": 0, "title": "no way to specify the password", "other_users_affected_count_with_dupes": 3, "name": null, "http_etag": "\"a3737d46ddd10eaf3d353d23ce6601e51b0d2c48-357c2b3fea989f8e20c72e550e3ea43f0e513b35\"", "messages_collection_link": "https://bugs.launchpad.net/api/devel/bugs/566075/messages", "self_link": "https://bugs.launchpad.net/api/devel/bugs/566075", "information_type": "Public", "who_made_private_link": null, "attachments_collection_link": "https://bugs.launchpad.net/api/devel/bugs/566075/attachments", "resource_type_link": "https://bugs.launchpad.net/api/devel/#bug", "activity_collection_link": "https://bugs.launchpad.net/api/devel/bugs/566075/activity", "date_last_updated": "2018-04-23T12:21:28.262825+00:00", "description": "Binary package hint: linphone\n\nI don't see a way for the current lucid linphone 3.2.1-1ubuntu4 to specify a password for a SIP account.  Registration with the SIP server naturally fails.", "duplicates_collection_link": "https://bugs.launchpad.net/api/devel/bugs/566075/duplicates", "tags": ["lucid"], "message_count": 10, "heat": 18, "bug_tasks_collection_link": "https://bugs.launchpad.net/api/devel/bugs/566075/bug_tasks", "duplicate_of_link": null, "linked_merge_proposals_collection_link": "https://bugs.launchpad.net/api/devel/bugs/566075/linked_merge_proposals", "users_affected_with_dupes_collection_link": "https://bugs.launchpad.net/api/devel/bugs/566075/users_affected_with_dupes", "cves_collection_link": "https://bugs.launchpad.net/api/devel/bugs/566075/cves", "web_link": "https://bugs.launchpad.net/bugs/566075", "users_affected_count": 3, "owner_link": "https://bugs.launchpad.net/api/devel/~r0lf", "date_created": "2010-04-18T16:45:15.999797+00:00", "date_last_message": "2018-04-23T12:21:27.848395+00:00", "users_affected_collection_link": "https://bugs.launchpad.net/api/devel/bugs/566075/users_affected"}, "first visible_recent_comment": -31};</script>
+
+    
+  
+
+    
+  
+
+
+  
+
+
+
+</body><!--
+    Facet name: bugs
+    Page type: main_side
+    Has global search: True
+    Has application tabs: True
+    Has side portlets: True
+
+    At least 58 queries/external actions issued in 1.47 seconds
+
+    Features: {'app.mainsite_only.canonical_url': None, 'hard_timeout': u'9000', 'profiling.enabled': None, 'visible_render_time': None, 'disclosure.dsp_picker.enabled': u'on', 'bugs.affected_count_includes_dupes.disabled': None, 'js.yui_version': None, 'bugs.nominations.bug_supervisors_can_target': None, 'baselayout.careers_link.disabled': None}
+
+    r18623
+
+    --></html>

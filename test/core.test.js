@@ -52,6 +52,27 @@ describe("sites", () => {
         });
     });
 
+    describe('bugs.launchpad.net', () => {
+        let page;
+        let params;
+    
+        before(async () => {
+            page = await createPage(browser, "bugs.launchpad.net.html");
+            params = getParamsForUrl("https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075");
+        });
+    
+        it('next comment root', async () => {
+            await testNextTop(page,
+                ".boardComment:nth-child(1) .boardCommentDetails",
+                ".boardComment:nth-child(2) .boardCommentDetails",
+                params);
+        });
+    
+        after(async () => {
+            await page.close();
+        });
+    });
+
     describe('d3.ru', () => {
         let page;
         let params;

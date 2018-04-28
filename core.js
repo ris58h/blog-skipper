@@ -238,7 +238,7 @@ function indexOfSorted(elements, pageY) { //TODO binary search
 function extractCommentSelector(element) {
 	if (element.id && includesCommentWord(element.id)) {
 		if (endsWithInt(element.id)) {
-			return startsWithSelector("id", trimIntEnding(element.id));
+			return startsWithSelector("id", trimIntEnding(element.id), true);
 		} else {
 			return '#' + element.id;
 		}
@@ -247,7 +247,7 @@ function extractCommentSelector(element) {
 	for (const className of element.classList) {
 		if (includesCommentWord(className)) {
 			if (endsWithInt(className)) {
-				fpArray.push(containsSelector('class', trimIntEnding(className)));
+				fpArray.push(containsSelector('class', trimIntEnding(className), true));
 			} else {
 				fpArray.push('.' + className);
 			}
@@ -260,14 +260,14 @@ function extractCommentSelector(element) {
 	}
 }
 
-const commentWords = ["comment"];
+const commentWords = ["comment"]; // must be lowercase
 const commentCandidatesSelectors = [];
 for (const commentWord of commentWords) {
-	const idSelector = containsSelector("id", commentWord) + ":not(code)";
-	const classSelector = containsSelector("class", commentWord) + ":not(code)";
+	const idSelector = containsSelector("id", commentWord, true) + ":not(code)";
+	const classSelector = containsSelector("class", commentWord, true) + ":not(code)";
 	commentCandidatesSelectors.push(idSelector + ',' + classSelector);
 }
-const includesCommentWord = s => commentWords.some(cw => s.includes(cw));
+const includesCommentWord = s => commentWords.some(cw => s.toLowerCase().includes(cw));
 
 const intEndingRegexp = /\d+$/;
 
@@ -279,12 +279,12 @@ function trimIntEnding(s) {
 	return s.replace(intEndingRegexp, '');
 }
 
-function startsWithSelector(attr, s) {
-	return "[" + attr + "^='" + s + "']";
+function startsWithSelector(attr, s, caseInsensitive) {
+	return `[${attr}^="${s}"${caseInsensitive ? ' i' : ''}]`;
 }
 
-function containsSelector(attr, s) {
-	return "[" + attr + "*='" + s + "']";
+function containsSelector(attr, s, caseInsensitive) {
+	return `[${attr}*="${s}"${caseInsensitive ? ' i' : ''}]`;
 }
 
 function siblingIndex(element) {
