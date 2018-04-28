@@ -25,15 +25,16 @@ function nextTarget(pageY, params = {}) {
 			if (!isHidden(comment)) {
 				elements.push(comment);
 				const rect = comment.getBoundingClientRect();
+				const contentLeft = rect.left + leftPadding(comment);
 				if (commentsBounds == null) {
 					commentsBounds = {
-						contentLeft: rect.left + leftPadding(comment),
+						contentLeft,
 						top: rect.top,
 						bottom: rect.bottom
 					};
 				} else {
-					if (rect.left + leftPadding(comment) < commentsBounds.contentLeft) {
-						commentsBounds.left = rect.left;
+					if (contentLeft < commentsBounds.contentLeft) {
+						commentsBounds.contentLeft = contentLeft;
 					}
 					if (rect.top < commentsBounds.top) {
 						commentsBounds.top = rect.top;
@@ -120,7 +121,7 @@ function querySuperSelector(superSelector) {
 }
 
 function leftPadding(e) {
-	return window.getComputedStyle(e, null).getPropertyValue('padding-left')
+	return parseFloat(window.getComputedStyle(e, null).getPropertyValue('padding-left'));
 }
 
 function compareTop(a, b) {
