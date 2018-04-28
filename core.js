@@ -298,11 +298,8 @@ function siblingIndex(element) {
 }
 
 function bestKeys(stats) {
-	const keys = Object.keys(stats);
-	if (keys.length == 0) {
-		return [];
-	}
-	if (keys.length == 1) {
+	const keys = Object.keys(stats).filter(k => stats[k] > 1);
+	if (keys.length <= 1) {
 		return keys;
 	}
 	keys.sort((a, b) => stats[b] - stats[a]);
