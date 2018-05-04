@@ -175,7 +175,7 @@ describe("integration", () => {
         });
 
         it('next header', async () => {
-            await testSkipComparingTop(page, "h2", "Мотивация и возможности", headerHeight);
+            await testSkipComparingTop(page, "h2", "h2 ~ h2", headerHeight);
         });
 
         it('next comment root', async () => {
