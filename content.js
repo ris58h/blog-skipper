@@ -97,6 +97,9 @@ function calcHeaderHeight() {
 			&& e.offsetHeight < maxHeight
 			&& e.offsetWidth > minWidth) {
 			const style = window.getComputedStyle(e, null);
+			if (isHidden(e)) {
+				continue;
+			}
 			const position = style.getPropertyValue('position');
 			if (position == 'fixed' || position == 'sticky') {
 				const rect = e.getBoundingClientRect();

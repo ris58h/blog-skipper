@@ -260,7 +260,8 @@ describe("integration", () => {
 
     describe('vc.ru', () => {
         let page;
-        const headerHeight = 0;
+        const headerHeight = 50;
+        const commentHeaderHeight = headerHeight + 50;
 
         before(async () => {
             page = await createPage("https://vc.ru/36920-vlasti-finlyandii-reshili-ne-prodlevat-eksperiment-s-vyplatoy-bazovogo-dohoda", "vc.html");
@@ -269,7 +270,7 @@ describe("integration", () => {
         it('next header', async () => {
             await testSkipComparingTop(page,
                 "h2",
-                "Почему идея оказалась не так эффективна и какие есть альтернативы",
+                "h2 ~ h2",
                 headerHeight);
         });
 
@@ -277,7 +278,7 @@ describe("integration", () => {
             await testSkipComparingTop(page,
                 "[data-id='696917'].comments__item .comments__item__self",
                 "[data-id='696719'].comments__item .comments__item__self",
-                headerHeight);
+                commentHeaderHeight);
         });
 
         after(async () => {
