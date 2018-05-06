@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 const except = require("chai").expect;
-const fs = require("fs");
+const parseUrl = require("url").parse;
 
 describe("integration", () => {
     let browser;
@@ -22,19 +22,15 @@ describe("integration", () => {
         const headerHeight = 40;
 
         before(async () => {
-            page = await createPage("https://4pda.ru/2018/04/23/350937#comments", "4pda.html");
+            page = await createPage("https://4pda.ru/2018/04/23/350937#comments");
         });
 
         it('next header', async () => {
-            await waitThenScroll(page, "h2");
-            await skip(page);
-            const top = await page.$$eval('h2', (headers) => {
-                return headers[1].getBoundingClientRect().top;
-            });
-            except(headerHeight).to.be.closeTo(top, 1);
+            await testSkipComparingTop(page, "h2", "h2 ~ h2", headerHeight); 
         });
 
         it('next comment root', async () => {
+            await page.waitFor(1000); // Without this test fails. It seems like a race.           
             await testSkipComparingTop(page, "#comment-4750748", "#comment-4750749", headerHeight);
         });
 
@@ -48,7 +44,7 @@ describe("integration", () => {
         let headerHeight = 0;
 
         before(async () => {
-            page = await createPage("https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075", "bugs.launchpad.net.html");
+            page = await createPage("https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075");
         });
 
         it('next comment root', async () => {
@@ -68,7 +64,7 @@ describe("integration", () => {
         const headerHeight = 0;
 
         before(async () => {
-            page = await createPage("https://gif.d3.ru/nu-nakonets-to-1583095/", "d3.html");
+            page = await createPage("https://gif.d3.ru/nu-nakonets-to-1583095/");
         });
 
         it('next comment root', async () => {
@@ -90,7 +86,7 @@ describe("integration", () => {
         let headerHeight = 0;
 
         before(async () => {
-            page = await createPage("http://dataworld.info/payeer-karta-koshelek-obzor-otzyvy-registratsiya-russia-php.php", "dataworld.html");
+            page = await createPage("http://dataworld.info/payeer-karta-koshelek-obzor-otzyvy-registratsiya-russia-php.php");
         });
 
         it('next header', async () => {
@@ -106,12 +102,12 @@ describe("integration", () => {
         });
     });
 
-    describe('disqus comments', () => {
+    describe('disqus.com comments', () => {
         let page;
         const headerHeight = 0;
 
         before(async () => {
-            page = await createPage("https://disqus.com/embed/comments/?base=default&f=androidmr&t_i=54479%20http%3A%2F%2Fandroid.mobile-review.com%2F%3Fp%3D54479&t_u=http%3A%2F%2Fandroid.mobile-review.com%2Farticles%2F54479%2F&t_e=HiSilicon%3A%20%D0%B2%D1%81%D0%B5%20%D0%BE%20%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B5%20%D1%87%D0%B8%D0%BF%D1%81%D0%B5%D1%82%D0%BE%D0%B2%20%D0%B4%D0%BB%D1%8F%20Huawei&t_d=HiSilicon%3A%20%D0%B2%D1%81%D0%B5%20%D0%BE%20%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B5%20%D1%87%D0%B8%D0%BF%D1%81%D0%B5%D1%82%D0%BE%D0%B2%20%D0%B4%D0%BB%D1%8F%20Huawei&t_t=HiSilicon%3A%20%D0%B2%D1%81%D0%B5%20%D0%BE%20%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B5%20%D1%87%D0%B8%D0%BF%D1%81%D0%B5%D1%82%D0%BE%D0%B2%20%D0%B4%D0%BB%D1%8F%20Huawei&s_o=default&l=#version=3a153681e8d91dee2860bdf5f56e28f6", "disqus.html");
+            page = await createPage("https://disqus.com/embed/comments/?base=default&f=androidmr&t_i=54479%20http%3A%2F%2Fandroid.mobile-review.com%2F%3Fp%3D54479&t_u=http%3A%2F%2Fandroid.mobile-review.com%2Farticles%2F54479%2F&t_e=HiSilicon%3A%20%D0%B2%D1%81%D0%B5%20%D0%BE%20%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B5%20%D1%87%D0%B8%D0%BF%D1%81%D0%B5%D1%82%D0%BE%D0%B2%20%D0%B4%D0%BB%D1%8F%20Huawei&t_d=HiSilicon%3A%20%D0%B2%D1%81%D0%B5%20%D0%BE%20%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B5%20%D1%87%D0%B8%D0%BF%D1%81%D0%B5%D1%82%D0%BE%D0%B2%20%D0%B4%D0%BB%D1%8F%20Huawei&t_t=HiSilicon%3A%20%D0%B2%D1%81%D0%B5%20%D0%BE%20%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B5%20%D1%87%D0%B8%D0%BF%D1%81%D0%B5%D1%82%D0%BE%D0%B2%20%D0%B4%D0%BB%D1%8F%20Huawei&s_o=default&l=#version=3a153681e8d91dee2860bdf5f56e28f6");
         });
 
         it('next comment root', async () => {
@@ -123,12 +119,12 @@ describe("integration", () => {
         });
     });
 
-    describe('geektimes.ru', () => {
+    describe('geektimes.com', () => {
         let page;
         const headerHeight = 0;
 
         before(async () => {
-            page = await createPage("https://geektimes.com/post/300211/", "geektimes.html");
+            page = await createPage("https://geektimes.com/post/300211/");
         });
 
         it('next header', async () => {
@@ -145,12 +141,12 @@ describe("integration", () => {
     });
 
 
-    describe('habrahabr.ru', () => {
+    describe('habr.com', () => {
         let page;
         const headerHeight = 0;
 
         before(async () => {
-            page = await createPage("https://habr.com/post/354052/", "habrahabr.html");
+            page = await createPage("https://habr.com/post/354052/");
         });
 
         it('next header', async () => {
@@ -168,10 +164,10 @@ describe("integration", () => {
 
     describe('livejournal.com', () => {
         let page;
-        const headerHeight = 44;
+        const headerHeight = 0;
 
         before(async () => {
-            page = await createPage("https://lozga.livejournal.com/170880.html", "livejournal.html");
+            page = await createPage("https://lozga.livejournal.com/170880.html");
         });
 
         it('next header', async () => {
@@ -179,7 +175,7 @@ describe("integration", () => {
         });
 
         it('next comment root', async () => {
-            await testSkipComparingTop(page, "#t7122048", "#t7122304", headerHeight);
+            await testSkipComparingTop(page, "#ljcmt7121792", "#ljcmt7122304", headerHeight);
         });
 
         after(async () => {
@@ -209,11 +205,11 @@ describe("integration", () => {
         const headerHeight = 0;
 
         before(async () => {
-            page = await createPage("https://pikabu.ru/story/beregite_prirodu_5865577", "pikabu.html");
+            page = await createPage("https://pikabu.ru/story/beregite_prirodu_5865577");
         });
 
         it('next comment root', async () => {
-            await testSkipComparingTop(page, "#comment_111899576", "#comment_111899341", headerHeight);
+            await testSkipComparingTop(page, ".b-comment__body", ".b-comment__body ~ .b-comment__body", headerHeight);
         });
 
         after(async () => {
@@ -226,7 +222,7 @@ describe("integration", () => {
         const headerHeight = 0;
 
         before(async () => {
-            page = await createPage("https://www.reddit.com/r/aww/comments/8dyrb3/ben_is_very_proud_of_himself_for_learning_to_go/", "reddit.html");
+            page = await createPage("https://www.reddit.com/r/aww/comments/8dyrb3/ben_is_very_proud_of_himself_for_learning_to_go/");
         });
 
         it('next comment root', async () => {
@@ -238,12 +234,12 @@ describe("integration", () => {
         });
     });
 
-    describe('spot comments', () => {
+    describe('spot.im comments', () => {
         let page;
         const headerHeight = 0;
 
         before(async () => {
-            page = await createPage("https://spoxy-shard3.spot.im/v2/spot/sp_IjnMf2Jd/post/23418430/?elementId=b321749a16c5d64924c61888adcac21d&spot_im_platform=desktop&host_url=www.aol.com%2Farticle%2Fnews%2F2018%2F04%2F23%2Feagles-issue-interesting-statement-on-potential-white-house-visit%2F23418430%2F&host_url_64=d3d3LmFvbC5jb20vYXJ0aWNsZS9uZXdzLzIwMTgvMDQvMjMvZWFnbGVzLWlzc3VlLWludGVyZXN0aW5nLXN0YXRlbWVudC1vbi1wb3RlbnRpYWwtd2hpdGUtaG91c2UtdmlzaXQvMjM0MTg0MzAv&spot_im_ph__prerender_deferred=true&prerenderDeferred=true&sort_by=best&isStarsRatingEnabled=false&enableMessageShare=true&enableAnonymize=true&isConversationLiveBlog=false&enableSeeMoreButton=true", "spot.html");
+            page = await createPage("https://spoxy-shard3.spot.im/v2/spot/sp_IjnMf2Jd/post/23418430/?elementId=b321749a16c5d64924c61888adcac21d&spot_im_platform=desktop&host_url=www.aol.com%2Farticle%2Fnews%2F2018%2F04%2F23%2Feagles-issue-interesting-statement-on-potential-white-house-visit%2F23418430%2F&host_url_64=d3d3LmFvbC5jb20vYXJ0aWNsZS9uZXdzLzIwMTgvMDQvMjMvZWFnbGVzLWlzc3VlLWludGVyZXN0aW5nLXN0YXRlbWVudC1vbi1wb3RlbnRpYWwtd2hpdGUtaG91c2UtdmlzaXQvMjM0MTg0MzAv&spot_im_ph__prerender_deferred=true&prerenderDeferred=true&sort_by=best&isStarsRatingEnabled=false&enableMessageShare=true&enableAnonymize=true&isConversationLiveBlog=false&enableSeeMoreButton=true");
         });
 
         it('next comment root', async () => {
@@ -264,7 +260,7 @@ describe("integration", () => {
         const commentHeaderHeight = headerHeight + 50;
 
         before(async () => {
-            page = await createPage("https://vc.ru/36920-vlasti-finlyandii-reshili-ne-prodlevat-eksperiment-s-vyplatoy-bazovogo-dohoda", "vc.html");
+            page = await createPage("https://vc.ru/36920-vlasti-finlyandii-reshili-ne-prodlevat-eksperiment-s-vyplatoy-bazovogo-dohoda");
         });
 
         it('next header', async () => {
@@ -288,13 +284,16 @@ describe("integration", () => {
 
     describe('youtube.com', () => {
         let page;
-        const headerHeight = 0;
+        const headerHeight = 56;
 
         before(async () => {
-            page = await createPage("https://www.youtube.com/watch?v=gOsERJzMhLc&t=28s", "youtube.html");
+            page = await createPage("https://www.youtube.com/watch?v=gOsERJzMhLc");
         });
 
         it('next comment root', async () => {
+            await page.waitFor(3000);
+            await waitThenScroll(page, "#comments");
+            await page.waitFor(3000);
             await testSkipComparingTop(page,
                 "ytd-comment-thread-renderer:nth-child(4)",
                 "ytd-comment-thread-renderer:nth-child(5)",
@@ -310,23 +309,30 @@ describe("integration", () => {
         browser.close();
     });
 
-    async function createPage(url, fileName) {
+    async function createPage(url) {
         const page = await browser.newPage();
         await page.setRequestInterception(true);
         page.on('request', request => {
-            if (request.url() == url) {
-                const html = fs.readFileSync(process.cwd() + `/test/sites_data/${fileName}`, 'utf8');
-                request.respond({
-                    status: 200,
-                    contentType: 'text/html',
-                    body: html
-                });
+            if (isImageUrl(request.url())) {
+                request.abort();
             } else {
                 request.continue();
             }
         });
         await page.goto(url);
         return page;
+    }
+
+    function isImageUrl(url) {
+        const pathname = parseUrl(url).pathname;
+        if (!pathname) {
+            return false;
+        }
+        return pathname.endsWith(".png")
+            || pathname.endsWith(".jpg")
+            || pathname.endsWith(".jpeg")
+            || pathname.endsWith(".gif")
+            || pathname.endsWith(".svg");
     }
 
     function scrollIntoView(element) {
