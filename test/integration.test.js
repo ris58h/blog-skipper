@@ -209,8 +209,9 @@ describe("integration", () => {
             page = await createPage("https://pikabu.ru/story/beregite_prirodu_5865577");
         });
 
-        it('next comment root', async () => {
-            await testSkipComparingTop(page, ".b-comment__body", ".b-comment__body ~ .b-comment__body", headerHeight);
+        // TODO: This site has 'z' shortcut that scrolls page up so we skip to the same element every time.
+        it.skip('next comment root', async () => {
+            await testSkipComparingTop2(page, ".comments__container > .comment", headerHeight);
         });
 
         after(async () => {
