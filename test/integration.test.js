@@ -219,14 +219,22 @@ describe("integration", () => {
 
     describe('reddit.com', () => {
         let page;
-        const headerHeight = 0;
+        const oldHeaderHeight = 0;
+        const newHeaderHeight = 69;
 
         before(async () => {
             page = await createPage("https://www.reddit.com/r/aww/comments/8dyrb3/ben_is_very_proud_of_himself_for_learning_to_go/");
         });
 
         it('next comment root', async () => {
-            await testSkipComparingTop(page, "#thing_t1_dxr2q90", "#thing_t1_dxr6ht6", headerHeight);
+            const oldDesignSelector = ".commentarea>.sitetable>.comment";
+            const newDesignSelector = ".Comment.top-level";
+            const oldDesign = await page.$(oldDesignSelector);
+            if (oldDesign) {
+                await testSkipComparingTop2(page, oldDesignSelector, oldHeaderHeight);
+            } else {
+                await testSkipComparingTop2(page, newDesignSelector, newHeaderHeight);
+            }
         });
 
         after(async () => {
@@ -357,6 +365,13 @@ describe("integration", () => {
         await waitThenScroll(page, fromSelector);
         await skip(page);
         const top = await page.$eval(nextSelector, getTop);
+        except(headerHeight).to.be.closeTo(top, 1);
+    }
+
+    async function testSkipComparingTop2(page, selector, headerHeight) {
+        await waitThenScroll(page, selector);
+        await skip(page);
+        const top = await page.$$eval(selector, elements => elements[1].getBoundingClientRect().top);
         except(headerHeight).to.be.closeTo(top, 1);
     }
 });
