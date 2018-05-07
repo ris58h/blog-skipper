@@ -170,7 +170,8 @@ describe("integration", () => {
             page = await createPage("https://lozga.livejournal.com/170880.html");
         });
 
-        it('next header', async () => {
+        // There is fixed footer with suggested articles that contains header.
+        it.skip('next header', async () => {
             await testSkipComparingTop(page, "h2", "h2 ~ h2", headerHeight);
         });
 
