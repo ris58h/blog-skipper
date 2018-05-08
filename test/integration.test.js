@@ -7,8 +7,7 @@ describe("integration", () => {
 
     before(async () => {
         browser = await puppeteer.launch({
-            //TODO
-            headless: false,
+            headless: false, // Chrome Headless doesn't support extensions. https://github.com/GoogleChrome/puppeteer/issues/659
             args: [
                 '--no-sandbox',
                 '--disable-extensions-except=' + process.cwd(),
@@ -26,7 +25,7 @@ describe("integration", () => {
         });
 
         it('next header', async () => {
-            await testSkipComparingTop(page, "h2", "h2 ~ h2", headerHeight); 
+            await testSkipComparingTop2(page, "h2", headerHeight); 
         });
 
         it('next comment root', async () => {
@@ -48,10 +47,7 @@ describe("integration", () => {
         });
 
         it('next comment root', async () => {
-            await testSkipComparingTop(page,
-                ".boardComment:nth-child(1) .boardCommentDetails",
-                ".boardComment:nth-child(2) .boardCommentDetails",
-                headerHeight);
+            await testSkipComparingTop2(page, ".boardComment .boardCommentDetails", headerHeight);
         });
 
         after(async () => {
@@ -68,12 +64,7 @@ describe("integration", () => {
         });
 
         it('next comment root', async () => {
-            await testSkipComparingTop(
-                page,
-                "#b-comment-root > .b-comment:nth-child(1) .b-comment__body",
-                "#b-comment-root > .b-comment:nth-child(2) .b-comment__body",
-                headerHeight
-            );
+            await testSkipComparingTop2(page, "#b-comment-root > .b-comment .b-comment__body", headerHeight);
         });
 
         after(async () => {
@@ -170,7 +161,7 @@ describe("integration", () => {
             page = await createPage("https://lozga.livejournal.com/170880.html");
         });
 
-        // There is fixed footer with suggested articles that contains header.
+        // TODO: There is fixed footer with suggested articles that contains header.
         it.skip('next header', async () => {
             await testSkipComparingTop(page, "h2", "h2 ~ h2", headerHeight);
         });
@@ -201,7 +192,7 @@ describe("integration", () => {
         });
     });
 
-    describe('pikabu.ru', () => {
+    describe.skip('pikabu.ru', () => {
         let page;
         const headerHeight = 0;
 
@@ -210,7 +201,7 @@ describe("integration", () => {
         });
 
         // TODO: This site has 'z' shortcut that scrolls page up so we skip to the same element every time.
-        it.skip('next comment root', async () => {
+        it('next comment root', async () => {
             await testSkipComparingTop2(page, ".comments__container > .comment", headerHeight);
         });
 
@@ -304,10 +295,7 @@ describe("integration", () => {
             await page.waitFor(3000);
             await waitThenScroll(page, "#comments");
             await page.waitFor(3000);
-            await testSkipComparingTop(page,
-                "ytd-comment-thread-renderer:nth-child(4)",
-                "ytd-comment-thread-renderer:nth-child(5)",
-                headerHeight);
+            await testSkipComparingTop2(page, "ytd-comment-thread-renderer", headerHeight);
         });
 
         after(async () => {
