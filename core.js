@@ -55,10 +55,13 @@ function nextTarget(pageY, params = {}) {
 		return commentsBounds.top <= rect.top && rect.bottom <= commentsBounds.bottom;	
 	}
 
-	const headersSelector = 'article h1,article h2,article h3,article h4,article h5,article h6';
-	let headerList = document.querySelectorAll(headersSelector);
+	let headerList = [];
+	if (document.querySelectorAll("article").length == 1) {
+		const headersSelector = 'article h1, article h2, article h3, article h4, article h5, article h6';
+		headerList = document.querySelectorAll(headersSelector);
+	}
 	if (headerList.length == 0) {
-		const headersSelector2 = 'h1,h2,h3,h4,h5,h6';
+		const headersSelector2 = 'h1, h2, h3, h4, h5, h6';
 		headerList = document.querySelectorAll(headersSelector2);
 	}
 	for (const header of headerList) {

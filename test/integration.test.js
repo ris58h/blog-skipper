@@ -21,7 +21,7 @@ describe("integration", () => {
         const headerHeight = 40;
 
         before(async () => {
-            page = await createPage("https://4pda.ru/2018/04/23/350937#comments");
+            page = await createPage("https://4pda.ru/2018/05/10/351164/#comments");
         });
 
         it('next header', async () => {
@@ -30,7 +30,7 @@ describe("integration", () => {
 
         it('next comment root', async () => {
             await page.waitFor(1000); // Without this test fails. It seems like a race.           
-            await testSkipComparingTop(page, "#comment-4750748", "#comment-4750749", headerHeight);
+            await testSkipComparingTop2(page, ".comment-list.level-0 > li", headerHeight);
         });
 
         after(async () => {
