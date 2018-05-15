@@ -11,7 +11,8 @@ describe("integration", () => {
             args: [
                 '--no-sandbox',
                 '--disable-extensions-except=' + process.cwd(),
-                '--load-extension=' + process.cwd()
+                '--load-extension=' + process.cwd(),
+                '--mute-audio'
             ]
         });
     });
