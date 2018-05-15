@@ -313,7 +313,7 @@ describe("integration", () => {
         const page = await browser.newPage();
         await page.setRequestInterception(true);
         page.on('request', request => {
-            if (isImageUrl(request.url())) {
+            if (isImageUrl(request.url()) || isFontUrl(request.url())) {
                 request.abort();
             } else {
                 request.continue();
@@ -333,6 +333,15 @@ describe("integration", () => {
             || pathname.endsWith(".jpeg")
             || pathname.endsWith(".gif")
             || pathname.endsWith(".svg");
+    }
+
+    function isFontUrl(url) {
+        const pathname = parseUrl(url).pathname;
+        if (!pathname) {
+            return false;
+        }
+        return pathname.endsWith(".woff")
+            || pathname.endsWith(".woff2");
     }
 
     function scrollIntoView(element) {
