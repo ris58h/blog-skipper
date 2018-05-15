@@ -214,6 +214,7 @@ describe("integration", () => {
         let page;
         const oldHeaderHeight = 0;
         const newHeaderHeight = 69;
+        const delta = 5;
 
         before(async () => {
             page = await createPage("https://www.reddit.com/r/aww/comments/8dyrb3/ben_is_very_proud_of_himself_for_learning_to_go/");
@@ -224,9 +225,9 @@ describe("integration", () => {
             const newDesignSelector = ".Comment.top-level";
             const oldDesign = await page.$(oldDesignSelector);
             if (oldDesign) {
-                await testSkipComparingTop2(page, oldDesignSelector, oldHeaderHeight);
+                await testSkipComparingTop2(page, oldDesignSelector, oldHeaderHeight, delta);
             } else {
-                await testSkipComparingTop2(page, newDesignSelector, newHeaderHeight);
+                await testSkipComparingTop2(page, newDesignSelector, newHeaderHeight, delta);
             }
         });
 
@@ -351,17 +352,17 @@ describe("integration", () => {
         await page.keyboard.press('KeyZ');
     }
 
-    async function testSkipComparingTop(page, fromSelector, nextSelector, headerHeight) {
+    async function testSkipComparingTop(page, fromSelector, nextSelector, headerHeight, delta = 1) {
         await waitThenScroll(page, fromSelector);
         await skip(page);
         const top = await page.$eval(nextSelector, getTop);
-        except(headerHeight).to.be.closeTo(top, 1);
+        except(headerHeight).to.be.closeTo(top, delta);
     }
 
-    async function testSkipComparingTop2(page, selector, headerHeight) {
+    async function testSkipComparingTop2(page, selector, headerHeight, delta = 1) {
         await waitThenScroll(page, selector);
         await skip(page);
         const top = await page.$$eval(selector, elements => elements[1].getBoundingClientRect().top);
-        except(headerHeight).to.be.closeTo(top, 1);
+        except(headerHeight).to.be.closeTo(top, delta);
     }
 });
