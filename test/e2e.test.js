@@ -111,28 +111,6 @@ describe("integration", () => {
         });
     });
 
-    describe('geektimes.com', () => {
-        let page;
-        const headerHeight = 0;
-
-        before(async () => {
-            page = await createPage("https://geektimes.com/post/300211/");
-        });
-
-        it('next header', async () => {
-            await testSkipComparingTop(page, "h1", "h2", headerHeight);
-        });
-
-        it('next comment root', async () => {
-            await testSkipComparingTop(page, "#comment_10743077", "#comment_10743481", headerHeight);
-        });
-
-        after(async () => {
-            await page.close();
-        });
-    });
-
-
     describe('habr.com', () => {
         let page;
         const headerHeight = 0;
