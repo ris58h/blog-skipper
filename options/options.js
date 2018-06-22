@@ -30,6 +30,8 @@ function saveOptions(e) {
     settings["shortcuts"]["undo"] = undoShortcut;
   }
 
+  settings["skipOnMiddleClick"] = document.querySelector("#skipOnMiddleClick").checked;
+
   save(settings);
 }
 
@@ -42,6 +44,8 @@ function restoreOptions() {
 }
 
 function renderSettings(settings) {
+  document.querySelector("#autoDetectComments").checked = settings["autoDetectComments"];
+  
   const sitesElement = document.querySelector("#sites");
   while (sitesElement.firstChild) {
     sitesElement.removeChild(sitesElement.firstChild);
@@ -50,7 +54,6 @@ function renderSettings(settings) {
     sitesElement.appendChild(createSiteRowElement(site));
   }
 
-  document.querySelector("#autoDetectComments").checked = settings["autoDetectComments"];
   const shortcuts = settings["shortcuts"];
   if (shortcuts["skip"]) {
     document.querySelector("#shortcuts .skip").value = shortcuts["skip"];
@@ -58,6 +61,8 @@ function renderSettings(settings) {
   if (shortcuts["undo"]) {
     document.querySelector("#shortcuts .undo").value = shortcuts["undo"];
   }
+
+  document.querySelector("#skipOnMiddleClick").checked = settings["skipOnMiddleClick"];
 }
 
 function createSiteRowElement(site) {

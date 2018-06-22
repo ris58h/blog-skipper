@@ -5,6 +5,7 @@
 let autoDetectComments = false;
 let commentSelector = null;
 let shortcuts = {};
+let skipOnMiddleClick = false;
 
 //TODO: race condition
 load(function (settings) {
@@ -22,6 +23,17 @@ load(function (settings) {
 	}
 	if (settings.shortcuts) {
 		shortcuts = settings.shortcuts;
+	}
+	if (settings.skipOnMiddleClick != null) {
+		skipOnMiddleClick = settings.skipOnMiddleClick;
+	}
+
+	if (skipOnMiddleClick) {
+		document.addEventListener("click", function (e) {
+			if (e.button == 1 && e.target.nodeName != "A") {
+				doFullSkip(e.pageY);
+			}
+		});
 	}
 });
 

@@ -17,5 +17,6 @@
     "shortcuts": {
         "skip": "z",
         "undo": "Z"
-    }
+    },
+    "skipOnMiddleClick": false
 }
