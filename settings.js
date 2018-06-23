@@ -22,3 +22,14 @@
         "settings": settings
     });
 }
+
+function addChangeListener(listener) {
+    chrome.storage.onChanged.addListener(function (changes) {
+        for (const key in changes) {
+            if (key == "settings") {
+                var storageChange = changes[key];
+                listener(storageChange.newValue);
+            }
+        }
+    });
+}

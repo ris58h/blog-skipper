@@ -7,8 +7,7 @@ let commentSelector = null;
 let shortcuts = {};
 let skipOnMiddleClick = false;
 
-//TODO: race condition
-load(function (settings) {
+function initFromSettings(settings) {
 	if (settings.autoDetectComments != null) {
 		autoDetectComments = settings.autoDetectComments;
 	}
@@ -27,15 +26,12 @@ load(function (settings) {
 	if (settings.skipOnMiddleClick != null) {
 		skipOnMiddleClick = settings.skipOnMiddleClick;
 	}
+}
 
-	if (skipOnMiddleClick) {
-		document.addEventListener("click", function (e) {
-			if (e.button == 1 && e.target.nodeName != "A") {
-				doFullSkip(e.pageY);
-			}
-		});
-	}
-});
+//TODO: race condition
+load(initFromSettings);
+
+addChangeListener(initFromSettings);
 
 let prescrollPosition = null;
 
@@ -52,6 +48,24 @@ function doFullSkip(pageY) {
 		}
 	})
 }
+
+document.addEventListener("click", function (e) {
+	if (skipOnMiddleClick) {
+		if (e.button == 1 && !inNode(e.target, "A")) {
+			doFullSkip(e.pageY);
+		}
+	}
+
+	function inNode(element, nodeName) {
+		do {
+			if (element.nodeName == nodeName) {
+				return true;
+			}
+			element = element.parentNode;
+		} while (element != null);
+		return false;
+	}
+});
 
 let clickY;
 
