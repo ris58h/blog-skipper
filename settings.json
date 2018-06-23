@@ -1,7 +1,7 @@
 {
     "autoDetectComments": true,
-    "contextMenu": true,
-    "skipOnMiddleClick": false,
+    "contextMenu": false,
+    "skipOnMiddleClick": true,
     "sites": [
         {
             "urlPattern": "https://*.spot.im/*",
