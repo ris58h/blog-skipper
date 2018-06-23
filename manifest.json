@@ -1,46 +1,46 @@
 {
-  "manifest_version": 2,
+    "manifest_version": 2,
 
-  "name": "Blog Skipper",
-  "description": "Skip longreads and comment threads.",
-  "version": "1.2.1",
+    "name": "Blog Skipper",
+    "description": "Skip longreads and comment threads.",
+    "version": "1.3.0",
 
-  "applications": {
-    "gecko": {
-      "id": "blog-skipper@ris58h"
-    }
-  },
+    "applications": {
+        "gecko": {
+            "id": "blog-skipper@ris58h"
+        }
+    },
 
-  "permissions": [
-    "webNavigation",
-    "contextMenus",
-    "storage"
-  ],
+    "permissions": [
+        "webNavigation",
+        "contextMenus",
+        "storage"
+    ],
 
-  "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-   "128": "icons/icon128.png"
-  },
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
 
-  "background": {
-    "scripts": ["settings.js", "background.js"]
-  },
+    "background": {
+        "scripts": ["settings.js", "background.js"]
+    },
 
-  "content_scripts": [
-    {
-      "all_frames": true,
-      "matches": ["<all_urls>"],
-      "js": ["core.js", "settings.js", "content.js"]
-    }
-  ],
+    "content_scripts": [
+        {
+            "all_frames": true,
+            "matches": ["<all_urls>"],
+            "js": ["core.js", "settings.js", "content.js"]
+        }
+    ],
 
-  "options_ui": {
-    "page": "options/options.html",
-    "open_in_tab": true
-  },
+    "options_ui": {
+        "page": "options/options.html",
+        "open_in_tab": true
+    },
 
-  "web_accessible_resources": [
-    "settings.json"
-  ]
+    "web_accessible_resources": [
+        "settings.json"
+    ]
 }
