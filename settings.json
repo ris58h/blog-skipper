@@ -1,5 +1,7 @@
 {
     "autoDetectComments": true,
+    "contextMenu": true,
+    "skipOnMiddleClick": false,
     "sites": [
         {
             "urlPattern": "https://*.spot.im/*",
@@ -17,6 +19,5 @@
     "shortcuts": {
         "skip": "z",
         "undo": "Z"
-    },
-    "skipOnMiddleClick": false
+    }
 }

@@ -7,6 +7,10 @@ function saveOptions(e) {
 
   settings["autoDetectComments"] = document.querySelector("#autoDetectComments").checked;
 
+  settings["contextMenu"] = document.querySelector("#contextMenu").checked;
+  
+  settings["skipOnMiddleClick"] = document.querySelector("#skipOnMiddleClick").checked;
+
   settings["sites"] = [];
   const sites = document.querySelectorAll("#sites .site");
   for (const site of sites) {
@@ -30,8 +34,6 @@ function saveOptions(e) {
     settings["shortcuts"]["undo"] = undoShortcut;
   }
 
-  settings["skipOnMiddleClick"] = document.querySelector("#skipOnMiddleClick").checked;
-
   save(settings);
 }
 
@@ -45,6 +47,10 @@ function restoreOptions() {
 
 function renderSettings(settings) {
   document.querySelector("#autoDetectComments").checked = settings["autoDetectComments"];
+
+  document.querySelector("#contextMenu").checked = settings["contextMenu"];
+  
+  document.querySelector("#skipOnMiddleClick").checked = settings["skipOnMiddleClick"];
   
   const sitesElement = document.querySelector("#sites");
   while (sitesElement.firstChild) {
@@ -61,8 +67,6 @@ function renderSettings(settings) {
   if (shortcuts["undo"]) {
     document.querySelector("#shortcuts .undo").value = shortcuts["undo"];
   }
-
-  document.querySelector("#skipOnMiddleClick").checked = settings["skipOnMiddleClick"];
 }
 
 function createSiteRowElement(site) {
