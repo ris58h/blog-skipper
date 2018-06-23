@@ -1,46 +1,42 @@
-// import {load} from "./settings";
-// import {isHidden} from "./utils"
-// import {guessComentSelector} from "./skipper"
-
-let autoDetectComments = false;
-let commentSelector = null;
-let shortcuts = {};
-let skipOnMiddleClick = false;
+let autoDetectComments = false
+let commentSelector = null
+let shortcuts = {}
+let skipOnMiddleClick = false
 
 function initFromSettings(settings) {
 	if (settings.autoDetectComments != null) {
-		autoDetectComments = settings.autoDetectComments;
+		autoDetectComments = settings.autoDetectComments
 	}
 	if (settings.sites) {
 		for (const site of settings.sites) {
-			const urlRegex = new RegExp("^" + site.urlPattern.replace(/\*/g, ".*") + "$");
+			const urlRegex = new RegExp("^" + site.urlPattern.replace(/\*/g, ".*") + "$")
 			if (urlRegex.test(window.location.href) && site.commentSelector) {
-				commentSelector = site.commentSelector;
-				break;
+				commentSelector = site.commentSelector
+				break
 			}
 		}
 	}
 	if (settings.shortcuts) {
-		shortcuts = settings.shortcuts;
+		shortcuts = settings.shortcuts
 	}
 	if (settings.skipOnMiddleClick != null) {
-		skipOnMiddleClick = settings.skipOnMiddleClick;
+		skipOnMiddleClick = settings.skipOnMiddleClick
 	}
 }
 
 //TODO: race condition
-load(initFromSettings);
+load(initFromSettings)
 
-addChangeListener(initFromSettings);
+addChangeListener(initFromSettings)
 
-let prescrollPosition = null;
+let prescrollPosition = null
 
 function doFullSkip(pageY) {
 	prescrollPosition = {
 		'x': window.scrollX,
 		'y': window.scrollY
 	}
-	const headerHeight = doSkip(pageY, {autoDetectComments, commentSelector});
+	const headerHeight = doSkip(pageY, {autoDetectComments, commentSelector})
 	chrome.runtime.sendMessage({
 		type: 'scroll-parent-header',
 		data: {
@@ -52,95 +48,95 @@ function doFullSkip(pageY) {
 document.addEventListener("click", function (e) {
 	if (skipOnMiddleClick) {
 		if (e.button == 1 && !inNode(e.target, "A")) {
-			doFullSkip(e.pageY);
+			doFullSkip(e.pageY)
 		}
 	}
 
 	function inNode(element, nodeName) {
 		do {
 			if (element.nodeName == nodeName) {
-				return true;
+				return true
 			}
-			element = element.parentNode;
-		} while (element != null);
-		return false;
+			element = element.parentNode
+		} while (element != null)
+		return false
 	}
-});
+})
 
-let clickY;
+let clickY
 
 document.addEventListener('contextmenu', function(e) {
-	clickY = e.pageY;
-});
+	clickY = e.pageY
+})
 
 chrome.runtime.onMessage.addListener(function(msg) {
 	if (msg.type == 'skip') {
-		doFullSkip(clickY);
+		doFullSkip(clickY)
 	} else if (msg.type == 'scroll-header') {
-		const headerHeight = calcHeaderHeight();
-		window.scrollBy(0, -(headerHeight - msg.data.scrolled));
+		const headerHeight = calcHeaderHeight()
+		window.scrollBy(0, -(headerHeight - msg.data.scrolled))
 	}
-});
+})
 
 document.addEventListener('keyup', function(e) {
 	if (document.activeElement 
 		&& (document.activeElement.tagName == "INPUT" 
 		|| document.activeElement.tagName == "SELECT"
 			|| document.activeElement.tagName == "TEXTAREA")) {
-				return;
+				return
 	}
 	if (e.key == shortcuts["skip"]) {
-		const headerHeight = calcHeaderHeight();
-		const startFrom = window.scrollY + headerHeight + 1;
-		doFullSkip(startFrom);
+		const headerHeight = calcHeaderHeight()
+		const startFrom = window.scrollY + headerHeight + 1
+		doFullSkip(startFrom)
 	} else if (e.key == shortcuts["undo"]) {
 		if (prescrollPosition != null) {
-			window.scrollTo(prescrollPosition.x, prescrollPosition.y);
-			prescrollPosition == null;
+			window.scrollTo(prescrollPosition.x, prescrollPosition.y)
+			prescrollPosition == null
 		}
 	}
-});
+})
 
 function doSkip(pageY, params) {
-	const next = nextTarget(pageY, params);
-	return next == null ? null : goTo(next);
+	const next = nextTarget(pageY, params)
+	return next == null ? null : goTo(next)
 }
 
 function goTo(element) {
-	element.scrollIntoView();
+	element.scrollIntoView()
 
-	const headerHeight = calcHeaderHeight();
-	window.scrollBy(0, -headerHeight);
-	return headerHeight;
+	const headerHeight = calcHeaderHeight()
+	window.scrollBy(0, -headerHeight)
+	return headerHeight
 }
 
 function calcHeaderHeight() {
-	const maxHeight = window.innerHeight / 2;
-	const minWidth = window.innerWidth / 2;
-	let lowestBottom = 0;
+	const maxHeight = window.innerHeight / 2
+	const minWidth = window.innerWidth / 2
+	let lowestBottom = 0
 	for (const e of document.body.querySelectorAll("div,nav,header")) {
 		if (e.offsetHeight > 0
 			&& e.offsetHeight < maxHeight
 			&& e.offsetWidth > minWidth) {
-			const style = window.getComputedStyle(e, null);
+			const style = window.getComputedStyle(e, null)
 			if (isHidden(e)) {
-				continue;
+				continue
 			}
-			const position = style.getPropertyValue('position');
+			const position = style.getPropertyValue('position')
 			if (position == 'fixed' || position == 'sticky') {
-				const rect = e.getBoundingClientRect();
+				const rect = e.getBoundingClientRect()
 				if (position == 'sticky') {
-					const stuck = rect.top == parseFloat(e.style.top);
+					const stuck = rect.top == parseFloat(e.style.top)
 					if (!stuck) {
-						continue;
+						continue
 					}
 				}
-				const bottom = rect.bottom;
+				const bottom = rect.bottom
 				if (bottom < window.innerHeight / 2 && bottom > lowestBottom) {
-					lowestBottom = bottom;
+					lowestBottom = bottom
 				}
 			}
 		}
 	}
-	return lowestBottom;
+	return lowestBottom
 }
