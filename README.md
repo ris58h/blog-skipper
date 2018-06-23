@@ -26,7 +26,14 @@ Right-click on a part of an article or a comment thread you want to skip. In the
 
 ## Keyboard
 
-There are shortcuts, which is great for [Vimium](https://vimium.github.io/) (or other similar extensions) users! Defaults are 'z' for Skip and 'Z' for Undo (move to the position before Skip). You can reassign them on the extension's options page.
+There are shortcuts for BlogSkipper's actions. Defaults are 'z' for Skip and 'Z' for Undo (move to the position before Skip). You can reassign them on the extension's options page.
+
+### Vimium
+
+The shortcuts are great for [Vimium](https://vimium.github.io/) (or other similar extensions) users!
+
+Note that there could be shortcuts collision between extensions. Vimium users can resolve it using "Excluded URLs
+and keys" option in the Vimium's option page (for example, Patterns: *, Keys: z).
 
 ## Options
 
