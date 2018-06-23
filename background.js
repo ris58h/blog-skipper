@@ -1,5 +1,6 @@
 function initFromSettings(settings) {
-    if (settings["contextMenu"]) {
+    const cm = settings["contextMenu"];
+    if (cm == null || cm) { // backward compatibility
         chrome.contextMenus.create({
             id: "blog-skipper-skip",
             title: "Skip"
