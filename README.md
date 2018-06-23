@@ -14,7 +14,7 @@ Blog Skipper is a Web Extension to skip longreads and comment threads. It works 
 
 ## Mouse
 
-It scrolls a page to the next header in case of article click or to the next comment tree (last comment if there is no next comment tree) in case of comment click.
+It scrolls a page to the next header in case of article click or to the next comment tree (last comment if there is no next comment tree) in case of comment click. You can enable/disable it on the extension's options page.
 
 ### Middle Click
 
@@ -38,12 +38,13 @@ and keys" option in the Vimium's option page (for example, Patterns: *, Keys: z)
 ## Options
 
 There are several settings on the extension's options page.
-| Name | Description |
-| - | - |
-| Automatically detect comments | Check it to autodetect comments. See Sites option. |
+
+| Option | Description |
+| --- | --- |
+| Automatically detect comments | Check it to autodetect comments. See *Sites* option. |
 | Add to Context Menu | Check it if you want to add BlogSkipper to Browser's Context Menu. |
 | Skip on Middle Click | Check it if you want to do skip on Middle Click. |
-| Sites | There you can manually define comment's CSS-selectors for sites. |
+| Sites | There you can manually define CSS-selectors for comments on sites. |
 | Shortcuts | Shortcuts for BlogSkipper's actions. One letter per action. |
 
 # Build
