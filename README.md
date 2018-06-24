@@ -33,7 +33,7 @@ There are shortcuts for BlogSkipper's actions. Defaults are 'z' for Skip and 'Z'
 The shortcuts are great for [Vimium](https://vimium.github.io/) (or other similar extensions) users!
 
 Note that there could be shortcuts collision between extensions. Vimium users can resolve it using "Excluded URLs
-and keys" option in the Vimium's option page (for example, Patterns: *, Keys: z).
+and keys" option on the Vimium's options page (for example: `Patterns: *` `Keys: z`).
 
 ## Options
 
