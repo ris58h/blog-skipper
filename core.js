@@ -150,7 +150,7 @@ function indexOfSorted(elements, pageY) { //TODO binary search
 	return -elements.length - 1
 }
 
-/*export*/ function guessComentSelector() {
+function guessComentSelector() {
 	if (document.querySelectorAll(".comment").length > 1) {
 		log("Dumb comments detection is used!")
 		return {
@@ -323,7 +323,7 @@ function bestKeys(stats) {
 	return topKeys
 }
 
-/*export*/ function isHidden(el) {
+function isHidden(el) {
     const style = window.getComputedStyle(el)
 	return style.display === 'none' 
 		|| (el.offsetParent === null && style.position !== 'fixed') 

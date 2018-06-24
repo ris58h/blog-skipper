@@ -29,10 +29,10 @@ chrome.runtime.onMessage.addListener(function(msg, sender) {
             chrome.tabs.sendMessage(
                 tabId,
                 {
-                type: "scroll-header",
-                data: {
-                    scrolled: msg.data.scrolled
-                }
+                    type: "scroll-header",
+                    data: {
+                        scrolled: msg.data.scrolled
+                    }
                 },
                 { frameId: pFrameId }
             )
