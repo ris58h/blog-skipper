@@ -5,7 +5,11 @@ function saveOptions(e) {
 
     settings["autoDetectComments"] = document.querySelector("#autoDetectComments").checked
 
-    settings["contextMenu"] = document.querySelector("#contextMenu").checked
+    settings["contextMenu"] = {}
+    settings["contextMenu"]["enabled"] = document.querySelector("#contextMenu-enabled").checked
+    settings["contextMenu"]["items"] = {}
+    settings["contextMenu"]["items"]["skip"] = document.querySelector("#contextMenu-item-skip").checked
+    settings["contextMenu"]["items"]["undo"] = document.querySelector("#contextMenu-item-undo").checked
 
     settings["skipOnMiddleClick"] = document.querySelector("#skipOnMiddleClick").checked
 
@@ -46,7 +50,19 @@ function restoreOptions() {
 function renderSettings(settings) {
     document.querySelector("#autoDetectComments").checked = settings["autoDetectComments"]
 
-    document.querySelector("#contextMenu").checked = settings["contextMenu"]
+    let cm = settings["contextMenu"]
+    if (cm == null || typeof cm != "object") {
+        cm = {
+            "enabled": true,
+            "items": {
+                "skip": true,
+                "undo": false
+            }
+        }
+    }
+    document.querySelector("#contextMenu-enabled").checked = cm["enabled"]
+    document.querySelector("#contextMenu-item-skip").checked = cm["items"]["skip"]
+    document.querySelector("#contextMenu-item-undo").checked = cm["items"]["undo"]
 
     document.querySelector("#skipOnMiddleClick").checked = settings["skipOnMiddleClick"]
 

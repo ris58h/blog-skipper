@@ -112,3 +112,13 @@ input[type="checkbox"]:checked {
 .actions button:first-of-type {
     margin-left: 0px;
 }
+
+.checked-section {
+    border: 1px solid #d7d7db;
+    margin: 4px;
+    padding: 4px;
+}
+
+.checked-section-content {
+    padding-left: 32px;
+}

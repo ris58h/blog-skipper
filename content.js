@@ -31,6 +31,13 @@ addChangeListener(initFromSettings)
 
 let prescrollPosition = null
 
+function undo() {
+	if (prescrollPosition != null) {
+		window.scrollTo(prescrollPosition.x, prescrollPosition.y)
+		prescrollPosition == null
+	}
+}
+
 function doFullSkip(pageY) {
 	prescrollPosition = {
 		'x': window.scrollX,
@@ -72,6 +79,8 @@ document.addEventListener('contextmenu', function(e) {
 chrome.runtime.onMessage.addListener(function(msg) {
 	if (msg.type == 'skip') {
 		doFullSkip(clickY)
+	} else if (msg.type == 'undo') {
+		undo()
 	} else if (msg.type == 'scroll-header') {
 		const headerHeight = calcHeaderHeight()
 		window.scrollBy(0, -(headerHeight - msg.data.scrolled))
@@ -90,10 +99,7 @@ document.addEventListener('keyup', function(e) {
 		const startFrom = window.scrollY + headerHeight + 1
 		doFullSkip(startFrom)
 	} else if (e.key == shortcuts["undo"]) {
-		if (prescrollPosition != null) {
-			window.scrollTo(prescrollPosition.x, prescrollPosition.y)
-			prescrollPosition == null
-		}
+		undo()
 	}
 })
 

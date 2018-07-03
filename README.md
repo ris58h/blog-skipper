@@ -22,7 +22,7 @@ Middle-click on a part of an article or a comment thread you want to skip.
 
 ### Context Menu
 
-Right-click on a part of an article or a comment thread you want to skip. In the context menu click 'Skip'.
+Right-click on a part of an article or a comment thread you want to skip. In the context menu click 'Skip' or 'Undo'. You can customize context menu items on the extension's options page.
 
 ## Keyboard
 
@@ -42,7 +42,9 @@ There are several settings on the extension's options page.
 | Option | Description |
 | --- | --- |
 | Automatically detect comments | Check it to autodetect comments. See *Sites* option. |
-| Add to Context Menu | Check it if you want to add BlogSkipper to Browser's Context Menu. |
+| Add to Context Menu | Check it if you want to add BlogSkipper actions to Browser's Context Menu. |
+| Skip | Check it if you want to add Skip to Context Menu. |
+| Undo | Check it if you want to add Undo to Context Menu. |
 | Skip on Middle Click | Check it if you want to do skip on Middle Click. |
 | Sites | There you can manually define CSS-selectors for comments on sites. |
 | Shortcuts | Shortcuts for BlogSkipper's actions. One letter per action. |

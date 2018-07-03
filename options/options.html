@@ -12,9 +12,21 @@
         <input type="checkbox" id="autoDetectComments" />
         <label for="autoDetectComments">Automatically detect comments</label>
       </div>
-      <div class="flex-row">
-        <input type="checkbox" id="contextMenu" />
-        <label for="contextMenu">Add to Context Menu</label>
+      <div class="checked-section">
+        <div class="flex-row">
+          <input type="checkbox" id="contextMenu-enabled" />
+          <label for="contextMenu-enabled">Add to Context Menu</label>
+        </div>
+        <div class="checked-section-content">
+          <div class="flex-row">
+            <input type="checkbox" id="contextMenu-item-skip" />
+            <label for="contextMenu-item-skip">Skip</label>
+          </div>
+          <div class="flex-row">
+            <input type="checkbox" id="contextMenu-item-undo" />
+            <label for="contextMenu-item-undo">Undo</label>
+          </div>
+        </div>
       </div>
       <div class="flex-row">
         <input type="checkbox" id="skipOnMiddleClick" />

@@ -1,13 +1,30 @@
 function initFromSettings(settings) {
-    const cm = settings["contextMenu"]
-    if (cm == null || cm) { // backward compatibility
-        chrome.contextMenus.create({
-            id: "blog-skipper-skip",
-            title: "Skip"
-        })
-    } else {
-        chrome.contextMenus.remove("blog-skipper-skip")
-    }
+    chrome.contextMenus.removeAll(function () {
+        let cm = settings["contextMenu"]
+        if (cm == null || typeof cm != "object") {
+            cm = {
+                "enabled": true,
+                "items": {
+                    "skip": true,
+                    "undo": false
+                }
+            }
+        }
+        if (cm.enabled) {
+            if (cm.items.skip) {
+                chrome.contextMenus.create({
+                    id: "skip",
+                    title: "Skip"
+                })
+            }
+            if (cm.items.undo) {
+                chrome.contextMenus.create({
+                    id: "undo",
+                    title: "Undo"
+                })
+            }
+        }
+    })
 }
 
 load(initFromSettings)
@@ -15,7 +32,11 @@ load(initFromSettings)
 addChangeListener(initFromSettings)
 
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
-    chrome.tabs.sendMessage(tab.id, { type: "skip" }, { frameId: info.frameId })
+    if (info.menuItemId == "skip") {
+        chrome.tabs.sendMessage(tab.id, { type: "skip" }, { frameId: info.frameId })
+    } else if (info.menuItemId == "undo") {
+        chrome.tabs.sendMessage(tab.id, { type: "undo" }, { frameId: info.frameId })
+    }
 })
 
 chrome.runtime.onMessage.addListener(function(msg, sender) {

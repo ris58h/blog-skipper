@@ -1,6 +1,12 @@
 {
     "autoDetectComments": true,
-    "contextMenu": false,
+    "contextMenu": {
+        "enabled": false,
+        "items": {
+            "skip": true,
+            "undo": true
+        }
+    },
     "skipOnMiddleClick": true,
     "sites": [
         {
