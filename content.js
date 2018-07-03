@@ -52,7 +52,7 @@ function doFullSkip(pageY) {
 	})
 }
 
-document.addEventListener("click", function (e) {
+document.addEventListener("auxclick", function (e) {
 	if (skipOnMiddleClick) {
 		if (e.button == 1 && !inNode(e.target, "A")) {
 			doFullSkip(e.pageY)
