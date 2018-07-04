@@ -273,7 +273,8 @@ describe("integration", () => {
 
         it('next comment root', async () => {
             await page.waitFor(3000)
-            await waitThenScroll(page, "#comments")
+            await page.waitForSelector("#comments")
+            await page.$eval("#comments", scrollIntoView)
             await page.waitFor(3000)
             await testSkipComparingTop2(page, "ytd-comment-thread-renderer", headerHeight)
         })
@@ -326,30 +327,39 @@ describe("integration", () => {
         element.scrollIntoView()
     }
 
-    async function waitThenScroll(page, selector) {
-        await page.waitForSelector(selector)
-        await page.$eval(selector, scrollIntoView)
-    }
-
     function getTop(element) {
         return element.getBoundingClientRect().top
     }
 
-    async function skip(page) {
+    async function skipWithKey(page, selector) {
+        await page.waitForSelector(selector)
+        await page.$eval(selector, scrollIntoView)
         //TODO it could be different key
         await page.keyboard.press('KeyZ')
     }
 
+    async function skipWithClick(page, selector) {
+        await page.waitForSelector(selector)
+        await page.click(selector, { button: "middle" })
+    }
+
+    async function skip(page, selector) {
+        const useClick = true
+        if (useClick) {
+            await skipWithClick(page, selector)
+        } else {
+            await skipWithKey(page, selector)
+        }
+    }
+
     async function testSkipComparingTop(page, fromSelector, nextSelector, headerHeight, delta = 1) {
-        await waitThenScroll(page, fromSelector)
-        await skip(page)
+        await skip(page, fromSelector)
         const top = await page.$eval(nextSelector, getTop)
         except(headerHeight).to.be.closeTo(top, delta)
     }
 
     async function testSkipComparingTop2(page, selector, headerHeight, delta = 1) {
-        await waitThenScroll(page, selector)
-        await skip(page)
+        await skip(page, selector)
         const top = await page.$$eval(selector, elements => elements[1].getBoundingClientRect().top)
         except(headerHeight).to.be.closeTo(top, delta)
     }
