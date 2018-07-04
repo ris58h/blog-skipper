@@ -171,7 +171,8 @@ describe("integration", () => {
         })
     })
 
-    describe.skip('pikabu.ru', () => {
+    //This site has 'z' shortcut that scrolls page up so we skip to the same element every time.
+    describe('pikabu.ru', () => {
         let page
         const headerHeight = 0
 
@@ -179,9 +180,8 @@ describe("integration", () => {
             page = await createPage("https://pikabu.ru/story/beregite_prirodu_5865577")
         })
 
-        // TODO: This site has 'z' shortcut that scrolls page up so we skip to the same element every time.
         it('next comment root', async () => {
-            await testSkipComparingTop2(page, ".comments__container > .comment", headerHeight)
+            await testSkipComparingTop2(page, ".comments__container > .comment", headerHeight, 2)
         })
 
         after(async () => {
