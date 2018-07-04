@@ -163,7 +163,7 @@ describe("integration", () => {
         })
 
         it('next comment root', async () => {
-            await testSkipComparingTop(page, "#unv_16909828", "#unv_16909655", headerHeight)
+            await testSkipComparingTop(page, "tr[id='16909828'] .comment", "tr[id='16909655'] .comhead", headerHeight)
         })
 
         after(async () => {
