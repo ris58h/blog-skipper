@@ -1,0 +1,20 @@
+Blog Skipper is a Web Extension to skip longreads and comment threads. It works great for 'holy wars' and won't let your fingers get tired \o/.
+
+HOW TO USE IT
+Middle-click on a part of an article or a comment thread you want to skip.
+Right-click on a part of an article or a comment thread you want to skip. In the context menu click 'Skip' (disabled by default; you can change it on the extension's options page).
+It scrolls a page to the next header in case of article click or to the next comment tree (last comment if there is no next comment tree) in case of comment click.
+Use 'Undo' action if you want to return back to the place you skipped from (take a look at the extension's options page).
+
+SITES
+Blog Skipper automatically detects comments on sites, but you can define CSS-selectors for comments on the extension's options page (basic CSS knowledge is required).
+List of tested sites:
+- YouTube
+- Reddit
+- Hacker News
+- Disqus
+- LiveJournal
+- Pikabu
+- Habr
+- D3
+- 4PDA
