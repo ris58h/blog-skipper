@@ -292,7 +292,11 @@ describe("integration", () => {
         const page = await browser.newPage()
         await page.setRequestInterception(true)
         page.on('request', request => {
-            if (isImageUrl(request.url()) || isFontUrl(request.url())) {
+            if (isImageUrl(request.url()) 
+                || isFontUrl(request.url())
+                || urlHostnameEndsWith(request.url(), "yandex.ru")
+                || urlHostnameEndsWith(request.url(), "rambler.ru")) {
+                // console.log("abort " + request.url())
                 request.abort()
             } else {
                 request.continue()
@@ -321,6 +325,14 @@ describe("integration", () => {
         }
         return pathname.endsWith(".woff")
             || pathname.endsWith(".woff2")
+    }
+
+    function urlHostnameEndsWith(url, ending) {
+        const hostname = parseUrl(url).hostname
+        if (!hostname) {
+            return false
+        }
+        return hostname.endsWith(ending)
     }
 
     function scrollIntoView(element) {
