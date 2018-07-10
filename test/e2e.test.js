@@ -272,10 +272,9 @@ describe("integration", () => {
         })
 
         it('next comment root', async () => {
-            await page.waitFor(3000)
-            await page.waitForSelector("#comments")
-            await page.$eval("#comments", scrollIntoView)
-            await page.waitFor(3000)
+            await page.waitForSelector("#main #comments #sections")
+            await page.$eval("#main #comments #sections", scrollIntoView)
+            await page.waitFor(1000) //TODO Hack to let YouTube time to render comments.
             await testSkipComparingTop2(page, "ytd-comment-thread-renderer", headerHeight)
         })
 
