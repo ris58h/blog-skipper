@@ -26,11 +26,11 @@ describe("integration", () => {
         })
 
         it('next header', async () => {
-            await testSkipComparingTop2(page, "h2", headerHeight) 
+            await testSkipComparingTop2(page, "h2", headerHeight)
         })
 
         it('next comment root', async () => {
-            await page.waitFor(1000) // Without this test fails. It seems like a race.           
+            await page.waitFor(1000) // Without this test fails. It seems like a race.
             await testSkipComparingTop2(page, ".comment-list.level-0 > li", headerHeight)
         })
 
@@ -272,9 +272,7 @@ describe("integration", () => {
         })
 
         it('next comment root', async () => {
-            await page.waitForSelector("#main #comments #sections")
-            await page.$eval("#main #comments #sections", scrollIntoView)
-            await page.waitFor(1000) //TODO Hack to let YouTube time to render comments.
+            await waitThenScroll(page, "#comments #sections")
             await testSkipComparingTop2(page, "ytd-comment-thread-renderer", headerHeight)
         })
 
@@ -291,7 +289,7 @@ describe("integration", () => {
         const page = await browser.newPage()
         await page.setRequestInterception(true)
         page.on('request', request => {
-            if (isImageUrl(request.url()) 
+            if (isImageUrl(request.url())
                 || isFontUrl(request.url())
                 || urlHostnameEndsWith(request.url(), "yandex.ru")
                 || urlHostnameEndsWith(request.url(), "rambler.ru")) {
@@ -336,6 +334,11 @@ describe("integration", () => {
 
     function scrollIntoView(element) {
         element.scrollIntoView()
+    }
+
+    async function waitThenScroll(page, selector) {
+        await page.waitForSelector(selector)
+        await page.$eval(selector, scrollIntoView)
     }
 
     function getTop(element) {
