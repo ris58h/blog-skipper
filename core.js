@@ -7,7 +7,7 @@ function log(s) {
 
 function nextTarget(pageY, params = {}) {
 	const elements = []
-	
+
 	let commentsBounds = null
 	let commentSelector = null
 	if (params.commentSelector) {
@@ -52,7 +52,7 @@ function nextTarget(pageY, params = {}) {
 			return false
 		}
 		const rect = e.getBoundingClientRect()
-		return commentsBounds.top <= rect.top && rect.bottom <= commentsBounds.bottom	
+		return commentsBounds.top <= rect.top && rect.bottom <= commentsBounds.bottom
 	}
 
 	let headerList = []
@@ -65,7 +65,7 @@ function nextTarget(pageY, params = {}) {
 		headerList = document.querySelectorAll(headersSelector2)
 	}
 	for (const header of headerList) {
-		if (!isHidden(header) && !inVertCommentBounds(header)) {
+		if (!isHidden(header) && !inVertCommentBounds(header) && !isUnrelatedContent(header)) {
 			elements.push(header)
 		}
 	}
@@ -100,6 +100,12 @@ function nextTarget(pageY, params = {}) {
 	}
 }
 
+//TODO: it's a quick hack
+function isUnrelatedContent(element) {
+	const left = element.getBoundingClientRect().left
+	return left > (window.innerWidth * 0.66)
+}
+
 function querySuperSelector(superSelector) {
 	const elements = document.querySelectorAll(superSelector.selector)
 	if (superSelector.parent == 0) {
@@ -130,7 +136,7 @@ function leftPadding(e) {
 function compareTop(a, b) {
 	const aRect = a.getBoundingClientRect()
 	const bRect = b.getBoundingClientRect()
-	return aRect.top - bRect.top	
+	return aRect.top - bRect.top
 }
 
 function indexOfSorted(elements, pageY) { //TODO binary search
@@ -157,7 +163,7 @@ function guessComentSelector() {
 			selector: ".comment",
 			parent: 0,
 		}
-	} 
+	}
 	for (const commentCandidatesSelector of commentCandidatesSelectors) {
 		const stats = {}
 		const commentCandidates = document.querySelectorAll(commentCandidatesSelector)
@@ -325,7 +331,7 @@ function bestKeys(stats) {
 
 function isHidden(el) {
     const style = window.getComputedStyle(el)
-	return style.display === 'none' 
-		|| (el.offsetParent === null && style.position !== 'fixed') 
+	return style.display === 'none'
+		|| (el.offsetParent === null && style.position !== 'fixed')
 		|| style.visibility === 'hidden'
 }

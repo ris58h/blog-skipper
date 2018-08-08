@@ -11,7 +11,7 @@ describe("integration", () => {
         browser = await puppeteer.launch({
             headless: false, // Chrome Headless doesn't support extensions. https://github.com/GoogleChrome/puppeteer/issues/659
             args: [
-                `--window-size=${width},${height}`,// TODO use defaultViewport
+                `--window-size=${width},${height}`,
                 '--no-sandbox',
                 '--disable-extensions-except=' + process.cwd(),
                 '--load-extension=' + process.cwd(),
