@@ -291,7 +291,9 @@ describe("integration", () => {
         page.on('request', request => {
             if (isImageUrl(request.url())
                 || isFontUrl(request.url())
+                || urlHostnameEndsWith(request.url(), "doubleclick.net")
                 || urlHostnameEndsWith(request.url(), "yandex.ru")
+                || urlHostnameEndsWith(request.url(), "mail.ru")
                 || urlHostnameEndsWith(request.url(), "rambler.ru")) {
                 // console.log("abort " + request.url())
                 request.abort()
