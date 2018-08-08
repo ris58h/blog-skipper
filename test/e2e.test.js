@@ -99,11 +99,11 @@ describe("integration", () => {
         const headerHeight = 0
 
         before(async () => {
-            page = await createPage("https://disqus.com/embed/comments/?base=default&f=androidmr&t_i=54479%20http%3A%2F%2Fandroid.mobile-review.com%2F%3Fp%3D54479&t_u=http%3A%2F%2Fandroid.mobile-review.com%2Farticles%2F54479%2F&t_e=HiSilicon%3A%20%D0%B2%D1%81%D0%B5%20%D0%BE%20%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B5%20%D1%87%D0%B8%D0%BF%D1%81%D0%B5%D1%82%D0%BE%D0%B2%20%D0%B4%D0%BB%D1%8F%20Huawei&t_d=HiSilicon%3A%20%D0%B2%D1%81%D0%B5%20%D0%BE%20%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B5%20%D1%87%D0%B8%D0%BF%D1%81%D0%B5%D1%82%D0%BE%D0%B2%20%D0%B4%D0%BB%D1%8F%20Huawei&t_t=HiSilicon%3A%20%D0%B2%D1%81%D0%B5%20%D0%BE%20%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B5%20%D1%87%D0%B8%D0%BF%D1%81%D0%B5%D1%82%D0%BE%D0%B2%20%D0%B4%D0%BB%D1%8F%20Huawei&s_o=default&l=#version=3a153681e8d91dee2860bdf5f56e28f6")
+            page = await createPage("https://disqus.com/embed/comments/?base=default&f=disqus&t_i=5354070036&t_u=https%3A%2F%2Fblog.disqus.com%2Flittle-known-disqus-features&t_d=%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2010%20Little-known%20Disqus%20Features%20You%20Should%20Know%20About%0A%20%20%20%20%20%20%20%20%20%20%20%20&t_t=%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2010%20Little-known%20Disqus%20Features%20You%20Should%20Know%20About%0A%20%20%20%20%20%20%20%20%20%20%20%20&s_o=default#version=c0054b9f0e6fdc06531dbc13c60562c8")
         })
 
         it('next comment root', async () => {
-            await testSkipComparingTop(page, "#post-3867673899", "#post-3867648004", headerHeight)
+            await testSkipComparingTop(page, "#post-3963748605", "#post-3947815796", headerHeight)
         })
 
         after(async () => {
