@@ -3,12 +3,15 @@ const except = require("chai").expect
 const parseUrl = require("url").parse
 
 describe("integration", () => {
+    const width = 1920
+    const height = 1080
     let browser
 
     before(async () => {
         browser = await puppeteer.launch({
             headless: false, // Chrome Headless doesn't support extensions. https://github.com/GoogleChrome/puppeteer/issues/659
             args: [
+                `--window-size=${width},${height}`,// TODO use defaultViewport
                 '--no-sandbox',
                 '--disable-extensions-except=' + process.cwd(),
                 '--load-extension=' + process.cwd(),
@@ -287,6 +290,7 @@ describe("integration", () => {
 
     async function createPage(url) {
         const page = await browser.newPage()
+        await page._client.send('Emulation.clearDeviceMetricsOverride')
         await page.setRequestInterception(true)
         page.on('request', request => {
             if (isImageUrl(request.url())
