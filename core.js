@@ -8,7 +8,20 @@ function log(s) {
 function nextTarget(pageY, params = {}) {
 	const elements = []
 
+	let contentBounds = { left: Number.MAX_VALUE, right: Number.MIN_VALUE }
+	function isUnrelatedContent(rect) {
+		const contentWidth = contentBounds.right - contentBounds.left
+		const elementLeft = rect.left - contentBounds.left
+		return elementLeft > (contentWidth * 0.66)
+	}
 	let commentsBounds = null
+	const inVertCommentBounds = function (rect) {
+		if (commentsBounds == null) {
+			return false
+		}
+		return commentsBounds.top <= rect.top && rect.bottom <= commentsBounds.bottom
+	}
+
 	let commentSelector = null
 	if (params.commentSelector) {
 		commentSelector = {
@@ -33,6 +46,13 @@ function nextTarget(pageY, params = {}) {
 						bottom: rect.bottom
 					}
 				} else {
+					if (rect.left < contentBounds.left) {
+						contentBounds.left = rect.left
+					}
+					if (rect.right > contentBounds.right) {
+						contentBounds.right = rect.right
+					}
+
 					if (contentLeft < commentsBounds.contentLeft) {
 						commentsBounds.contentLeft = contentLeft
 					}
@@ -47,14 +67,6 @@ function nextTarget(pageY, params = {}) {
 		}
 	}
 
-	const inVertCommentBounds = function (e) {
-		if (commentsBounds == null) {
-			return false
-		}
-		const rect = e.getBoundingClientRect()
-		return commentsBounds.top <= rect.top && rect.bottom <= commentsBounds.bottom
-	}
-
 	let headerList = []
 	if (document.querySelectorAll("article").length == 1) {
 		const headersSelector = 'article h1, article h2, article h3, article h4, article h5, article h6'
@@ -65,7 +77,17 @@ function nextTarget(pageY, params = {}) {
 		headerList = document.querySelectorAll(headersSelector2)
 	}
 	for (const header of headerList) {
-		if (!isHidden(header) && !inVertCommentBounds(header) && !isUnrelatedContent(header)) {
+		const rect = header.getBoundingClientRect()
+		if (rect.left < contentBounds.left) {
+			contentBounds.left = rect.left
+		}
+		if (rect.right > contentBounds.right) {
+			contentBounds.right = rect.right
+		}
+	}
+	for (const header of headerList) {
+		const rect = header.getBoundingClientRect()
+		if (!isHidden(header) && !inVertCommentBounds(rect) && !isUnrelatedContent(rect)) {
 			elements.push(header)
 		}
 	}
@@ -81,14 +103,14 @@ function nextTarget(pageY, params = {}) {
 	if (curIndex >= elements.length - 1) {
 		return null
 	} else {
-		if (curIndex < 0 || !inVertCommentBounds(elements[curIndex])) {
+		if (curIndex < 0 || !inVertCommentBounds(elements[curIndex].getBoundingClientRect())) {
 			return elements[curIndex + 1]
 		} else {
 			let lastComment = null
 			for (let i = curIndex + 1; i < elements.length; i++) {
 				const e = elements[i]
-				if (inVertCommentBounds(e)) {
-					const rect = e.getBoundingClientRect()
+				const rect = e.getBoundingClientRect()
+				if (inVertCommentBounds(rect)) {
 					if (rect.left + leftPadding(e) === commentsBounds.contentLeft) {
 						return e
 					}
@@ -98,12 +120,6 @@ function nextTarget(pageY, params = {}) {
 			return lastComment
 		}
 	}
-}
-
-//TODO: it's a quick hack
-function isUnrelatedContent(element) {
-	const left = element.getBoundingClientRect().left
-	return left > (window.innerWidth * 0.66)
 }
 
 function querySuperSelector(superSelector) {
