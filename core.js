@@ -9,17 +9,52 @@ function nextTarget(pageY, params = {}) {
 	const elements = []
 
 	let contentBounds = { left: Number.MAX_VALUE, right: Number.MIN_VALUE }
+	function addToContentBounds(rect) {
+		if (rect.left < contentBounds.left) {
+			contentBounds.left = rect.left
+		}
+		if (rect.right > contentBounds.right) {
+			contentBounds.right = rect.right
+		}
+	}
 	function isUnrelatedContent(rect) {
 		const contentWidth = contentBounds.right - contentBounds.left
 		const elementLeft = rect.left - contentBounds.left
 		return elementLeft > (contentWidth * 0.66)
 	}
 	let commentsBounds = null
-	const inVertCommentBounds = function (rect) {
+	function addToCommentBounds(comment, rect) {
+		const contentLeft = rect.left + leftPadding(comment)
+		if (commentsBounds == null) {
+			commentsBounds = {
+				contentLeft,
+				top: rect.top,
+				bottom: rect.bottom
+			}
+		} else {
+			if (contentLeft < commentsBounds.contentLeft) {
+				commentsBounds.contentLeft = contentLeft
+			}
+			if (rect.top < commentsBounds.top) {
+				commentsBounds.top = rect.top
+			}
+			if (rect.bottom > commentsBounds.bottom) {
+				commentsBounds.bottom = rect.bottom
+			}
+		}
+	}
+	function inVertCommentBounds(rect) {
 		if (commentsBounds == null) {
 			return false
 		}
 		return commentsBounds.top <= rect.top && rect.bottom <= commentsBounds.bottom
+	}
+	function isLeftmostCommentContent(comment, rect) {
+		if (commentsBounds == null) {
+			return false
+		}
+		const contentLeft = rect.left + leftPadding(comment)
+		return contentLeft === commentsBounds.contentLeft
 	}
 
 	let commentSelector = null
@@ -38,31 +73,8 @@ function nextTarget(pageY, params = {}) {
 			if (!isHidden(comment)) {
 				elements.push(comment)
 				const rect = comment.getBoundingClientRect()
-				const contentLeft = rect.left + leftPadding(comment)
-				if (commentsBounds == null) {
-					commentsBounds = {
-						contentLeft,
-						top: rect.top,
-						bottom: rect.bottom
-					}
-				} else {
-					if (rect.left < contentBounds.left) {
-						contentBounds.left = rect.left
-					}
-					if (rect.right > contentBounds.right) {
-						contentBounds.right = rect.right
-					}
-
-					if (contentLeft < commentsBounds.contentLeft) {
-						commentsBounds.contentLeft = contentLeft
-					}
-					if (rect.top < commentsBounds.top) {
-						commentsBounds.top = rect.top
-					}
-					if (rect.bottom > commentsBounds.bottom) {
-						commentsBounds.bottom = rect.bottom
-					}
-				}
+				addToContentBounds(rect)
+				addToCommentBounds(comment, rect)
 			}
 		}
 	}
@@ -77,13 +89,7 @@ function nextTarget(pageY, params = {}) {
 		headerList = document.querySelectorAll(headersSelector2)
 	}
 	for (const header of headerList) {
-		const rect = header.getBoundingClientRect()
-		if (rect.left < contentBounds.left) {
-			contentBounds.left = rect.left
-		}
-		if (rect.right > contentBounds.right) {
-			contentBounds.right = rect.right
-		}
+		addToContentBounds(header.getBoundingClientRect())
 	}
 	for (const header of headerList) {
 		const rect = header.getBoundingClientRect()
@@ -111,7 +117,7 @@ function nextTarget(pageY, params = {}) {
 				const e = elements[i]
 				const rect = e.getBoundingClientRect()
 				if (inVertCommentBounds(rect)) {
-					if (rect.left + leftPadding(e) === commentsBounds.contentLeft) {
+					if (isLeftmostCommentContent(e, rect)) {
 						return e
 					}
 					lastComment = e
