@@ -126,7 +126,7 @@ describe("integration", () => {
         })
 
         it('next comment root', async () => {
-            await testSkipComparingTop(page, "#post-3963748605", "#post-3947815796", headerHeight)
+            await testSkipN(10, page, "#posts #post-list > .post", headerHeight)
         })
 
         after(async () => {
@@ -406,8 +406,9 @@ describe("integration", () => {
     async function testSkipN(n, page, selector, headerHeight, delta = 1, useClick) {
         await page.waitForSelector(selector)
         const elements = await page.$$(selector)
-        if (elements.length <= n) {
-            throw "Not enough elements!"
+        const minNumOfElements = n <= 0 ? 2 : n + 1
+        if (elements.length < minNumOfElements) {
+            throw `Not enough elements! Only ${elements.length} found.`
         }
         const numberOfElements = n <= 0 ? elements.length - 1 : n
         for (let i = 0; i < numberOfElements; i++) {
