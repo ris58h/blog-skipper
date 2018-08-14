@@ -143,11 +143,11 @@ describe("integration", () => {
         })
 
         it('next header', async () => {
-            await testSkipComparingTop(page, "h1", "h2", headerHeight)
+            await testSkipAll(page, "article.post h2", headerHeight)
         })
 
         it('next comment root', async () => {
-            await testSkipComparingTop(page, "#comment_10769168", "#comment_10769254", headerHeight)
+            await testSkipAll(page, "#comments-list > li > .comment", headerHeight)
         })
 
         after(async () => {
