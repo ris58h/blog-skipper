@@ -272,28 +272,52 @@ describe("integration", () => {
     })
 
     describe("reddit.com", () => {
-        let page
         const oldHeaderHeight = 0
         const newHeaderHeight = 69
         const delta = 6
 
-        before(async () => {
-            page = await createPage("https://www.reddit.com/r/aww/comments/8dyrb3/ben_is_very_proud_of_himself_for_learning_to_go/")
+        describe("main page", async () => {
+            let page
+
+            before(async () => {
+                page = await createPage("https://reddit.com")
+            })
+
+            it("next header", async () => {
+                const newDesign = await page.$("header")
+                if (newDesign) {
+                    await testSkipAll(page, ".Post h2", newHeaderHeight, delta, false)
+                } else {
+                    console.log("skip test")
+                }
+            })
+
+            after(async () => {
+                await page.close()
+            })
         })
 
-        it("next comment root", async () => {
-            const oldDesignSelector = ".commentarea>.sitetable>.comment"
-            const newDesignSelector = ".Comment.top-level"
-            const oldDesign = await page.$(oldDesignSelector)
-            if (oldDesign) {
-                await testSkipN(10, page, oldDesignSelector, oldHeaderHeight, delta)
-            } else {
-                await testSkipN(10, page, newDesignSelector, newHeaderHeight, delta)
-            }
-        })
+        describe("entry page", async () => {
+            let page
 
-        after(async () => {
-            await page.close()
+            before(async () => {
+                page = await createPage("https://www.reddit.com/r/aww/comments/8dyrb3/ben_is_very_proud_of_himself_for_learning_to_go/")
+            })
+
+            it("next comment root", async () => {
+                const oldDesignSelector = ".commentarea>.sitetable>.comment"
+                const newDesignSelector = ".Comment.top-level"
+                const oldDesign = await page.$(oldDesignSelector)
+                if (oldDesign) {
+                    await testSkipN(10, page, oldDesignSelector, oldHeaderHeight, delta)
+                } else {
+                    await testSkipN(10, page, newDesignSelector, newHeaderHeight, delta)
+                }
+            })
+
+            after(async () => {
+                await page.close()
+            })
         })
     })
 
