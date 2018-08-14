@@ -20,25 +20,44 @@ describe("integration", () => {
         })
     })
 
-    describe('4pda.ru', () => {
-        let page
+    describe("4pda.ru", () => {
         const headerHeight = 40
 
-        before(async () => {
-            page = await createPage("https://4pda.ru/2018/05/10/351164/#comments")
+        describe.only("main page", async () => {
+            let page
+
+            before(async () => {
+                page = await createPage("https://4pda.ru")
+            })
+
+            it("next header", async () => {
+                await testSkipN(0, page, "h2.list-post-title", headerHeight, 1, false)
+            })
+
+            after(async () => {
+                await page.close()
+            })
         })
 
-        it('next header', async () => {
-            await testSkipComparingTop2(page, "h2", headerHeight)
-        })
+        describe("entry page", async () => {
+            let page
 
-        it('next comment root', async () => {
-            await page.waitFor(1000) // Without this test fails. It seems like a race.
-            await testSkipComparingTop2(page, ".comment-list.level-0 > li", headerHeight)
-        })
+            before(async () => {
+                page = await createPage("https://4pda.ru/2018/05/10/351164/#comments")
+            })
 
-        after(async () => {
-            await page.close()
+            it("next header", async () => {
+                await testSkipComparingTop2(page, "h2", headerHeight)
+            })
+
+            it("next comment root", async () => {
+                await page.waitFor(1000) // Without this test fails. It seems like a race.
+                await testSkipComparingTop2(page, ".comment-list.level-0 > li", headerHeight)
+            })
+
+            after(async () => {
+                await page.close()
+            })
         })
     })
 
@@ -351,36 +370,51 @@ describe("integration", () => {
         return element.getBoundingClientRect().top
     }
 
-    async function skipWithKey(page, selector) {
-        await page.waitForSelector(selector)
-        await page.$eval(selector, scrollIntoView)
+    async function skipUsingKey(page, element) {
+        await page.evaluate(scrollIntoView, element)
         //TODO it could be different key
         await page.keyboard.press('KeyZ')
     }
 
-    async function skipWithClick(page, selector) {
-        await page.waitForSelector(selector)
-        await page.click(selector, { button: "middle" })
+    async function skipUsingClick(page, element) {
+        await element.click({ button: "middle" })
     }
 
-    async function skip(page, selector) {
-        const useClick = true
+    async function skip(page, e, useClick = true) {
         if (useClick) {
-            await skipWithClick(page, selector)
+            await skipUsingClick(page, e)
         } else {
-            await skipWithKey(page, selector)
+            await skipUsingKey(page, e)
         }
     }
 
-    async function testSkipComparingTop(page, fromSelector, nextSelector, headerHeight, delta = 1) {
-        await skip(page, fromSelector)
+    async function testSkipComparingTop(page, fromSelector, nextSelector, headerHeight, delta = 1, useClick) {
+        const element = await page.waitForSelector(fromSelector)
+        await skip(page, element, useClick)
         const top = await page.$eval(nextSelector, getTop)
         except(headerHeight).to.be.closeTo(top, delta)
     }
 
-    async function testSkipComparingTop2(page, selector, headerHeight, delta = 1) {
-        await skip(page, selector)
+    async function testSkipComparingTop2(page, selector, headerHeight, delta = 1, useClick) {
+        const element = await page.waitForSelector(selector)
+        await skip(page, element, useClick)
         const top = await page.$$eval(selector, elements => elements[1].getBoundingClientRect().top)
         except(headerHeight).to.be.closeTo(top, delta)
+    }
+
+    async function testSkipN(n, page, selector, headerHeight, delta = 1, useClick) {
+        await page.waitForSelector(selector)
+        const elements = await page.$$(selector)
+        if (elements.length <= n) {
+            throw "Not enough elements!"
+        }
+        const numberOfElements = n <= 0 ? elements.length - 1 : n
+        for (let i = 0; i < numberOfElements; i++) {
+            const current = elements[i]
+            const next = elements[i + 1]
+            await skip(page, current, useClick)
+            const top = await page.evaluate(e => e.getBoundingClientRect().top, next)
+            except(headerHeight).to.be.closeTo(top, delta)
+        }
     }
 })
