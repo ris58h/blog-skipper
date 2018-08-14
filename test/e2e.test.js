@@ -47,12 +47,12 @@ describe("integration", () => {
             })
 
             it("next header", async () => {
-                await testSkipComparingTop2(page, "h2", headerHeight)
+                await testSkipAll(page, ".content-box > h2", headerHeight)
             })
 
             it("next comment root", async () => {
                 await page.waitFor(1000) // Without this test fails. It seems like a race.
-                await testSkipComparingTop2(page, ".comment-list.level-0 > li", headerHeight)
+                await testSkipAll(page, ".comment-list.level-0 > li", headerHeight)
             })
 
             after(async () => {
