@@ -177,15 +177,15 @@ describe("integration", () => {
         })
     })
 
-    describe('news.ycombinator.com', () => {
+    describe("news.ycombinator.com", () => {
         let page
         const headerHeight = 0
 
         before(async () => {
-            page = await createPage("https://news.ycombinator.com/item?id=16909056", "news.ycombinator.html")
+            page = await createPage("https://news.ycombinator.com/item?id=16909056")
         })
 
-        it('next comment root', async () => {
+        it("next comment root", async () => {
             await testSkipComparingTop(page, "tr[id='16909828'] .comment", "tr[id='16909655'] .comhead", headerHeight)
         })
 
