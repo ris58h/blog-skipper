@@ -61,7 +61,7 @@ describe("integration", () => {
         })
     })
 
-    describe('bugs.launchpad.net', () => {
+    describe.only('bugs.launchpad.net', () => {
         let page
         let headerHeight = 0
 
@@ -70,7 +70,8 @@ describe("integration", () => {
         })
 
         it('next comment root', async () => {
-            await testSkipComparingTop2(page, ".boardComment .boardCommentDetails", headerHeight)
+            const n = 11 // because the end of the page
+            await testSkipN(n, page, ".boardComment .boardCommentDetails", headerHeight)
         })
 
         after(async () => {
