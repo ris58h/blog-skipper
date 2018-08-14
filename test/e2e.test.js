@@ -339,24 +339,43 @@ describe("integration", () => {
     })
 
     describe("vc.ru", () => {
-        let page
         const headerHeight = 50
-        const commentHeaderHeight = headerHeight + 50
 
-        before(async () => {
-            page = await createPage("https://vc.ru/36920-vlasti-finlyandii-reshili-ne-prodlevat-eksperiment-s-vyplatoy-bazovogo-dohoda#comments")
+        describe("main page", async () => {
+            let page
+
+            before(async () => {
+                page = await createPage("https://vc.ru")
+            })
+
+            it("next header", async () => {
+                await testSkipAll(page, ".b-article h2", headerHeight, 1, false)
+            })
+
+            after(async () => {
+                await page.close()
+            })
         })
 
-        it("next header", async () => {
-            await testSkipAll(page, "h1,h2", headerHeight)
-        })
+        describe("entry page", async () => {
+            let page
+            const commentHeaderHeight = headerHeight + 50
 
-        it("next comment root", async () => {
-            await testSkipN(5, page, ".comments__content > .comments__item > .comments__item__space > .comments__item__self", commentHeaderHeight)
-        })
+            before(async () => {
+                page = await createPage("https://vc.ru/36920-vlasti-finlyandii-reshili-ne-prodlevat-eksperiment-s-vyplatoy-bazovogo-dohoda#comments")
+            })
 
-        after(async () => {
-            await page.close()
+            it("next header", async () => {
+                await testSkipAll(page, "h1,h2", headerHeight)
+            })
+
+            it("next comment root", async () => {
+                await testSkipN(5, page, ".comments__content > .comments__item > .comments__item__space > .comments__item__self", commentHeaderHeight)
+            })
+
+            after(async () => {
+                await page.close()
+            })
         })
     })
 
