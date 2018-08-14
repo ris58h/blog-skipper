@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer')
+const puppeteer = require("puppeteer")
 const except = require("chai").expect
 const parseUrl = require("url").parse
 
@@ -12,10 +12,10 @@ describe("integration", () => {
             headless: false, // Chrome Headless doesn't support extensions. https://github.com/GoogleChrome/puppeteer/issues/659
             args: [
                 `--window-size=${width},${height}`,
-                '--no-sandbox',
-                '--disable-extensions-except=' + process.cwd(),
-                '--load-extension=' + process.cwd(),
-                '--mute-audio'
+                "--no-sandbox",
+                "--disable-extensions-except=" + process.cwd(),
+                "--load-extension=" + process.cwd(),
+                "--mute-audio"
             ]
         })
     })
@@ -61,7 +61,7 @@ describe("integration", () => {
         })
     })
 
-    describe('bugs.launchpad.net', () => {
+    describe("bugs.launchpad.net", () => {
         let page
         let headerHeight = 0
 
@@ -69,7 +69,7 @@ describe("integration", () => {
             page = await createPage("https://bugs.launchpad.net/ubuntu/+source/linphone/+bug/566075")
         })
 
-        it('next comment root', async () => {
+        it("next comment root", async () => {
             const n = 11 // because the end of the page
             await testSkipN(n, page, ".boardComment .boardCommentDetails", headerHeight)
         })
@@ -105,11 +105,11 @@ describe("integration", () => {
             page = await createPage("http://dataworld.info/payeer-karta-koshelek-obzor-otzyvy-registratsiya-russia-php.php")
         })
 
-        it('next header', async () => {
+        it("next header", async () => {
             await testSkipComparingTop(page, "h2", "h4", headerHeight)
         })
 
-        it('next comment root', async () => {
+        it("next comment root", async () => {
             await testSkipAll(page, ".commentlist > .comment", headerHeight)
         })
 
@@ -118,7 +118,7 @@ describe("integration", () => {
         })
     })
 
-    describe('disqus.com comments', () => {
+    describe("disqus.com comments", () => {
         let page
         const headerHeight = 0
 
@@ -126,7 +126,7 @@ describe("integration", () => {
             page = await createPage("https://disqus.com/embed/comments/?base=default&f=disqus&t_i=5354070036&t_u=https%3A%2F%2Fblog.disqus.com%2Flittle-known-disqus-features&t_d=%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2010%20Little-known%20Disqus%20Features%20You%20Should%20Know%20About%0A%20%20%20%20%20%20%20%20%20%20%20%20&t_t=%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2010%20Little-known%20Disqus%20Features%20You%20Should%20Know%20About%0A%20%20%20%20%20%20%20%20%20%20%20%20&s_o=default#version=c0054b9f0e6fdc06531dbc13c60562c8")
         })
 
-        it('next comment root', async () => {
+        it("next comment root", async () => {
             await testSkipN(10, page, "#posts #post-list > .post", headerHeight)
         })
 
@@ -135,7 +135,7 @@ describe("integration", () => {
         })
     })
 
-    describe('habr.com', () => {
+    describe("habr.com", () => {
         let page
         const headerHeight = 0
 
@@ -143,11 +143,11 @@ describe("integration", () => {
             page = await createPage("https://habr.com/post/354052/")
         })
 
-        it('next header', async () => {
+        it("next header", async () => {
             await testSkipAll(page, "article.post h2", headerHeight)
         })
 
-        it('next comment root', async () => {
+        it("next comment root", async () => {
             await testSkipAll(page, "#comments-list > li > .comment", headerHeight)
         })
 
@@ -156,7 +156,7 @@ describe("integration", () => {
         })
     })
 
-    describe('livejournal.com', () => {
+    describe("livejournal.com", () => {
         let page
         const headerHeight = 0
 
@@ -165,11 +165,11 @@ describe("integration", () => {
         })
 
         // TODO: There is fixed footer with suggested articles that contains header.
-        it.skip('next header', async () => {
+        it.skip("next header", async () => {
             await testSkipComparingTop(page, "h2", "h2 ~ h2", headerHeight)
         })
 
-        it('next comment root', async () => {
+        it("next comment root", async () => {
             await testSkipComparingTop(page, "#ljcmt7121792", "#ljcmt7122304", headerHeight)
         })
 
@@ -239,7 +239,7 @@ describe("integration", () => {
         })
     })
 
-    describe('spot.im comments', () => {
+    describe("spot.im comments", () => {
         let page
         const headerHeight = 0
 
@@ -247,7 +247,7 @@ describe("integration", () => {
             page = await createPage("https://spoxy-shard3.spot.im/v2/spot/sp_IjnMf2Jd/post/23418430/?elementId=b321749a16c5d64924c61888adcac21d&spot_im_platform=desktop&host_url=www.aol.com%2Farticle%2Fnews%2F2018%2F04%2F23%2Feagles-issue-interesting-statement-on-potential-white-house-visit%2F23418430%2F&host_url_64=d3d3LmFvbC5jb20vYXJ0aWNsZS9uZXdzLzIwMTgvMDQvMjMvZWFnbGVzLWlzc3VlLWludGVyZXN0aW5nLXN0YXRlbWVudC1vbi1wb3RlbnRpYWwtd2hpdGUtaG91c2UtdmlzaXQvMjM0MTg0MzAv&spot_im_ph__prerender_deferred=true&prerenderDeferred=true&sort_by=best&isStarsRatingEnabled=false&enableMessageShare=true&enableAnonymize=true&isConversationLiveBlog=false&enableSeeMoreButton=true")
         })
 
-        it('next comment root', async () => {
+        it("next comment root", async () => {
             await testSkipComparingTop(page,
                 "[data-message-id='sp_IjnMf2Jd_23418430_c_66RJSY']",
                 "[data-message-id='sp_IjnMf2Jd_23418430_c_wtCxyz']",
@@ -259,7 +259,7 @@ describe("integration", () => {
         })
     })
 
-    describe('vc.ru', () => {
+    describe("vc.ru", () => {
         let page
         const headerHeight = 50
         const commentHeaderHeight = headerHeight + 50
@@ -268,14 +268,14 @@ describe("integration", () => {
             page = await createPage("https://vc.ru/36920-vlasti-finlyandii-reshili-ne-prodlevat-eksperiment-s-vyplatoy-bazovogo-dohoda")
         })
 
-        it('next header', async () => {
+        it("next header", async () => {
             await testSkipComparingTop(page,
                 "h2",
                 "h2 ~ h2",
                 headerHeight)
         })
 
-        it('next comment root', async () => {
+        it("next comment root", async () => {
             await testSkipComparingTop(page,
                 "[data-id='696917'].comments__item .comments__item__self",
                 "[data-id='696719'].comments__item .comments__item__self",
@@ -311,9 +311,9 @@ describe("integration", () => {
 
     async function createPage(url) {
         const page = await browser.newPage()
-        await page._client.send('Emulation.clearDeviceMetricsOverride')
+        await page._client.send("Emulation.clearDeviceMetricsOverride")
         await page.setRequestInterception(true)
-        page.on('request', request => {
+        page.on("request", request => {
             if (isImageUrl(request.url())
                 || isFontUrl(request.url())
                 || urlHostnameEndsWith(request.url(), "doubleclick.net")
@@ -375,7 +375,7 @@ describe("integration", () => {
     async function skipUsingKey(page, element) {
         await page.evaluate(scrollIntoView, element)
         //TODO it could be different key
-        await page.keyboard.press('KeyZ')
+        await page.keyboard.press("KeyZ")
     }
 
     async function skipUsingClick(page, element) {
