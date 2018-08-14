@@ -155,23 +155,43 @@ describe("integration", () => {
     })
 
     describe("habr.com", () => {
-        let page
         const headerHeight = 0
 
-        before(async () => {
-            page = await createPage("https://habr.com/post/354052/")
+        describe("main page", async () => {
+            let page
+
+            before(async () => {
+                page = await createPage("https://habr.com")
+            })
+
+            it("next header", async () => {
+                // ".posts_list h2.post__title" would be better but sometimes there are headers in post previews.
+                await testSkipAll(page, ".posts_list h2", headerHeight, 1, false)
+            })
+
+            after(async () => {
+                await page.close()
+            })
         })
 
-        it("next header", async () => {
-            await testSkipAll(page, "article.post h2", headerHeight)
-        })
+        describe("entry page", async () => {
+            let page
 
-        it("next comment root", async () => {
-            await testSkipAll(page, "#comments-list > li > .comment", headerHeight)
-        })
+            before(async () => {
+                page = await createPage("https://habr.com/post/354052/")
+            })
 
-        after(async () => {
-            await page.close()
+            it("next header", async () => {
+                await testSkipAll(page, "article.post h2", headerHeight)
+            })
+
+            it("next comment root", async () => {
+                await testSkipAll(page, "#comments-list > li > .comment", headerHeight)
+            })
+
+            after(async () => {
+                await page.close()
+            })
         })
     })
 
