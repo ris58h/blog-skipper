@@ -236,19 +236,38 @@ describe("integration", () => {
 
     // This site has 'z' shortcut that scrolls page up.
     describe("pikabu.ru", () => {
-        let page
         const headerHeight = 0
 
-        before(async () => {
-            page = await createPage("https://pikabu.ru/story/beregite_prirodu_5865577")
+        describe.skip("main page", async () => {
+            let page
+
+            before(async () => {
+                page = await createPage("https://pikabu.ru")
+            })
+
+            it("next header", async () => {
+                await testSkipAll(page, "h2.story__title", headerHeight, 1, false)
+            })
+
+            after(async () => {
+                await page.close()
+            })
         })
 
-        it("next comment root", async () => {
-            await testSkipN(10, page, ".comments__container > .comment", headerHeight, 3)
-        })
+        describe("entry page", async () => {
+            let page
 
-        after(async () => {
-            await page.close()
+            before(async () => {
+                page = await createPage("https://pikabu.ru/story/beregite_prirodu_5865577")
+            })
+
+            it("next comment root", async () => {
+                await testSkipN(10, page, ".comments__container > .comment", headerHeight, 3)
+            })
+
+            after(async () => {
+                await page.close()
+            })
         })
     })
 
