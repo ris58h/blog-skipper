@@ -286,7 +286,7 @@ describe("integration", () => {
         })
     })
 
-    describe('youtube.com', () => {
+    describe("youtube.com", () => {
         let page
         const headerHeight = 56
 
@@ -294,9 +294,9 @@ describe("integration", () => {
             page = await createPage("https://www.youtube.com/watch?v=gOsERJzMhLc")
         })
 
-        it('next comment root', async () => {
+        it("next comment root", async () => {
             await waitThenScroll(page, "#comments #sections")
-            await testSkipComparingTop2(page, "ytd-comment-thread-renderer", headerHeight)
+            await testSkipAll(page, "ytd-comment-thread-renderer", headerHeight)
         })
 
         after(async () => {
