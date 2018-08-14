@@ -195,7 +195,7 @@ describe("integration", () => {
     })
 
     // This site has 'z' shortcut that scrolls page up.
-    describe.only("pikabu.ru", () => {
+    describe("pikabu.ru", () => {
         let page
         const headerHeight = 0
 
@@ -212,24 +212,24 @@ describe("integration", () => {
         })
     })
 
-    describe('reddit.com', () => {
+    describe("reddit.com", () => {
         let page
         const oldHeaderHeight = 0
         const newHeaderHeight = 69
-        const delta = 5
+        const delta = 6
 
         before(async () => {
             page = await createPage("https://www.reddit.com/r/aww/comments/8dyrb3/ben_is_very_proud_of_himself_for_learning_to_go/")
         })
 
-        it('next comment root', async () => {
+        it("next comment root", async () => {
             const oldDesignSelector = ".commentarea>.sitetable>.comment"
             const newDesignSelector = ".Comment.top-level"
             const oldDesign = await page.$(oldDesignSelector)
             if (oldDesign) {
-                await testSkipComparingTop2(page, oldDesignSelector, oldHeaderHeight, delta)
+                await testSkipN(10, page, oldDesignSelector, oldHeaderHeight, delta)
             } else {
-                await testSkipComparingTop2(page, newDesignSelector, newHeaderHeight, delta)
+                await testSkipN(10, page, newDesignSelector, newHeaderHeight, delta)
             }
         })
 
