@@ -79,7 +79,7 @@ describe("integration", () => {
         })
     })
 
-    describe('d3.ru', () => {
+    describe("d3.ru", () => {
         let page
         const headerHeight = 0
 
@@ -87,8 +87,9 @@ describe("integration", () => {
             page = await createPage("https://gif.d3.ru/nu-nakonets-to-1583095/")
         })
 
-        it('next comment root', async () => {
-            await testSkipComparingTop2(page, "#b-comment-root > .b-comment .b-comment__body", headerHeight)
+        it("next comment root", async () => {
+            const n = 4 //TODO greater value leads to an error
+            await testSkipN(n, page, "#b-comment-root > .b-comment .b-comment__body", headerHeight)
         })
 
         after(async () => {
@@ -393,13 +394,6 @@ describe("integration", () => {
         const element = await page.waitForSelector(fromSelector)
         await skip(page, element, useClick)
         const top = await page.$eval(nextSelector, getTop)
-        except(headerHeight).to.be.closeTo(top, delta)
-    }
-
-    async function testSkipComparingTop2(page, selector, headerHeight, delta = 1, useClick) {
-        const element = await page.waitForSelector(selector)
-        await skip(page, element, useClick)
-        const top = await page.$$eval(selector, elements => elements[1].getBoundingClientRect().top)
         except(headerHeight).to.be.closeTo(top, delta)
     }
 
