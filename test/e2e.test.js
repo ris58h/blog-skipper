@@ -9,6 +9,7 @@ describe("integration", () => {
 
     before(async () => {
         browser = await puppeteer.launch({
+            slowMo: 100,
             headless: false, // Chrome Headless doesn't support extensions. https://github.com/GoogleChrome/puppeteer/issues/659
             args: [
                 `--window-size=${width},${height}`,
@@ -248,10 +249,7 @@ describe("integration", () => {
         })
 
         it("next comment root", async () => {
-            await testSkipComparingTop(page,
-                "[data-message-id='sp_IjnMf2Jd_23418430_c_66RJSY']",
-                "[data-message-id='sp_IjnMf2Jd_23418430_c_wtCxyz']",
-                headerHeight)
+            await testSkipN(1, page, ".sppre_root-message", headerHeight)
         })
 
         after(async () => {
