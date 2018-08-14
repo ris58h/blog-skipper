@@ -80,20 +80,39 @@ describe("integration", () => {
     })
 
     describe("d3.ru", () => {
-        let page
         const headerHeight = 0
 
-        before(async () => {
-            page = await createPage("https://gif.d3.ru/nu-nakonets-to-1583095/")
+        describe.skip("main page", async () => {
+            let page
+
+            before(async () => {
+                page = await createPage("https://d3.ru")
+            })
+
+            it("next header", async () => {
+                await testSkipAll(page, ".b-post-cut .b-post-header", headerHeight, 1, false)
+            })
+
+            after(async () => {
+                await page.close()
+            })
         })
 
-        it("next comment root", async () => {
-            const n = 4 //TODO greater value leads to an error
-            await testSkipN(n, page, "#b-comment-root > .b-comment .b-comment__body", headerHeight)
-        })
+        describe("entry page", async () => {
+            let page
 
-        after(async () => {
-            await page.close()
+            before(async () => {
+                page = await createPage("https://gif.d3.ru/nu-nakonets-to-1583095/")
+            })
+
+            it("next comment root", async () => {
+                const n = 4 //TODO greater value leads to an error
+                await testSkipN(n, page, "#b-comment-root > .b-comment .b-comment__body", headerHeight)
+            })
+
+            after(async () => {
+                await page.close()
+            })
         })
     })
 
