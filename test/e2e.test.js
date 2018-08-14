@@ -23,7 +23,7 @@ describe("integration", () => {
     describe("4pda.ru", () => {
         const headerHeight = 40
 
-        describe.only("main page", async () => {
+        describe("main page", async () => {
             let page
 
             before(async () => {
@@ -31,7 +31,7 @@ describe("integration", () => {
             })
 
             it("next header", async () => {
-                await testSkipN(0, page, "h2.list-post-title", headerHeight, 1, false)
+                await testSkipAll(page, "h2.list-post-title", headerHeight, 1, false)
             })
 
             after(async () => {
@@ -416,5 +416,9 @@ describe("integration", () => {
             const top = await page.evaluate(e => e.getBoundingClientRect().top, next)
             except(headerHeight).to.be.closeTo(top, delta)
         }
+    }
+
+    async function testSkipAll(page, selector, headerHeight, delta = 1, useClick) {
+        await testSkipN(0, page, selector, headerHeight, delta, useClick)
     }
 })
