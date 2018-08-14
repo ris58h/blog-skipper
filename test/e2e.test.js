@@ -9,7 +9,6 @@ describe("integration", () => {
 
     before(async () => {
         browser = await puppeteer.launch({
-            slowMo: 100,
             headless: false, // Chrome Headless doesn't support extensions. https://github.com/GoogleChrome/puppeteer/issues/659
             args: [
                 `--window-size=${width},${height}`,
@@ -107,7 +106,7 @@ describe("integration", () => {
         })
 
         it("next header", async () => {
-            await testSkipComparingTop(page, "h2", "h4", headerHeight)
+            await testSkipSelectors(page, ["h2", "h4"], headerHeight)
         })
 
         it("next comment root", async () => {
@@ -167,11 +166,11 @@ describe("integration", () => {
 
         // TODO: There is fixed footer with suggested articles that contains header.
         it.skip("next header", async () => {
-            await testSkipComparingTop(page, "h2", "h2 ~ h2", headerHeight)
+            await testSkipSelectors(page, ["h2", "h2 ~ h2"], headerHeight)
         })
 
         it("next comment root", async () => {
-            await testSkipComparingTop(page, "#ljcmt7121792", "#ljcmt7122304", headerHeight)
+            await testSkipSelectors(page, ["#ljcmt7121792", "#ljcmt7122304"], headerHeight)
         })
 
         after(async () => {
@@ -188,7 +187,7 @@ describe("integration", () => {
         })
 
         it("next comment root", async () => {
-            await testSkipComparingTop(page, "tr[id='16909828'] .comment", "tr[id='16909655'] .comhead", headerHeight)
+            await testSkipSelectors(page, ["tr[id='16909828'] .comment", "tr[id='16909655'] .comhead"], headerHeight)
         })
 
         after(async () => {
@@ -382,11 +381,18 @@ describe("integration", () => {
         }
     }
 
-    async function testSkipComparingTop(page, fromSelector, nextSelector, headerHeight, delta = 1, useClick) {
-        const element = await page.waitForSelector(fromSelector)
-        await skip(page, element, useClick)
-        const top = await page.$eval(nextSelector, getTop)
-        except(headerHeight).to.be.closeTo(top, delta)
+    async function testSkipSelectors(page, selectors, headerHeight, delta = 1, useClick) {
+        if (selectors.length < 2) {
+            throw `At least 2 selectors required. Only ${selectors.length} gotten.`
+        }
+        for (let i = 0; i < selectors.length - 1; i++) {
+            const currentSelector = selectors[i]
+            const nextSelector = selectors[i + 1]
+            const element = await page.waitForSelector(currentSelector)
+            await skip(page, element, useClick)
+            const top = await page.$eval(nextSelector, getTop)
+            except(headerHeight).to.be.closeTo(top, delta)
+        }
     }
 
     async function testSkipN(n, page, selector, headerHeight, delta = 1, useClick) {
