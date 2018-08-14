@@ -64,7 +64,8 @@ function nextTarget(pageY, params = {}) {
 			parent: 0,
 		}
 	}
-	if (!commentSelector && params.autoDetectComments) {
+	const isRootUrl = window.location.pathname == "/"
+	if (!commentSelector && params.autoDetectComments && !isRootUrl) {
 		commentSelector = guessComentSelector()
 	}
 	if (commentSelector) {
