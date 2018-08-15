@@ -281,16 +281,12 @@ describe("integration", () => {
             let page
 
             before(async () => {
-                page = await createPage("https://reddit.com")
+                // It forces new design. Old can't be tested anyway (no headers).
+                page = await createPage("https://new.reddit.com")
             })
 
             it("next header", async () => {
-                const newDesign = await page.$("header")
-                if (newDesign) {
-                    await testSkipAll(page, ".Post h2", newHeaderHeight, delta, false)
-                } else {
-                    console.log("skip test")
-                }
+                await testSkipN(20, page, ".Post h2", newHeaderHeight, delta, false)
             })
 
             after(async () => {
