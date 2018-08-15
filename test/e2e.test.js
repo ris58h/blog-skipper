@@ -32,7 +32,7 @@ describe("integration", () => {
             })
 
             it("next header", async () => {
-                await testSkipAll(page, "h2.list-post-title", headerHeight, 1, false)
+                await testSkipN(25, page, "h2.list-post-title", headerHeight, 1, false)
             })
 
             after(async () => {
