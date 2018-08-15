@@ -350,7 +350,7 @@ describe("integration", () => {
             })
 
             it("next header", async () => {
-                await testSkipAll(page, ".b-article h2", headerHeight, 1, false)
+                await testSkipN(30, page, ".b-article h2", headerHeight, 1, false)
             })
 
             after(async () => {
