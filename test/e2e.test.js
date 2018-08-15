@@ -166,8 +166,8 @@ describe("integration", () => {
             })
 
             it("next header", async () => {
-                // ".posts_list h2.post__title" would be better but sometimes there are headers in post previews.
-                await testSkipAll(page, ".posts_list h2", headerHeight, 1, false)
+                //TODO ".posts_list h2.post__title" would be better but sometimes there are headers in post previews.
+                await testSkipAll(page, ".posts_list h1, .posts_list h2, .posts_list h3, .posts_list h4", headerHeight, 1, false)
             })
 
             after(async () => {
