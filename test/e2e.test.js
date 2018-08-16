@@ -275,13 +275,13 @@ describe("integration", () => {
     describe("reddit.com", () => {
         const oldHeaderHeight = 0
         const newHeaderHeight = 69
-        const delta = 6
+        const delta = 7
 
         describe("main page", async () => {
             let page
 
             before(async () => {
-                // It forces new design. Old can't be tested anyway (no headers).
+                // It forces new design (Does it actually?). Old can't be tested anyway (no headers).
                 page = await createPage("https://new.reddit.com")
             })
 
