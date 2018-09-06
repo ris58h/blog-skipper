@@ -88,8 +88,8 @@ chrome.runtime.onMessage.addListener(function(msg) {
 })
 
 document.addEventListener('keyup', function(e) {
-	if (document.activeElement 
-		&& (document.activeElement.tagName == "INPUT" 
+	if (document.activeElement
+		&& (document.activeElement.tagName == "INPUT"
 		|| document.activeElement.tagName == "SELECT"
 			|| document.activeElement.tagName == "TEXTAREA")) {
 				return
@@ -120,7 +120,7 @@ function calcHeaderHeight() {
 	const maxHeight = window.innerHeight / 2
 	const minWidth = window.innerWidth / 2
 	let lowestBottom = 0
-	for (const e of document.body.querySelectorAll("div,nav,header")) {
+	for (const e of document.body.querySelectorAll("div,nav,header,section")) {
 		if (e.offsetHeight > 0
 			&& e.offsetHeight < maxHeight
 			&& e.offsetWidth > minWidth) {
