@@ -94,12 +94,14 @@ document.addEventListener('keyup', function(e) {
 			|| document.activeElement.tagName == "TEXTAREA")) {
 				return
 	}
-	if (e.key == shortcuts["skip"]) {
-		const headerHeight = calcHeaderHeight()
-		const startFrom = window.scrollY + headerHeight + 1
-		doFullSkip(startFrom)
-	} else if (e.key == shortcuts["undo"]) {
-		undo()
+	if (!e.ctrlKey && !e.altKey) {
+		if (e.key == shortcuts["skip"]) {
+			const headerHeight = calcHeaderHeight()
+			const startFrom = window.scrollY + headerHeight + 1
+			doFullSkip(startFrom)
+		} else if (e.key == shortcuts["undo"]) {
+			undo()
+		}
 	}
 })
 
