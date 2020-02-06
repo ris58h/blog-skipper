@@ -78,7 +78,11 @@ document.addEventListener('contextmenu', function(e) {
 
 chrome.runtime.onMessage.addListener(function(msg) {
 	if (msg.type == 'skip') {
-		doFullSkip(clickY)
+		if (msg.mouse) {
+			doFullSkip(clickY)
+		} else {
+			doFullSkip(headerSkipOffset())
+		}
 	} else if (msg.type == 'undo') {
 		undo()
 	} else if (msg.type == 'scroll-header') {
@@ -95,15 +99,18 @@ document.addEventListener('keyup', function(e) {
 				return
 	}
 	if (!e.ctrlKey && !e.altKey) {
-		if (e.key == shortcuts["skip"]) {
-			const headerHeight = calcHeaderHeight()
-			const startFrom = window.scrollY + headerHeight + 1
-			doFullSkip(startFrom)
-		} else if (e.key == shortcuts["undo"]) {
+		if (e.key == shortcuts['skip']) {
+			doFullSkip(headerSkipOffset())
+		} else if (e.key == shortcuts['undo']) {
 			undo()
 		}
 	}
 })
+
+function headerSkipOffset() {
+	const headerHeight = calcHeaderHeight()
+	return window.scrollY + headerHeight + 1
+}
 
 function doSkip(pageY, params) {
 	const next = nextTarget(pageY, params)

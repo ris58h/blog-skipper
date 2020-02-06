@@ -33,10 +33,14 @@ addChangeListener(initFromSettings)
 
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
     if (info.menuItemId == "skip") {
-        chrome.tabs.sendMessage(tab.id, { type: "skip" }, { frameId: info.frameId })
+        chrome.tabs.sendMessage(tab.id, { type: "skip", mouse: true }, { frameId: info.frameId })
     } else if (info.menuItemId == "undo") {
         chrome.tabs.sendMessage(tab.id, { type: "undo" }, { frameId: info.frameId })
     }
+})
+
+chrome.browserAction.onClicked.addListener(function(tab) {
+    chrome.tabs.sendMessage(tab.id, { type: "skip" })
 })
 
 chrome.runtime.onMessage.addListener(function(msg, sender) {
