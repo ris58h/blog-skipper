@@ -36,15 +36,15 @@ function saveOptions(e) {
         settings["shortcuts"]["undo"] = undoShortcut
     }
 
-    save(settings)
+    extension.settings.save(settings)
 }
 
 function restoreDefault() {
-    loadDefault(renderSettings)
+    extension.settings.loadDefault(renderSettings)
 }
 
 function restoreOptions() {
-    load(renderSettings)
+    extension.settings.load(renderSettings)
 }
 
 function renderSettings(settings) {

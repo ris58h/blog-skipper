@@ -33,14 +33,14 @@
     },
 
     "background": {
-        "scripts": ["settings.js", "background.js"]
+        "scripts": ["settings/settings.js", "background.js"]
     },
 
     "content_scripts": [
         {
             "all_frames": true,
             "matches": ["<all_urls>"],
-            "js": ["core.js", "settings.js", "content.js"]
+            "js": ["core.js", "settings/settings.js", "content.js"]
         }
     ],
 
@@ -50,6 +50,6 @@
     },
 
     "web_accessible_resources": [
-        "settings.json"
+        "settings/settings.json"
     ]
 }

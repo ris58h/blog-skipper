@@ -27,9 +27,8 @@ function initFromSettings(settings) {
     })
 }
 
-load(initFromSettings)
-
-addChangeListener(initFromSettings)
+extension.settings.load(initFromSettings)
+extension.settings.addChangeListener(initFromSettings)
 
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
     if (info.menuItemId == "skip") {

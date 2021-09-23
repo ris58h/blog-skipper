@@ -25,9 +25,8 @@ function initFromSettings(settings) {
 }
 
 //TODO: race condition
-load(initFromSettings)
-
-addChangeListener(initFromSettings)
+extension.settings.load(initFromSettings)
+extension.settings.addChangeListener(initFromSettings)
 
 let prescrollPosition = null
 
