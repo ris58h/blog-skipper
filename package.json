@@ -1,5 +1,6 @@
 {
     "name": "blog-skipper",
+    "type": "module",
     "scripts": {
         "dist": "node dist.js",
         "test": "mocha --timeout 15000"
